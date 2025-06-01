@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neurología: ECV Parte II - Guía de Estudio UCE (con IA)</title>
+    <title>Neurología: ECV Parte II - Guía de Estudio UCE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -96,89 +96,6 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
-
-        /* Modal styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 100; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto; /* 10% from the top and centered */
-            padding: 25px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-            max-width: 700px;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        .modal-header {
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e5e5e5;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1e3a8a;
-        }
-        .modal-body {
-            padding-top: 15px;
-            padding-bottom: 15px;
-            max-height: 60vh;
-            overflow-y: auto;
-            white-space: pre-wrap; /* To respect newlines from Gemini */
-        }
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-        }
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .gemini-btn {
-            background-color: #4f46e5; /* Indigo-600 */
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
-            cursor: pointer;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .gemini-btn:hover {
-            background-color: #4338ca; /* Indigo-700 */
-        }
-        .loader {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -187,7 +104,7 @@
         <div class="container mx-auto px-6 text-center">
             <div class="text-2xl font-bold mb-2">[Logo UCE]</div>
             <h1 class="text-4xl font-bold">Neurología: Enfermedad Cerebrovascular (Parte II)</h1>
-            <p class="text-xl mt-2">Guía de Estudio para Estudiantes de Sexto Semestre (con IA ✨)</p>
+            <p class="text-xl mt-2">Guía de Estudio para Estudiantes de Sexto Semestre</p>
             <p class="text-lg">Facultad de Ciencias Médicas - Universidad Central del Ecuador</p>
         </div>
     </header>
@@ -199,7 +116,6 @@
                 <li><a href="#acv_isquemico" class="nav-link font-medium text-gray-700 hover:text-blue-600">ACV Isquémico</a></li>
                 <li><a href="#prevencion_secundaria" class="nav-link font-medium text-gray-700 hover:text-blue-600">Prevención Secundaria</a></li>
                 <li><a href="#acv_hemorragico" class="nav-link font-medium text-gray-700 hover:text-blue-600">ACV Hemorrágico</a></li>
-                <li><a href="#glosario_ia" class="nav-link font-medium text-gray-700 hover:text-blue-600">Glosario IA</a></li>
                 <li><a href="#casos_clinicos" class="nav-link font-medium text-gray-700 hover:text-blue-600">Casos Clínicos</a></li>
                 <li><a href="#recursos" class="nav-link font-medium text-gray-700 hover:text-blue-600">Recursos</a></li>
             </ul>
@@ -399,10 +315,7 @@
                     <li><strong>Complicaciones Médicas:</strong> Profilaxis TVP, manejo de infecciones (neumonía, ITU), úlceras por presión, disfagia.</li>
                 </ul>
             </details>
-            <button class="gemini-btn" onclick="generateQuestions('acv_isquemico', 'Manejo Agudo del ACV Isquémico')">
-                ✨ Generar Preguntas de Repaso (ACV Isquémico)
-            </button>
-        </section>
+            </section>
 
         <section id="prevencion_secundaria" class="mb-12 card">
             <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Prevención Secundaria del ACV Isquémico</h2>
@@ -561,21 +474,7 @@
                 </ul>
                 <div class="visual-placeholder">Visual: Esquema coiling y clipaje.</div>
             </details>
-            <button class="gemini-btn" onclick="generateQuestions('acv_hemorragico', 'Accidente Cerebrovascular Hemorrágico')">
-                 ✨ Generar Preguntas de Repaso (ACV Hemorrágico)
-            </button>
-        </section>
-
-        <section id="glosario_ia" class="mb-12 card">
-            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Glosario Interactivo con IA ✨</h2>
-            <p class="mb-4 text-lg">¿Tienes dudas sobre algún término médico? Escríbelo abajo y la IA te ayudará a entenderlo mejor.</p>
-            <div class="flex flex-col sm:flex-row gap-2 items-center">
-                <input type="text" id="medicalTermInput" class="w-full sm:flex-grow p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: Angiopatía Amiloide Cerebral, Xantocromía...">
-                <button class="gemini-btn w-full sm:w-auto" onclick="explainMedicalTerm()">
-                    ✨ Explicar Término con IA
-                </button>
-            </div>
-        </section>
+            </section>
 
         <section id="casos_clinicos" class="mb-12 card">
             <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Actividad Interactiva: "Decisiones Críticas en el Código ICTUS"</h2>
@@ -589,43 +488,19 @@
                     <h4 class="text-xl font-semibold text-blue-700">Escenario 1</h4>
                     <p class="mt-2 text-gray-700" id="desc_caso1">Mujer de 72 años, AHF HTA, DM. Inicio súbito de hemiparesia derecha y afasia hace 2 horas. NIHSS 16. TC sin contraste: Sin hemorragia, sin signos tempranos claros de isquemia extensa. PA 190/105 mmHg.</p>
                     <textarea id="caso1_discusion" class="mt-3 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Discute: ¿Candidata a TIV? ¿Candidata a TM? ¿Manejo de PA? ¿Riesgos?"></textarea>
-                    <div class="flex flex-wrap gap-2 mt-2">
-                        <button class="gemini-btn" onclick="generateCaseSummary('caso1_discusion', 'Escenario Clínico 1', 'desc_caso1')">
-                            ✨ Generar Resumen del Caso con IA
-                        </button>
-                        <button class="gemini-btn" onclick="suggestDifferentialDiagnosis('desc_caso1', 'Escenario Clínico 1')">
-                            ✨ Sugerir Diagnósticos Diferenciales con IA
-                        </button>
                     </div>
-                </div>
 
                 <div class="mb-6 p-4 border border-gray-300 rounded-lg shadow-sm bg-blue-50">
                     <h4 class="text-xl font-semibold text-blue-700">Escenario 2</h4>
                     <p class="mt-2 text-gray-700" id="desc_caso2">Hombre de 55 años, fumador. Despertó hace 1 hora con hemiplejía izquierda y negligencia. Último visto bien hace 9 horas. NIHSS 20. TC sin contraste: Sin hemorragia, hipodensidad sutil en territorio ACM derecha (ASPECTS 7). PA 160/90 mmHg.</p>
                      <textarea id="caso2_discusion" class="mt-3 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Discute: ¿Candidata a TIV? ¿Candidata a TM? ¿Manejo de PA? ¿Riesgos?"></textarea>
-                     <div class="flex flex-wrap gap-2 mt-2">
-                        <button class="gemini-btn" onclick="generateCaseSummary('caso2_discusion', 'Escenario Clínico 2', 'desc_caso2')">
-                            ✨ Generar Resumen del Caso con IA
-                        </button>
-                        <button class="gemini-btn" onclick="suggestDifferentialDiagnosis('desc_caso2', 'Escenario Clínico 2')">
-                            ✨ Sugerir Diagnósticos Diferenciales con IA
-                        </button>
-                    </div>
-                </div>
+                     </div>
 
                 <div class="p-4 border border-gray-300 rounded-lg shadow-sm bg-blue-50">
                     <h4 class="text-xl font-semibold text-blue-700">Escenario 3</h4>
                     <p class="mt-2 text-gray-700" id="desc_caso3">Mujer de 85 años, FA en tratamiento con Apixabán (última dosis hace 6 horas). Inicio de disartria y ataxia hace 1.5 horas. NIHSS 5. TC sin contraste: Sin hemorragia. PA 170/95 mmHg.</p>
                     <textarea id="caso3_discusion" class="mt-3 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Discute: ¿Candidata a TIV? ¿Candidata a TM? ¿Manejo de PA? ¿Riesgos?"></textarea>
-                    <div class="flex flex-wrap gap-2 mt-2">
-                        <button class="gemini-btn" onclick="generateCaseSummary('caso3_discusion', 'Escenario Clínico 3', 'desc_caso3')">
-                            ✨ Generar Resumen del Caso con IA
-                        </button>
-                        <button class="gemini-btn" onclick="suggestDifferentialDiagnosis('desc_caso3', 'Escenario Clínico 3')">
-                            ✨ Sugerir Diagnósticos Diferenciales con IA
-                        </button>
                     </div>
-                </div>
             </div>
              <p class="mt-4 text-sm text-gray-500">Guía para la discusión: Tener a mano las guías actuales de TIV/TM. Enfocar en el proceso de toma de decisiones.</p>
         </section>
@@ -654,18 +529,6 @@
         </section>
     </main>
 
-    <div id="geminiModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="modalTitle">Respuesta de la IA</span>
-                <span class="close-button" onclick="closeModal()">&times;</span>
-            </div>
-            <div id="modalBody" class="modal-body">
-                <div class="loader" id="modalLoader"></div>
-            </div>
-        </div>
-    </div>
-
     <footer class="bg-gray-800 text-white py-8 text-center">
         <div class="container mx-auto px-6">
             <p>&copy; <span id="currentYear"></span> Facultad de Ciencias Médicas, Universidad Central del Ecuador.</p>
@@ -687,11 +550,7 @@
 
         // Scroll to Top Button Logic
         const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-        const modal = document.getElementById('geminiModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalBody = document.getElementById('modalBody');
-        const modalLoader = document.getElementById('modalLoader');
-
+        
         window.onscroll = function() {
             if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
                 scrollToTopBtn.classList.remove('hidden');
@@ -705,269 +564,16 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        function openModal(title) {
-            modalTitle.textContent = title || "Respuesta de la IA";
-            modalBody.innerHTML = '<div class="loader" id="modalLoader"></div>'; // Show loader
-            modal.style.display = "block";
-        }
-
-        function closeModal() {
-            modal.style.display = "none";
-        }
-
-        // Close modal if user clicks outside of it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        // Function to extract text from a section for Gemini prompt
-        function extractTextFromSection(sectionId) {
-            const sectionElement = document.getElementById(sectionId);
-            if (!sectionElement) return "";
-
-            let content = [];
-            // Get title of the section
-            const titleElement = sectionElement.querySelector('h2');
-            if (titleElement) {
-                content.push(titleElement.textContent.trim());
-            }
-
-            // Get introductory paragraph
-            const introParagraph = sectionElement.querySelector('p.text-lg');
-            if (introParagraph) {
-                content.push(introParagraph.textContent.trim());
-            }
-            
-            // Get content from all <details> elements within the section
-            const detailsElements = sectionElement.querySelectorAll('details');
-            detailsElements.forEach(detail => {
-                const summary = detail.querySelector('summary');
-                if (summary) {
-                    // Replace '▼' with its Unicode escape sequence \u25BC
-                    content.push(summary.textContent.replace('\u25BC','').trim() + ":");
-                }
-                let detailContent = [];
-                detail.childNodes.forEach(node => {
-                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
-                        detailContent.push(node.textContent.trim());
-                    } else if (node.tagName === 'P' || node.tagName === 'UL') {
-                         detailContent.push(node.innerText.trim());
-                    } else if (node.tagName === 'DIV' && !node.classList.contains('visual-placeholder')) {
-                        detailContent.push(node.innerText.trim());
-                    }
-                });
-                if (detailContent.length > 0) {
-                    content.push(detailContent.join("\n"));
-                }
-            });
-            return content.join("\n\n").substring(0, 15000); 
-        }
-        
-        // Function to generate study questions
-        async function generateQuestions(sectionId, topicName) {
-            openModal(`✨ Preguntas de Repaso sobre ${topicName}`);
-            const context = extractTextFromSection(sectionId);
-            if (!context) {
-                modalBody.innerHTML = "<p>No se pudo extraer contenido para generar preguntas.</p>";
-                return;
-            }
-
-            const prompt = `Eres un asistente de IA para estudiantes de medicina. Basándote en el siguiente texto sobre ${topicName}, genera 3 preguntas de repaso concisas y relevantes para estudiantes de medicina que se preparan para un examen. Las preguntas pueden ser de opción múltiple (con 4 opciones A, B, C, D y la respuesta correcta indicada claramente con "Respuesta Correcta: [Letra]") o preguntas abiertas que requieran una explicación breve. El texto es:\n\n${context}`;
-            
-            try {
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorResult = await response.json();
-                    console.error("Error from API:", errorResult);
-                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const generatedText = result.candidates[0].content.parts[0].text;
-                    modalBody.innerHTML = '<p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
-                } else {
-                    console.error("Respuesta inesperada de la API:", result);
-                    modalBody.innerHTML = "<p>No se pudieron generar las preguntas. La respuesta de la API no tuvo el formato esperado.</p>";
-                }
-            } catch (error) {
-                console.error("Error al generar preguntas:", error);
-                modalBody.innerHTML = `<p>Ocurrió un error al generar las preguntas: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
-            }
-        }
-
-        // Function to generate case summaries
-        async function generateCaseSummary(textAreaId, caseTitle, caseDescriptionId) {
-            openModal(`✨ Resumen con IA para ${caseTitle}`);
-            const caseDescriptionElement = document.getElementById(caseDescriptionId);
-            const studentDiscussion = document.getElementById(textAreaId).value;
-
-            if (!caseDescriptionElement) {
-                 modalBody.innerHTML = "<p>No se pudo encontrar la descripción del caso.</p>";
-                return;
-            }
-            const caseDescription = caseDescriptionElement.textContent.trim();
-            
-            let context = `Descripción del Caso Clínico (${caseTitle}):\n${caseDescription}\n`;
-            if (studentDiscussion.trim() !== "") {
-                context += `\nDiscusión del Estudiante:\n${studentDiscussion}\n`;
-            } else {
-                context += "\nEl estudiante no ha añadido una discusión todavía.\n";
-            }
-
-            const prompt = `Eres un asistente de IA para estudiantes de medicina. Analiza la siguiente descripción de un caso clínico y la discusión (si la hay) proporcionada por un estudiante. Genera un resumen conciso que incluya:
-1.  Puntos clave del caso.
-2.  Posibles diagnósticos diferenciales a considerar.
-3.  Sugerencias de próximos pasos o puntos importantes para la discusión basados en el caso.
-Si el estudiante proporcionó una discusión, comenta brevemente sobre ella, destacando puntos fuertes o áreas a considerar.
-El caso es:
-${context}`;
-
-            try {
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorResult = await response.json();
-                    console.error("Error from API:", errorResult);
-                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
-                }
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const generatedText = result.candidates[0].content.parts[0].text;
-                     modalBody.innerHTML = '<p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
-                } else {
-                    console.error("Respuesta inesperada de la API:", result);
-                    modalBody.innerHTML = "<p>No se pudo generar el resumen del caso. La respuesta de la API no tuvo el formato esperado.</p>";
-                }
-            } catch (error) {
-                console.error("Error al generar resumen del caso:", error);
-                modalBody.innerHTML = `<p>Ocurrió un error al generar el resumen: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
-            }
-        }
-
-        // Function to explain medical term
-        async function explainMedicalTerm() {
-            const termInput = document.getElementById('medicalTermInput');
-            const term = termInput.value.trim();
-
-            if (!term) {
-                // Using a custom modal for alerts now
-                openModal("Advertencia");
-                modalBody.innerHTML = "<p>Por favor, ingrese un término médico.</p>";
-                return;
-            }
-            openModal(`✨ Explicación de: ${term}`);
-            
-            const prompt = `Eres un tutor de IA para estudiantes de medicina. Explica el siguiente término médico de forma clara y concisa para un estudiante de sexto semestre de medicina: "${term}". Si es posible, incluye una analogía o un ejemplo sencillo para facilitar la comprensión.`;
-
-            try {
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorResult = await response.json();
-                    console.error("Error from API:", errorResult);
-                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
-                }
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const generatedText = result.candidates[0].content.parts[0].text;
-                     modalBody.innerHTML = '<p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
-                } else {
-                    console.error("Respuesta inesperada de la API:", result);
-                    modalBody.innerHTML = "<p>No se pudo generar la explicación. La respuesta de la API no tuvo el formato esperado.</p>";
-                }
-            } catch (error) {
-                console.error("Error al explicar término:", error);
-                modalBody.innerHTML = `<p>Ocurrió un error al generar la explicación: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
-            }
-        }
-
-        // Function to suggest differential diagnosis for clinical cases
-        async function suggestDifferentialDiagnosis(caseDescriptionId, caseTitle) {
-            openModal(`✨ Diagnósticos Diferenciales para ${caseTitle}`);
-            const caseDescriptionElement = document.getElementById(caseDescriptionId);
-
-            if (!caseDescriptionElement) {
-                modalBody.innerHTML = "<p>No se pudo encontrar la descripción del caso para sugerir diagnósticos.</p>";
-                return;
-            }
-            const caseDescription = caseDescriptionElement.textContent.trim();
-            
-            const prompt = `Eres un asistente de IA para estudiantes de medicina. Basado en los siguientes síntomas y datos clave del caso clínico "${caseTitle}":\n\n"${caseDescription}"\n\nPor favor, lista 3-4 posibles diagnósticos diferenciales relevantes en neurología, con una breve justificación (1-2 frases) para cada uno. Enfócate en diagnósticos que un estudiante de medicina debería considerar.`;
-
-            try {
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorResult = await response.json();
-                    console.error("Error from API:", errorResult);
-                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
-                }
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const generatedText = result.candidates[0].content.parts[0].text;
-                     modalBody.innerHTML = '<h4>Diagnósticos Diferenciales Sugeridos:</h4><p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
-                } else {
-                    console.error("Respuesta inesperada de la API:", result);
-                    modalBody.innerHTML = "<p>No se pudieron generar los diagnósticos diferenciales. La respuesta de la API no tuvo el formato esperado.</p>";
-                }
-            } catch (error) {
-                console.error("Error al sugerir diagnósticos:", error);
-                modalBody.innerHTML = `<p>Ocurrió un error al sugerir los diagnósticos: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
-            }
-        }
-
+        // Funciones de JavaScript relacionadas con Gemini y el modal han sido eliminadas:
+        // - openModal()
+        // - closeModal()
+        // - window.onclick para cerrar modal
+        // - extractTextFromSection() (ya que solo la usaba generateQuestions)
+        // - generateQuestions()
+        // - generateCaseSummary()
+        // - explainMedicalTerm()
+        // - suggestDifferentialDiagnosis()
+        // Las variables modal, modalTitle, modalBody, modalLoader también han sido eliminadas.
 
     </script>
 
