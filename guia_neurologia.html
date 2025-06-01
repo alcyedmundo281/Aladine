@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neurología: ECV Parte II - Guía de Estudio UCE (con IA)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .content-section ul {
+            list-style-position: inside;
+        }
+        .content-section ul li ul {
+            margin-left: 20px;
+            list-style-type: circle;
+        }
+        .content-section details summary {
+            cursor: pointer;
+            font-weight: 600;
+            padding: 0.5rem 0;
+            transition: background-color 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-section details summary::after {
+            content: '▼'; /* Flecha hacia abajo */
+            font-size: 0.8em;
+            margin-left: 0.5rem;
+            transition: transform 0.2s ease-in-out;
+        }
+        .content-section details[open] summary::after {
+            transform: rotate(180deg); /* Flecha hacia arriba */
+        }
+        .content-section details summary:hover {
+            background-color: #f0f4f8; /* Light blue-gray hover */
+        }
+        .content-section details[open] summary {
+            border-bottom: 1px solid #e2e8f0; /* Light gray border */
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #2563eb; /* Tailwind blue-600 */
+        }
+        .section-title {
+            border-bottom: 2px solid #3b82f6; /* Tailwind blue-500 */
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e3a8a; /* Tailwind blue-800 */
+            margin-bottom: 0.75rem;
+        }
+        .key-point {
+            background-color: #e0f2fe; /* Tailwind light blue-100 */
+            border-left: 4px solid #0ea5e9; /* Tailwind sky-500 */
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 0.25rem;
+        }
+        .visual-placeholder {
+            display: block;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+            border: 1px dashed #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.25rem;
+            font-style: italic;
+            color: #6b7280; /* Tailwind gray-500 */
+            text-align: center;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            max-width: 700px;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .modal-header {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e5e5;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        .modal-body {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            max-height: 60vh;
+            overflow-y: auto;
+            white-space: pre-wrap; /* To respect newlines from Gemini */
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .gemini-btn {
+            background-color: #4f46e5; /* Indigo-600 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .gemini-btn:hover {
+            background-color: #4338ca; /* Indigo-700 */
+        }
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-blue-700 text-white py-8 shadow-lg">
+        <div class="container mx-auto px-6 text-center">
+            <div class="text-2xl font-bold mb-2">[Logo UCE]</div>
+            <h1 class="text-4xl font-bold">Neurología: Enfermedad Cerebrovascular (Parte II)</h1>
+            <p class="text-xl mt-2">Guía de Estudio para Estudiantes de Sexto Semestre (con IA ✨)</p>
+            <p class="text-lg">Facultad de Ciencias Médicas - Universidad Central del Ecuador</p>
+        </div>
+    </header>
+
+    <nav class="sticky-nav shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <ul class="flex flex-wrap justify-center space-x-4 md:space-x-6">
+                <li><a href="#objetivos" class="nav-link font-medium text-gray-700 hover:text-blue-600">Objetivos</a></li>
+                <li><a href="#acv_isquemico" class="nav-link font-medium text-gray-700 hover:text-blue-600">ACV Isquémico</a></li>
+                <li><a href="#prevencion_secundaria" class="nav-link font-medium text-gray-700 hover:text-blue-600">Prevención Secundaria</a></li>
+                <li><a href="#acv_hemorragico" class="nav-link font-medium text-gray-700 hover:text-blue-600">ACV Hemorrágico</a></li>
+                <li><a href="#glosario_ia" class="nav-link font-medium text-gray-700 hover:text-blue-600">Glosario IA</a></li>
+                <li><a href="#casos_clinicos" class="nav-link font-medium text-gray-700 hover:text-blue-600">Casos Clínicos</a></li>
+                <li><a href="#recursos" class="nav-link font-medium text-gray-700 hover:text-blue-600">Recursos</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-8 content-section">
+
+        <section id="objetivos" class="mb-12 card">
+            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Introducción y Objetivos de Aprendizaje</h2>
+            <p class="mb-4 text-lg">
+                Bienvenidos al estudio de la Enfermedad Cerebrovascular (ECV) Parte II. Esta sección se enfoca en el manejo agudo del ACV isquémico,
+                la prevención secundaria y el manejo de los ACV hemorrágicos, integrando guías de práctica clínica actuales.
+                Este material es crucial para su formación como futuros médicos, proporcionando las herramientas necesarias para
+                enfrentar estas emergencias neurológicas.
+            </p>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Objetivos de Aprendizaje</summary>
+                <ul class="mt-2 space-y-2 text-gray-700 list-disc pl-5">
+                    <li>Describir los componentes del manejo prehospitalario y en sala de emergencias del paciente con ACV agudo ("Código ICTUS").</li>
+                    <li>Detallar las indicaciones, contraindicaciones, beneficios y riesgos de las terapias de reperfusión en el ACV isquémico agudo (trombolisis intravenosa y trombectomía mecánica).</li>
+                    <li>Esbozar el manejo de las complicaciones agudas del ACV isquémico (edema cerebral, transformación hemorrágica, convulsiones).</li>
+                    <li>Formular un plan de prevención secundaria para pacientes con ACV isquémico, basado en el control de factores de riesgo y la etiología del ACV.</li>
+                    <li>Diferenciar las principales etiologías, manifestaciones clínicas y principios de manejo del Accidente Cerebrovascular Hemorrágico Intracerebral (HIC).</li>
+                    <li>Describir la presentación clínica, diagnóstico y principios de manejo de la Hemorragia Subaracnoidea Aneurismática (HSA), incluyendo la prevención y manejo de sus complicaciones.</li>
+                </ul>
+                <div class="visual-placeholder mt-3">Visual: Iconos (ambulancia, jeringa/stent, cerebro con hemorragia, escudo de prevención).</div>
+            </details>
+        </section>
+
+        <section id="acv_isquemico" class="mb-12 card">
+            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Manejo Agudo del ACV Isquémico</h2>
+            <p class="mb-4 text-lg">El manejo agudo del ACV isquémico es tiempo-dependiente y crucial para salvar tejido cerebral viable (penumbra isquémica). "Tiempo es Cerebro".</p>
+            
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Repaso Rápido ACV Parte I</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li>Definición ACV/AIT.</li>
+                    <li>Fisiopatología Isquémica (Penumbra).</li>
+                    <li>Clasificación TOAST.</li>
+                    <li>Territorios vasculares.</li>
+                    <li>Escala NIHSS.</li>
+                    <li>Rol de TC/RMN inicial.</li>
+                </ul>
+                <p class="mt-2 font-semibold">"Ahora, ¿qué hacemos cuando llega el paciente?"</p>
+            </details>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Código ICTUS / Stroke Code</summary>
+                <div class="mt-2 space-y-2 text-gray-700">
+                    <p class="key-point"><strong>Objetivo:</strong> Evaluación y tratamiento ultrarrápido. "Tiempo es Cerebro".</p>
+                    <p><strong>Componentes Prehospitalarios:</strong> Reconocimiento (FAST/BEFAST), alerta al hospital, transporte prioritario.</p>
+                    <p><strong>Componentes Hospitalarios:</strong> Equipo multidisciplinario activado, evaluación neurológica inmediata (NIHSS), acceso rápido a neuroimagen (TC), laboratorio.</p>
+                    <p><strong>Tiempos Objetivo (AHA/ASA):</strong></p>
+                    <ul class="list-disc pl-5">
+                        <li>Puerta-Médico: &lt;10min</li>
+                        <li>Puerta-TC: &lt;20-25min</li>
+                        <li>Puerta-Aguja (TIV): &lt;45-60min</li>
+                        <li>Puerta-Punción (TM): &lt;90-120min</li>
+                    </ul>
+                    <div class="visual-placeholder">Visual: Diagrama de flujo del Código ICTUS con tiempos. Logo FAST/BEFAST.</div>
+                </div>
+            </details>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Evaluación y Manejo Inicial en Emergencia</summary>
+                 <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>ABCDE:</strong> Vía aérea, ventilación, circulación, déficit neurológico, exposición/entorno.</li>
+                    <li><strong>Signos Vitales:</strong> PA, FC, FR, SatO2, Temperatura.</li>
+                    <li><strong>Glucemia Capilar:</strong> ¡Corregir hipo/hiperglucemia!</li>
+                    <li><strong>Oxigenoterapia:</strong> Solo si SatO2 &lt;94%.</li>
+                    <li><strong>Historia Clínica Dirigida:</strong> Hora exacta de inicio de síntomas (o último visto bien), antecedentes, medicación (anticoagulantes/antiagregantes).</li>
+                    <li><strong>NIHSS basal.</strong></li>
+                    <li><strong>TC Craneal sin contraste URGENTE:</strong> ¡Descartar hemorragia!</li>
+                </ul>
+            </details>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Manejo de la Presión Arterial (PA) en ACV Isquémico Agudo</summary>
+                <div class="mt-2 space-y-2 text-gray-700">
+                    <p><strong>No candidato a reperfusión:</strong> Permitir HTA permisiva (hasta 220/120 mmHg) salvo condiciones comitantes. Bajar PA lentamente si &gt;220/120 mmHg (aprox. 15% en 24h).</p>
+                    <p><strong>Candidato a TIV:</strong> Bajar PA &lt;185/110 mmHg ANTES de TIV y mantener &lt;180/105 mmHg por 24h POST-TIV. (Labetalol, Nicardipino IV).</p>
+                    <p><strong>Candidato a TM:</strong> Mantener PA &lt;185/110 mmHg pre-procedimiento. Post-TM, objetivo individualizado (ej. &lt;140-160 mmHg sistólica).</p>
+                    <p class="key-point">Evitar hipotensión.</p>
+                    <div class="visual-placeholder">Visual: Algoritmo simple de manejo de PA según escenario.</div>
+                </div>
+            </details>
+
+            <div class="card-title mt-6">Terapias de Reperfusión</div>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">Trombolisis Intravenosa (TIV) - Principios</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Fármacos:</strong> Alteplasa (rtPA), Tenecteplasa (TNK - creciente uso, dosis única).</li>
+                    <li><strong>Mecanismo:</strong> Activador del plasminógeno tisular &rarr; convierte plasminógeno en plasmina &rarr; degrada fibrina del trombo.</li>
+                    <li><strong>Objetivo:</strong> Lisar el trombo, restaurar flujo, salvar penumbra.</li>
+                    <li><strong>Beneficio:</strong> Mejora pronóstico funcional.</li>
+                    <li><strong>Riesgo Principal:</strong> Hemorragia Intracraneal Sintomática (HICS) ~6%. Angioedema.</li>
+                </ul>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">TIV - Ventana Terapéutica e Indicaciones Clave</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Ventana Estándar:</strong> Hasta 4.5 horas desde inicio de síntomas.</li>
+                    <li><strong>Indicaciones Generales:</strong> ACV isquémico con déficit neurológico medible (NIHSS usualmente &ge;4-5), Edad &ge;18 años, TC sin hemorragia.</li>
+                    <li><strong>Ventana Extendida (4.5-9 horas) / ACV del Despertar:</strong> Pacientes seleccionados con criterios de imagen avanzada (RMN DWI-FLAIR mismatch, o Perfusión-TC/RMN).</li>
+                </ul>
+                <div class="visual-placeholder">Visual: Línea de tiempo mostrando las ventanas. Esquema DWI-FLAIR mismatch.</div>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">TIV - Contraindicaciones (Seleccionadas)</summary>
+                <p class="mt-2 text-gray-700"><strong>ABSOLUTAS (Ejemplos):</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li>Hemorragia intracraneal actual o previa (mayoría).</li>
+                    <li>Síntomas sugestivos de HSA.</li>
+                    <li>Neurocirugía, trauma craneal/espinal grave en últimos 3 meses.</li>
+                    <li>Sangrado activo interno.</li>
+                    <li>Plaquetas &lt;100,000/mm³.</li>
+                    <li>Uso de anticoagulantes con INR &gt;1.7 o ACODs recientes con pruebas alteradas.</li>
+                    <li>PA persistentemente &gt;185/110 mmHg.</li>
+                    <li>Glucemia &lt;50 mg/dL.</li>
+                </ul>
+                <p class="mt-2 text-gray-700"><strong>RELATIVAS (Ejemplos - evaluar riesgo/beneficio):</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li>ACV isquémico extenso en TC (&gt;1/3 hemisferio ACM).</li>
+                    <li>Cirugía mayor o trauma grave en últimos 14 días.</li>
+                </ul>
+                <div class="visual-placeholder">Visual: Tabla dividida en Absolutas y Relativas. ¡Consultar guías!</div>
+            </details>
+             <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">TIV - Dosis, Administración y Monitorización</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Alteplasa:</strong> 0.9 mg/kg (máx 90 mg). 10% en bolo IV (1 min), resto en infusión (60 min).</li>
+                    <li><strong>Tenecteplasa:</strong> Dosis única en bolo IV (ej. 0.25 mg/kg, máx 25 mg).</li>
+                    <li><strong>Monitorización Estricta:</strong> Neurológica (NIHSS) y SV (PA) frecuente. Vigilar sangrado. TC control a 24h.</li>
+                    <li>No antiagregantes/anticoagulantes por 24h post-TIV.</li>
+                </ul>
+            </details>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">Trombectomía Mecánica (TM) - Principios</summary>
+                 <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Objetivo:</strong> Extracción mecánica del trombo oclusivo de un gran vaso.</li>
+                    <li><strong>Indicaciones Principales (Circ. Anterior):</strong> Oclusión ACI terminal o ACM proximal (M1/M2), NIHSS &ge;6, ASPECTS &ge;6 en TC.</li>
+                    <li><strong>Ventana Estándar:</strong> Hasta 6 horas desde inicio de síntomas.</li>
+                    <li><strong>Ventana Extendida (6-24 horas):</strong> Pacientes seleccionados con criterios de imagen de "mismatch" (DAWN/DEFUSE 3).</li>
+                 </ul>
+                 <div class="visual-placeholder">Visual: Esquema de ACI/ACM con trombo. Stent-retriever. Escala ASPECTS.</div>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">TM - Consideraciones Adicionales</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>"Bridging Therapy":</strong> TIV seguida de TM si elegible para ambas.</li>
+                    <li><strong>TM Directa:</strong> "Drip and Ship" vs. "Mothership".</li>
+                    <li><strong>Circulación Posterior (Art. Basilar):</strong> TM puede considerarse en casos seleccionados.</li>
+                    <li><strong>Beneficio:</strong> Altas tasas de recanalización y mejora funcional.</li>
+                </ul>
+            </details>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Antiagregación Plaquetaria Temprana</summary>
+                <p class="mt-2 text-gray-700"><strong>Aspirina:</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li>Iniciar 160-325 mg en 24-48h (después de excluir hemorragia y 24h post-TIV).</li>
+                    <li>Reduce riesgo de recurrencia temprana y muerte.</li>
+                </ul>
+                <p class="mt-2 text-gray-700"><strong>Doble Antiagregación Plaquetaria (DAPT - Aspirina + Clopidogrel):</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li>Considerar en ACV isquémico menor (NIHSS &le;3-5) o AIT de alto riesgo (ABCD² &ge;4).</li>
+                    <li>Iniciar temprano (en 24h), mantener 21-90 días, luego monoterapia.</li>
+                </ul>
+            </details>
+
+            <div class="card-title mt-6">Manejo de Complicaciones Agudas del ACV Isquémico</div>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">Edema Cerebral Maligno / Hipertensión Intracraneal (HIC)</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li>Más común en infartos extensos (ej. ACM completa). Pico 3-5 días.</li>
+                    <li>Clínica: Deterioro neurológico, cefalea, vómitos, herniación.</li>
+                    <li>Manejo: Medidas generales (cabecera 30°, normotermia, etc.), Osmoterapia (Manitol, Sol. Salina Hipertónica), Hiperventilación transitoria.</li>
+                    <li><strong>Craniectomía Descompresiva:</strong> En &lt;60-65 años con infarto maligno ACM. Considerar en &gt;60 años e infartos cerebelosos con compresión.</li>
+                </ul>
+                <div class="visual-placeholder">Visual: TC con infarto extenso, edema, desviación línea media. Esquema craniectomía.</div>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">Transformación Hemorrágica (TH)</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li>Conversión del infarto isquémico en sangrado (petequial o hematoma).</li>
+                    <li><strong>TH Sintomática:</strong> Con deterioro neurológico.</li>
+                    <li>Factores de riesgo: Infarto grande, TIV, anticoagulación.</li>
+                    <li>Manejo: Similar a HIC primaria si sintomática y grande.</li>
+                </ul>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">Convulsiones Post-ACV y Otras Complicaciones</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Convulsiones:</strong> Tempranas (&lt;7 días) vs. Tardías (&gt;7 días). Profilaxis anticonvulsivante NO rutinaria.</li>
+                    <li><strong>Complicaciones Médicas:</strong> Profilaxis TVP, manejo de infecciones (neumonía, ITU), úlceras por presión, disfagia.</li>
+                </ul>
+            </details>
+            <button class="gemini-btn" onclick="generateQuestions('acv_isquemico', 'Manejo Agudo del ACV Isquémico')">
+                ✨ Generar Preguntas de Repaso (ACV Isquémico)
+            </button>
+        </section>
+
+        <section id="prevencion_secundaria" class="mb-12 card">
+            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Prevención Secundaria del ACV Isquémico</h2>
+            <p class="mb-4 text-lg key-point"><strong>Objetivo:</strong> Reducir el riesgo de recurrencia de ACV y otros eventos vasculares. Estrategia multifactorial e individualizada basada en etiología (TOAST) y factores de riesgo.</p>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Control de Factores de Riesgo Modificables</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Hipertensión Arterial:</strong> Objetivo PA &lt;130/80 mmHg (o &lt;140/90). IECA/ARAII, diuréticos, calcioantagonistas.</li>
+                    <li><strong>Diabetes Mellitus:</strong> Control glucémico intensivo (HbA1c &lt;7%).</li>
+                    <li><strong>Dislipidemia:</strong> Estatinas de alta intensidad (Atorvastatina 40-80mg, Rosuvastatina 20-40mg). Objetivo LDL &lt;70 mg/dL (o &lt;55 mg/dL en muy alto riesgo).</li>
+                    <li><strong>Tabaquismo:</strong> ¡Cese completo!</li>
+                    <li><strong>Estilo de Vida:</strong> Dieta saludable (Mediterránea, DASH), ejercicio regular, control de peso, moderación alcohol.</li>
+                    <li><strong>Fibrilación Auricular (FA):</strong> Ver anticoagulación.</li>
+                </ul>
+                <div class="visual-placeholder">Visual: Iconos para cada factor de riesgo con su objetivo.</div>
+            </details>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Terapia Antitrombótica a Largo Plazo</summary>
+                <p class="mt-2 text-gray-700"><strong>Antiagregación Plaquetaria (ACV no cardioembólico):</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li><strong>Monoterapia:</strong> Aspirina (50-325 mg/día) o Clopidogrel (75 mg/día) o Aspirina + Dipiridamol LP.</li>
+                    <li>Clopidogrel preferido en algunos casos.</li>
+                    <li>DAPT (Aspirina + Clopidogrel) a largo plazo NO recomendado de rutina.</li>
+                </ul>
+                <p class="mt-2 text-gray-700"><strong>Anticoagulación Oral (ACV cardioembólico, principalmente FA):</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li><strong>ACODs/DOACs (Dabigatrán, Rivaroxabán, Apixabán, Edoxabán):</strong> Generalmente preferidos sobre Warfarina.</li>
+                    <li><strong>Warfarina:</strong> Objetivo INR 2.0-3.0.</li>
+                    <li>Timing de inicio post-ACV: individualizado (Regla 1-3-6-12 días).</li>
+                </ul>
+            </details>
+
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Intervenciones Específicas</summary>
+                <p class="mt-2 text-gray-700"><strong>Estenosis Carotídea Sintomática Severa (70-99% o 50-69% seleccionados):</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li><strong>Endarterectomía Carotídea (CEA).</strong></li>
+                    <li><strong>Stenting de Arteria Carotídea (CAS).</strong></li>
+                    <li>Decisión individualizada, realizar tempranamente.</li>
+                </ul>
+                <p class="mt-2 text-gray-700"><strong>Foramen Oval Permeable (FOP) y ACV Criptogénico:</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li>Cierre percutáneo de FOP en pacientes jóvenes (&lt;60 años) seleccionados con embolismo paradójico.</li>
+                </ul>
+                <div class="visual-placeholder">Visual: Esquema estenosis carotídea y CEA/CAS. Esquema FOP y cierre.</div>
+            </details>
+        </section>
+
+        <section id="acv_hemorragico" class="mb-12 card">
+            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Accidente Cerebrovascular Hemorrágico</h2>
+            <p class="mb-4 text-lg">Representa ~15-20% de todos los ACV, con mayor mortalidad y morbilidad que el isquémico.</p>
+            <p class="key-point"><strong>Dos Tipos Principales:</strong> Hemorragia Intracerebral (HIC) Espontánea (~10-15%) y Hemorragia Subaracnoidea (HSA) (~5%).</p>
+
+            <div class="card-title mt-6">Hemorragia Intracerebral (HIC) Espontánea</div>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">HIC - Etiología</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Causa Más Común: HIPERTENSIÓN ARTERIAL CRÓNICA (HTA):</strong> Localizaciones típicas (ganglios basales, tálamo, puente, cerebelo).</li>
+                    <li><strong>Angiopatía Amiloide Cerebral (AAC):</strong> En ancianos, localización lobular.</li>
+                    <li><strong>Otras Causas:</strong> Malformaciones vasculares (MAV, cavernomas), tumores, coagulopatías, drogas simpaticomiméticas, vasculitis.</li>
+                </ul>
+                <div class="visual-placeholder">Visual: TC HIC hipertensiva (ganglios basales) y HIC lobular (AAC).</div>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">HIC - Clínica y Diagnóstico</summary>
+                <p class="mt-2 text-gray-700"><strong>Presentación Clínica:</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li>Inicio súbito de déficit neurológico focal, progresión rápida.</li>
+                    <li>Cefalea, náuseas, vómitos, disminución nivel de conciencia.</li>
+                </ul>
+                <p class="mt-2 text-gray-700"><strong>Diagnóstico:</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li><strong>TC Craneal sin contraste: GOLD STANDARD.</strong> Identifica sangre aguda.</li>
+                    <li>AngioTC/AngioRM/Arteriografía: Para buscar causas subyacentes en casos seleccionados.</li>
+                </ul>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">HIC - Manejo Agudo</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Soporte Vital (ABCDE).</strong></li>
+                    <li><strong>Control Agresivo de PA:</strong> Si PAS 150-220 mmHg, bajar a PAS &lt;140 mmHg rápidamente (Labetalol, Nicardipino).</li>
+                    <li><strong>Reversión de Anticoagulación/Antiagregación:</strong> Vitamina K, CPC, PFC para Warfarina. Agentes específicos para ACODs. Transfusión plaquetas controversial.</li>
+                    <li><strong>Manejo de Hipertensión Intracraneal (HIC):</strong> Medidas generales, osmoterapia, DVE si hidrocefalia.</li>
+                    <li><strong>Consideraciones Quirúrgicas (Evacuación Hematoma):</strong>
+                        <ul class="list-disc pl-5">
+                           <li>Controversial para HIC supratentorial profunda.</li>
+                           <li>Puede considerarse en: Hematomas Cerebelosos &gt;3cm con deterioro (¡urgencia!), Hematomas Lobulares superficiales con deterioro.</li>
+                           <li>Técnicas mínimamente invasivas en investigación.</li>
+                        </ul>
+                    </li>
+                    <li>Profilaxis de convulsiones NO rutinaria. Profilaxis TVP.</li>
+                </ul>
+                 <div class="visual-placeholder">Visual: Algoritmo manejo PA en HIC. Tabla agentes reversión.</div>
+            </details>
+
+            <div class="card-title mt-6">Hemorragia Subaracnoidea (HSA) Aneurismática</div>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">HSA Aneurismática - Generalidades</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>Definición:</strong> Extravasación de sangre en espacio subaracnoideo.</li>
+                    <li><strong>Causa Más Común y Grave (~85%): Ruptura de Aneurisma Sacular Intracraneal.</strong></li>
+                    <li>Factores de Riesgo: HTA, tabaquismo, historia familiar, enf. tejido conectivo.</li>
+                </ul>
+                <div class="visual-placeholder">Visual: Esquema espacio subaracnoideo con sangre. Aneurisma sacular.</div>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">HSA Aneurismática - Clínica y Escalas</summary>
+                <p class="mt-2 text-gray-700"><strong>Presentación Clínica Clásica:</strong></p>
+                <ul class="list-disc pl-5 text-gray-700">
+                    <li><strong>CEFALEA SÚBITA "EN TRUENO" / EXPLOSIVA: "La peor cefalea de mi vida".</strong></li>
+                    <li>Pérdida de conciencia, náuseas, vómitos, rigidez de nuca, fotofobia.</li>
+                    <li>Déficits neurológicos focales, convulsiones.</li>
+                </ul>
+                <p class="mt-2 text-gray-700"><strong>Escalas de Gradación Clínica (Pronósticas):</strong> Escala de Hunt y Hess, Escala WFNS.</p>
+                <div class="visual-placeholder">Visual: Persona con dolor de cabeza intenso. Tabla Hunt-Hess/WFNS.</div>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">HSA Aneurismática - Diagnóstico</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>1. TC Craneal sin Contraste: Prueba inicial de elección.</strong> Sensibilidad &gt;90-95% en primeras 6-12h. Escala de Fisher.</li>
+                    <li><strong>2. Punción Lumbar (PL): Si TC negativa y alta sospecha.</strong> Buscar xantocromía.</li>
+                    <li><strong>3. Identificación del Aneurisma:</strong>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Angiografía Cerebral (Arteriografía): GOLD STANDARD.</strong></li>
+                            <li><strong>AngioTC Craneal (CTA):</strong> Alta sensibilidad, rápida.</li>
+                            <li>AngioRM Craneal (MRA).</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="visual-placeholder">Visual: TC con HSA. Tubos LCR (normal vs xantocrómico). AngioTC/Arteriografía con aneurisma.</div>
+            </details>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-lg text-blue-600">HSA Aneurismática - Manejo Agudo y Prevención de Complicaciones</summary>
+                <ul class="mt-2 space-y-1 text-gray-700 list-disc pl-5">
+                    <li><strong>INGRESO EN UCI NEUROLÓGICA.</strong> Soporte Vital, monitorización.</li>
+                    <li>Control PA: PAS &lt;160 mmHg hasta asegurar aneurisma.</li>
+                    <li>Analgesia y Sedación.</li>
+                    <li><strong>Prevención de Resangrado: ASEGURAMIENTO TEMPRANO DEL ANEURISMA ROTO (&lt;24-72h):</strong>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Embolización Endovascular (Coiling).</strong></li>
+                            <li><strong>Clipaje Quirúrgico.</strong></li>
+                            <li>(Opcional) Ácido Tranexámico a corto plazo si retraso.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Prevención del VASOESPASMO CEREBRAL DIFERIDO (Pico 4-14 días):</strong>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Nimodipino Oral (60 mg c/4h por 21 días): ÚNICO fármaco que mejora outcome.</strong></li>
+                            <li>Mantener euvolemia, evitar hipotensión. Monitorización (Clínica, Doppler Transcraneal).</li>
+                            <li>Manejo vasoespasmo sintomático: Terapia "Triple H" (controversial), angioplastia/vasodilatadores IA.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manejo de Hidrocefalia:</strong> DVE o DVP.</li>
+                    <li>Manejo de hiponatremia, convulsiones (profilaxis controversial). Profilaxis TVP.</li>
+                </ul>
+                <div class="visual-placeholder">Visual: Esquema coiling y clipaje.</div>
+            </details>
+            <button class="gemini-btn" onclick="generateQuestions('acv_hemorragico', 'Accidente Cerebrovascular Hemorrágico')">
+                 ✨ Generar Preguntas de Repaso (ACV Hemorrágico)
+            </button>
+        </section>
+
+        <section id="glosario_ia" class="mb-12 card">
+            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Glosario Interactivo con IA ✨</h2>
+            <p class="mb-4 text-lg">¿Tienes dudas sobre algún término médico? Escríbelo abajo y la IA te ayudará a entenderlo mejor.</p>
+            <div class="flex flex-col sm:flex-row gap-2 items-center">
+                <input type="text" id="medicalTermInput" class="w-full sm:flex-grow p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: Angiopatía Amiloide Cerebral, Xantocromía...">
+                <button class="gemini-btn w-full sm:w-auto" onclick="explainMedicalTerm()">
+                    ✨ Explicar Término con IA
+                </button>
+            </div>
+        </section>
+
+        <section id="casos_clinicos" class="mb-12 card">
+            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Actividad Interactiva: "Decisiones Críticas en el Código ICTUS"</h2>
+            <p class="mb-2 text-lg">Aplica tus conocimientos para tomar decisiones terapéuticas en escenarios de ACV isquémico agudo.</p>
+            <p class="mb-4 text-gray-600"><strong>Objetivos de la actividad:</strong> Aplicar criterios de elegibilidad para TIV y TM, interpretar información clínica e imagenológica, fomentar razonamiento clínico rápido.</p>
+
+            <div class="mt-6">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-3">Escenarios Clínicos</h3>
+
+                <div class="mb-6 p-4 border border-gray-300 rounded-lg shadow-sm bg-blue-50">
+                    <h4 class="text-xl font-semibold text-blue-700">Escenario 1</h4>
+                    <p class="mt-2 text-gray-700" id="desc_caso1">Mujer de 72 años, AHF HTA, DM. Inicio súbito de hemiparesia derecha y afasia hace 2 horas. NIHSS 16. TC sin contraste: Sin hemorragia, sin signos tempranos claros de isquemia extensa. PA 190/105 mmHg.</p>
+                    <textarea id="caso1_discusion" class="mt-3 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Discute: ¿Candidata a TIV? ¿Candidata a TM? ¿Manejo de PA? ¿Riesgos?"></textarea>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button class="gemini-btn" onclick="generateCaseSummary('caso1_discusion', 'Escenario Clínico 1', 'desc_caso1')">
+                            ✨ Generar Resumen del Caso con IA
+                        </button>
+                        <button class="gemini-btn" onclick="suggestDifferentialDiagnosis('desc_caso1', 'Escenario Clínico 1')">
+                            ✨ Sugerir Diagnósticos Diferenciales con IA
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-6 p-4 border border-gray-300 rounded-lg shadow-sm bg-blue-50">
+                    <h4 class="text-xl font-semibold text-blue-700">Escenario 2</h4>
+                    <p class="mt-2 text-gray-700" id="desc_caso2">Hombre de 55 años, fumador. Despertó hace 1 hora con hemiplejía izquierda y negligencia. Último visto bien hace 9 horas. NIHSS 20. TC sin contraste: Sin hemorragia, hipodensidad sutil en territorio ACM derecha (ASPECTS 7). PA 160/90 mmHg.</p>
+                     <textarea id="caso2_discusion" class="mt-3 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Discute: ¿Candidata a TIV? ¿Candidata a TM? ¿Manejo de PA? ¿Riesgos?"></textarea>
+                     <div class="flex flex-wrap gap-2 mt-2">
+                        <button class="gemini-btn" onclick="generateCaseSummary('caso2_discusion', 'Escenario Clínico 2', 'desc_caso2')">
+                            ✨ Generar Resumen del Caso con IA
+                        </button>
+                        <button class="gemini-btn" onclick="suggestDifferentialDiagnosis('desc_caso2', 'Escenario Clínico 2')">
+                            ✨ Sugerir Diagnósticos Diferenciales con IA
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-4 border border-gray-300 rounded-lg shadow-sm bg-blue-50">
+                    <h4 class="text-xl font-semibold text-blue-700">Escenario 3</h4>
+                    <p class="mt-2 text-gray-700" id="desc_caso3">Mujer de 85 años, FA en tratamiento con Apixabán (última dosis hace 6 horas). Inicio de disartria y ataxia hace 1.5 horas. NIHSS 5. TC sin contraste: Sin hemorragia. PA 170/95 mmHg.</p>
+                    <textarea id="caso3_discusion" class="mt-3 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Discute: ¿Candidata a TIV? ¿Candidata a TM? ¿Manejo de PA? ¿Riesgos?"></textarea>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button class="gemini-btn" onclick="generateCaseSummary('caso3_discusion', 'Escenario Clínico 3', 'desc_caso3')">
+                            ✨ Generar Resumen del Caso con IA
+                        </button>
+                        <button class="gemini-btn" onclick="suggestDifferentialDiagnosis('desc_caso3', 'Escenario Clínico 3')">
+                            ✨ Sugerir Diagnósticos Diferenciales con IA
+                        </button>
+                    </div>
+                </div>
+            </div>
+             <p class="mt-4 text-sm text-gray-500">Guía para la discusión: Tener a mano las guías actuales de TIV/TM. Enfocar en el proceso de toma de decisiones.</p>
+        </section>
+
+        <section id="recursos" class="mb-12 card">
+            <h2 class="text-3xl font-bold text-blue-700 mb-6 section-title">Conclusiones Clave y Recursos Adicionales</h2>
+            <details class="mb-4 bg-white rounded-lg shadow p-4">
+                <summary class="text-xl text-blue-600">Conclusiones Clave (Parte II)</summary>
+                <ul class="mt-2 space-y-2 text-gray-700 list-disc pl-5">
+                    <li>El manejo agudo del ACV isquémico se centra en la <strong>reperfusión rápida y segura</strong> (TIV, TM) y el soporte vital.</li>
+                    <li>La <strong>prevención secundaria</strong> es crucial y multifactorial para reducir recurrencias.</li>
+                    <li>El <strong>ACV hemorrágico</strong> (HIC, HSA) es una emergencia con alta mortalidad; el manejo se enfoca en controlar la causa, la PA, la HIC y prevenir complicaciones específicas.</li>
+                    <li>El <strong>trabajo en equipo multidisciplinario</strong> y el seguimiento de <strong>guías actualizadas</strong> son esenciales.</li>
+                </ul>
+                <div class="visual-placeholder mt-3">Visual: Logo AHA/ASA Stroke Guidelines. Imagen de equipo médico colaborando.</div>
+            </details>
+
+            <div class="mt-6">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-3">Recursos Adicionales</h3>
+                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                    <li>Consultar siempre las Guías de Práctica Clínica más recientes (ej. AHA/ASA, ESO) sobre manejo de ACV.</li>
+                    <li>Se recomienda revisar el "Documento de Puntos Clave: ECV Parte II" proporcionado por su docente (referencia a material complementario).</li>
+                    <li>Explorar recursos adicionales y bases de datos médicas para profundizar en temas específicos.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <div id="geminiModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="modalTitle">Respuesta de la IA</span>
+                <span class="close-button" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <div class="loader" id="modalLoader"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-8 text-center">
+        <div class="container mx-auto px-6">
+            <p>&copy; <span id="currentYear"></span> Facultad de Ciencias Médicas, Universidad Central del Ecuador.</p>
+            <p>Material de estudio para Neurología - Sexto Semestre.</p>
+            <p class="text-sm text-gray-400 mt-2">Basado en el plan de clase y materiales proporcionados para ECV Parte II.</p>
+        </div>
+    </footer>
+
+    <button id="scrollToTopBtn" title="Ir arriba"
+        class="hidden fixed bottom-5 right-5 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full shadow-lg transition-opacity duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
+    <script>
+        // Get current year for footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Scroll to Top Button Logic
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+        const modal = document.getElementById('geminiModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalLoader = document.getElementById('modalLoader');
+
+        window.onscroll = function() {
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                scrollToTopBtn.classList.remove('hidden');
+                scrollToTopBtn.classList.add('opacity-100');
+            } else {
+                scrollToTopBtn.classList.add('hidden');
+                scrollToTopBtn.classList.remove('opacity-100');
+            }
+        };
+        scrollToTopBtn.onclick = function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function openModal(title) {
+            modalTitle.textContent = title || "Respuesta de la IA";
+            modalBody.innerHTML = '<div class="loader" id="modalLoader"></div>'; // Show loader
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        // Close modal if user clicks outside of it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Function to extract text from a section for Gemini prompt
+        function extractTextFromSection(sectionId) {
+            const sectionElement = document.getElementById(sectionId);
+            if (!sectionElement) return "";
+
+            let content = [];
+            // Get title of the section
+            const titleElement = sectionElement.querySelector('h2');
+            if (titleElement) {
+                content.push(titleElement.textContent.trim());
+            }
+
+            // Get introductory paragraph
+            const introParagraph = sectionElement.querySelector('p.text-lg');
+            if (introParagraph) {
+                content.push(introParagraph.textContent.trim());
+            }
+            
+            // Get content from all <details> elements within the section
+            const detailsElements = sectionElement.querySelectorAll('details');
+            detailsElements.forEach(detail => {
+                const summary = detail.querySelector('summary');
+                if (summary) {
+                    // Replace '▼' with its Unicode escape sequence \u25BC
+                    content.push(summary.textContent.replace('\u25BC','').trim() + ":");
+                }
+                let detailContent = [];
+                detail.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
+                        detailContent.push(node.textContent.trim());
+                    } else if (node.tagName === 'P' || node.tagName === 'UL') {
+                         detailContent.push(node.innerText.trim());
+                    } else if (node.tagName === 'DIV' && !node.classList.contains('visual-placeholder')) {
+                        detailContent.push(node.innerText.trim());
+                    }
+                });
+                if (detailContent.length > 0) {
+                    content.push(detailContent.join("\n"));
+                }
+            });
+            return content.join("\n\n").substring(0, 15000); 
+        }
+        
+        // Function to generate study questions
+        async function generateQuestions(sectionId, topicName) {
+            openModal(`✨ Preguntas de Repaso sobre ${topicName}`);
+            const context = extractTextFromSection(sectionId);
+            if (!context) {
+                modalBody.innerHTML = "<p>No se pudo extraer contenido para generar preguntas.</p>";
+                return;
+            }
+
+            const prompt = `Eres un asistente de IA para estudiantes de medicina. Basándote en el siguiente texto sobre ${topicName}, genera 3 preguntas de repaso concisas y relevantes para estudiantes de medicina que se preparan para un examen. Las preguntas pueden ser de opción múltiple (con 4 opciones A, B, C, D y la respuesta correcta indicada claramente con "Respuesta Correcta: [Letra]") o preguntas abiertas que requieran una explicación breve. El texto es:\n\n${context}`;
+            
+            try {
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorResult = await response.json();
+                    console.error("Error from API:", errorResult);
+                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const generatedText = result.candidates[0].content.parts[0].text;
+                    modalBody.innerHTML = '<p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
+                } else {
+                    console.error("Respuesta inesperada de la API:", result);
+                    modalBody.innerHTML = "<p>No se pudieron generar las preguntas. La respuesta de la API no tuvo el formato esperado.</p>";
+                }
+            } catch (error) {
+                console.error("Error al generar preguntas:", error);
+                modalBody.innerHTML = `<p>Ocurrió un error al generar las preguntas: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
+            }
+        }
+
+        // Function to generate case summaries
+        async function generateCaseSummary(textAreaId, caseTitle, caseDescriptionId) {
+            openModal(`✨ Resumen con IA para ${caseTitle}`);
+            const caseDescriptionElement = document.getElementById(caseDescriptionId);
+            const studentDiscussion = document.getElementById(textAreaId).value;
+
+            if (!caseDescriptionElement) {
+                 modalBody.innerHTML = "<p>No se pudo encontrar la descripción del caso.</p>";
+                return;
+            }
+            const caseDescription = caseDescriptionElement.textContent.trim();
+            
+            let context = `Descripción del Caso Clínico (${caseTitle}):\n${caseDescription}\n`;
+            if (studentDiscussion.trim() !== "") {
+                context += `\nDiscusión del Estudiante:\n${studentDiscussion}\n`;
+            } else {
+                context += "\nEl estudiante no ha añadido una discusión todavía.\n";
+            }
+
+            const prompt = `Eres un asistente de IA para estudiantes de medicina. Analiza la siguiente descripción de un caso clínico y la discusión (si la hay) proporcionada por un estudiante. Genera un resumen conciso que incluya:
+1.  Puntos clave del caso.
+2.  Posibles diagnósticos diferenciales a considerar.
+3.  Sugerencias de próximos pasos o puntos importantes para la discusión basados en el caso.
+Si el estudiante proporcionó una discusión, comenta brevemente sobre ella, destacando puntos fuertes o áreas a considerar.
+El caso es:
+${context}`;
+
+            try {
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorResult = await response.json();
+                    console.error("Error from API:", errorResult);
+                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
+                }
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const generatedText = result.candidates[0].content.parts[0].text;
+                     modalBody.innerHTML = '<p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
+                } else {
+                    console.error("Respuesta inesperada de la API:", result);
+                    modalBody.innerHTML = "<p>No se pudo generar el resumen del caso. La respuesta de la API no tuvo el formato esperado.</p>";
+                }
+            } catch (error) {
+                console.error("Error al generar resumen del caso:", error);
+                modalBody.innerHTML = `<p>Ocurrió un error al generar el resumen: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
+            }
+        }
+
+        // Function to explain medical term
+        async function explainMedicalTerm() {
+            const termInput = document.getElementById('medicalTermInput');
+            const term = termInput.value.trim();
+
+            if (!term) {
+                // Using a custom modal for alerts now
+                openModal("Advertencia");
+                modalBody.innerHTML = "<p>Por favor, ingrese un término médico.</p>";
+                return;
+            }
+            openModal(`✨ Explicación de: ${term}`);
+            
+            const prompt = `Eres un tutor de IA para estudiantes de medicina. Explica el siguiente término médico de forma clara y concisa para un estudiante de sexto semestre de medicina: "${term}". Si es posible, incluye una analogía o un ejemplo sencillo para facilitar la comprensión.`;
+
+            try {
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorResult = await response.json();
+                    console.error("Error from API:", errorResult);
+                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
+                }
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const generatedText = result.candidates[0].content.parts[0].text;
+                     modalBody.innerHTML = '<p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
+                } else {
+                    console.error("Respuesta inesperada de la API:", result);
+                    modalBody.innerHTML = "<p>No se pudo generar la explicación. La respuesta de la API no tuvo el formato esperado.</p>";
+                }
+            } catch (error) {
+                console.error("Error al explicar término:", error);
+                modalBody.innerHTML = `<p>Ocurrió un error al generar la explicación: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
+            }
+        }
+
+        // Function to suggest differential diagnosis for clinical cases
+        async function suggestDifferentialDiagnosis(caseDescriptionId, caseTitle) {
+            openModal(`✨ Diagnósticos Diferenciales para ${caseTitle}`);
+            const caseDescriptionElement = document.getElementById(caseDescriptionId);
+
+            if (!caseDescriptionElement) {
+                modalBody.innerHTML = "<p>No se pudo encontrar la descripción del caso para sugerir diagnósticos.</p>";
+                return;
+            }
+            const caseDescription = caseDescriptionElement.textContent.trim();
+            
+            const prompt = `Eres un asistente de IA para estudiantes de medicina. Basado en los siguientes síntomas y datos clave del caso clínico "${caseTitle}":\n\n"${caseDescription}"\n\nPor favor, lista 3-4 posibles diagnósticos diferenciales relevantes en neurología, con una breve justificación (1-2 frases) para cada uno. Enfócate en diagnósticos que un estudiante de medicina debería considerar.`;
+
+            try {
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorResult = await response.json();
+                    console.error("Error from API:", errorResult);
+                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorResult?.error?.message || 'No hay más detalles.'}`);
+                }
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const generatedText = result.candidates[0].content.parts[0].text;
+                     modalBody.innerHTML = '<h4>Diagnósticos Diferenciales Sugeridos:</h4><p>' + generatedText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
+                } else {
+                    console.error("Respuesta inesperada de la API:", result);
+                    modalBody.innerHTML = "<p>No se pudieron generar los diagnósticos diferenciales. La respuesta de la API no tuvo el formato esperado.</p>";
+                }
+            } catch (error) {
+                console.error("Error al sugerir diagnósticos:", error);
+                modalBody.innerHTML = `<p>Ocurrió un error al sugerir los diagnósticos: ${error.message}</p><p>Por favor, revisa la consola para más detalles.</p>`;
+            }
+        }
+
+
+    </script>
+
+</body>
+</html>
