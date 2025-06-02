@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alteraciones GI por AINEs - Gastroenterología UCE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        h2 {
+            font-size: 1.75rem; /* text-2xl */
+            font-weight: 600; /* font-semibold */
+            margin-top: 2rem; /* mt-8 */
+            margin-bottom: 1rem; /* mb-4 */
+            color: #1e3a8a; /* Tailwind blue-800 */
+        }
+        h3 {
+            font-size: 1.5rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            margin-top: 1.5rem; /* mt-6 */
+            margin-bottom: 0.75rem; /* mb-3 */
+            color: #1d4ed8; /* Tailwind blue-700 */
+        }
+        h4 {
+            font-size: 1.25rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            margin-top: 1rem; /* mt-4 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            color: #2563eb; /* Tailwind blue-600 */
+        }
+        .card {
+            background-color: white;
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .section-container {
+            padding-top: 1rem; /* pt-4 */
+        }
+        /* Style for details/summary to make them look like accordions */
+        details > summary {
+            padding: 0.5rem 1rem;
+            background-color: #e0e7ff; /* indigo-100 */
+            border: 1px solid #c7d2fe; /* indigo-200 */
+            border-radius: 0.375rem; /* rounded-md */
+            cursor: pointer;
+            font-weight: 500; /* medium */
+            margin-bottom: 0.5rem;
+        }
+        details[open] > summary {
+            background-color: #c7d2fe; /* indigo-200 */
+        }
+        details > div {
+            padding: 1rem;
+            border: 1px solid #e0e7ff; /* indigo-100 */
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-blue-700 text-white p-6 shadow-lg">
+        <div class="container mx-auto">
+            <div class="flex items-center">
+                <div class="bg-white text-blue-700 p-2 rounded-md mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6-2.292m0 0V3.75m0 12.508V18" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold">Alteraciones Gastrointestinales Inducidas por AINEs</h1>
+                    <p class="text-lg">Gastroenterología – Séptimo Semestre</p>
+                    <p class="text-sm">Escuela de Medicina, Universidad Central del Ecuador</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sticky-nav bg-blue-600 text-white py-3 shadow-md">
+        <div class="container mx-auto flex flex-wrap justify-center gap-x-4 gap-y-2 px-2">
+            <a href="#introduccion" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Introducción</a>
+            <a href="#fisiopatologia" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Fisiopatología</a>
+            <a href="#espectro-clinico" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Espectro Clínico</a>
+            <a href="#factores-riesgo" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Factores de Riesgo</a>
+            <a href="#diagnostico" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Diagnóstico</a>
+            <a href="#prevencion" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Prevención</a>
+            <a href="#manejo" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Manejo</a>
+            <a href="#contexto-ecuador" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Contexto Ecuador</a>
+            <a href="#material-estudio" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Material de Estudio</a>
+            <a href="#recursos-adicionales" class="hover:bg-blue-500 px-3 py-1 rounded-md transition-colors">Recursos Adicionales</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-6">
+        
+        <section id="introduccion" class="section-container card">
+            <h2>Introducción y Objetivos</h2>
+            <p class="mb-4">Los Antiinflamatorios No Esteroideos (AINEs) son un grupo de fármacos ampliamente utilizados a nivel mundial y en Ecuador, tanto por prescripción médica como por automedicación, para el manejo del dolor, la fiebre y la inflamación. A pesar de sus beneficios terapéuticos, su uso no está exento de riesgos, siendo las alteraciones gastrointestinales (GI) algunas de las complicaciones más frecuentes y potencialmente graves.</p>
+            <p class="mb-4">Este módulo tiene como objetivo proporcionar al estudiante de medicina los conocimientos necesarios para comprender, diagnosticar, prevenir y manejar las lesiones GI inducidas por AINEs, con un enfoque en la relevancia clínica y el contexto ecuatoriano.</p>
+            
+            <h3 class="text-blue-700">Objetivos de Aprendizaje:</h3>
+            <p>Al finalizar el estudio de este tema, el estudiante será capaz de:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1 mt-2">
+                <li>Describir la epidemiología y el impacto clínico de las lesiones gastrointestinales inducidas por AINEs.</li>
+                <li>Explicar los mecanismos fisiopatológicos por los cuales los AINEs causan daño en el tracto gastrointestinal superior e inferior.</li>
+                <li>Identificar los factores de riesgo que predisponen a la gastropatía y enteropatía por AINEs.</li>
+                <li>Enumerar el espectro de lesiones gastrointestinales inducidas por AINEs, desde la dispepsia hasta complicaciones graves.</li>
+                <li>Discutir las estrategias de diagnóstico para la gastropatía y enteropatía por AINEs.</li>
+                <li>Proponer estrategias de prevención y manejo de las alteraciones gastrointestinales inducidas por AINEs, considerando el contexto ecuatoriano.</li>
+            </ul>
+        </section>
+
+        <section id="fisiopatologia" class="section-container card">
+            <h2>Fisiopatología del Daño por AINEs</h2>
+            
+            <h3>Fundamentos: Fisiología de la Mucosa GI y Rol de Prostaglandinas</h3>
+            <p class="mb-2">La mucosa gastrointestinal posee mecanismos de defensa robustos contra agentes nocivos, incluyendo el ácido gástrico y enzimas digestivas. Las prostaglandinas (PGs), especialmente PGE2 y PGI2, juegan un papel crucial en la citoprotección gástrica a través de varios mecanismos:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li>Estimulación de la secreción de moco y bicarbonato, formando una barrera protectora.</li>
+                <li>Mantenimiento del flujo sanguíneo mucoso adecuado, esencial para la nutrición y reparación celular.</li>
+                <li>Promoción de la restitución celular y la proliferación epitelial para reparar el daño.</li>
+            </ul>
+
+            <h3>Mecanismo de Acción de los AINEs</h3>
+            <p class="mb-2">El principal mecanismo de acción terapéutico (antiinflamatorio, analgésico, antipirético) y tóxico de los AINEs es la inhibición de las enzimas Ciclooxigenasas (COX).</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>COX-1:</strong> Es una enzima constitutiva, presente en la mayoría de los tejidos, incluyendo la mucosa GI, plaquetas y riñones. Su inhibición es responsable de la mayoría de los efectos adversos GI de los AINEs no selectivos, al disminuir la producción de PGs citoprotectoras. También participa en la función plaquetaria.</li>
+                <li><strong>COX-2:</strong> Es una enzima inducible, cuya expresión aumenta significativamente en sitios de inflamación. También es constitutiva en algunos tejidos como riñón, cerebro y endotelio. Los AINEs COX-2 selectivos (COXIBs) fueron desarrollados para reducir la toxicidad GI, aunque no la eliminan por completo y pueden tener otros riesgos (cardiovasculares).</li>
+            </ul>
+
+            <h3>Fisiopatología del Daño en el Tracto GI Superior</h3>
+            <p class="mb-2">El daño gástrico y duodenal inducido por AINEs es multifactorial:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Inhibición sistémica de COX-1:</strong> Reduce la síntesis de PGs protectoras, disminuyendo la producción de moco y bicarbonato, alterando el flujo sanguíneo mucoso y comprometiendo la capacidad de reparación epitelial.</li>
+                <li><strong>Daño tópico directo:</strong> Muchos AINEs son ácidos débiles y pueden causar daño directo a las células epiteliales de la mucosa al ser atrapados en forma ionizada dentro de ellas, especialmente en el ambiente ácido del estómago. Este efecto es más pronunciado con AINEs no recubiertos o de liberación inmediata.</li>
+                <li><strong>Aumento de la permeabilidad de la mucosa:</strong> Permite la retrodifusión de iones hidrógeno (H+) y pepsina hacia la submucosa, causando más daño.</li>
+            </ul>
+            <p class="mt-2"><em>(Visualización sugerida: Diagrama comparando mucosa gástrica normal vs. erosionada por AINEs)</em></p>
+
+            <h3>Fisiopatología del Daño en el Tracto GI Inferior (Enteropatía por AINEs)</h3>
+            <p class="mb-2">La enteropatía por AINEs (daño en intestino delgado y colon) es también significativa. Los mecanismos son complejos y menos comprendidos que en el tracto GI superior, pero incluyen:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Inhibición de PGs:</strong> Aunque el rol de las PGs en el intestino es menos claro, su inhibición parece contribuir.</li>
+                <li><strong>Alteración de la barrera intestinal:</strong> Aumento de la permeabilidad intestinal.</li>
+                <li><strong>Daño mitocondrial y estrés oxidativo</strong> en los enterocitos.</li>
+                <li><strong>Disbiosis:</strong> Alteraciones en la microbiota intestinal.</li>
+                <li><strong>Ciclo enterohepático de los AINEs:</strong> Algunos AINEs se excretan en la bilis y se reabsorben en el intestino, lo que puede prolongar la exposición de la mucosa intestinal al fármaco.</li>
+                <li><strong>Efecto tipo detergente</strong> de las sales biliares sobre la mucosa dañada por AINEs.</li>
+            </ul>
+        </section>
+
+        <section id="espectro-clinico" class="section-container card">
+            <h2>Espectro Clínico de Lesiones por AINEs</h2>
+            
+            <h3>Lesiones del Tracto GI Superior</h3>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Dispepsia:</strong> Es el síntoma más común. Incluye dolor o malestar en epigastrio, ardor, sensación de plenitud postprandial, saciedad precoz.</li>
+                <li><strong>Erosiones y gastritis hemorrágica:</strong> Lesiones superficiales de la mucosa.</li>
+                <li><strong>Úlceras pépticas:</strong> Defectos más profundos en la mucosa gástrica o duodenal. Pueden ser asintomáticas hasta que se complican.</li>
+                <li><strong>Complicaciones graves:</strong>
+                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                        <li><strong>Hemorragia Digestiva Alta (HDA):</strong> La complicación más frecuente y grave. Se manifiesta como hematemesis (vómito con sangre) o melena (heces negras, alquitranadas).</li>
+                        <li><strong>Perforación:</strong> Una úlcera puede atravesar toda la pared gástrica o duodenal, causando peritonitis. Es una emergencia quirúrgica.</li>
+                        <li><strong>Obstrucción pilórica:</strong> Por edema o cicatrización de úlceras cercanas al píloro, impidiendo el vaciamiento gástrico.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="mt-2"><em>(Visualización sugerida: Imágenes endoscópicas de cada tipo de lesión)</em></p>
+
+            <h3>Lesiones del Tracto GI Inferior (Enteropatía por AINEs)</h3>
+            <p class="mb-2">A menudo es asintomática o presenta síntomas inespecíficos.</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Erosiones y úlceras:</strong> Comúnmente en el íleon y colon proximal.</li>
+                <li><strong>Anemia ferropénica:</strong> Secundaria a sangrado crónico oculto, es una manifestación frecuente.</li>
+                <li><strong>Enteropatía perdedora de proteínas:</strong> Puede llevar a hipoalbuminemia y edema.</li>
+                <li><strong>Estenosis diafragmáticas:</strong> Estrechamientos anulares, finos, múltiples, característicos (aunque raros) de la enteropatía por AINEs. Pueden causar síntomas obstructivos.</li>
+                <li><strong>Hemorragia digestiva baja:</strong> Menos común que la HDA, pero puede ocurrir.</li>
+                <li><strong>Perforación o inflamación severa (colitis/enteritis).</strong></li>
+            </ul>
+            <p class="mt-2"><em>(Visualización sugerida: Imágenes de cápsula endoscópica o enteroscopia mostrando lesiones)</em></p>
+        </section>
+
+        <section id="factores-riesgo" class="section-container card">
+            <h2>Factores de Riesgo para Lesiones GI por AINEs</h2>
+            
+            <h3>Factores de Riesgo para Gastropatía por AINEs</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-300 rounded-lg mt-2">
+                    <thead class="bg-blue-100">
+                        <tr>
+                            <th class="py-2 px-4 border-b text-left">Factor de Riesgo</th>
+                            <th class="py-2 px-4 border-b text-left">Comentario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Edad > 65 años</td>
+                            <td class="py-2 px-4 border-b">La mucosa gástrica puede ser más susceptible y la reparación más lenta.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Historia previa de úlcera péptica o complicación GI (HDA, perforación)</td>
+                            <td class="py-2 px-4 border-b">Factor de riesgo mayor.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Uso de dosis altas de AINEs</td>
+                            <td class="py-2 px-4 border-b">Relación dosis-respuesta.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Uso de múltiples AINEs simultáneamente</td>
+                            <td class="py-2 px-4 border-b">Incluye el uso de un AINE + aspirina (AAS) a dosis antiagregante.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Uso concomitante de corticoides</td>
+                            <td class="py-2 px-4 border-b">Aumentan significativamente el riesgo.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Uso concomitante de anticoagulantes (warfarina, ACODs)</td>
+                            <td class="py-2 px-4 border-b">No aumentan la incidencia de úlceras, pero sí el riesgo de sangrado si una úlcera se desarrolla.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Uso concomitante de antiagregantes (ej. clopidogrel)</td>
+                            <td class="py-2 px-4 border-b">Aumenta el riesgo de sangrado.</td>
+                        </tr>
+                         <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Uso concomitante de Inhibidores Selectivos de la Recaptación de Serotonina (ISRS)</td>
+                            <td class="py-2 px-4 border-b">Pueden aumentar el riesgo de sangrado GI superior.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Infección por <em>Helicobacter pylori</em></td>
+                            <td class="py-2 px-4 border-b">Aumenta el riesgo de úlceras y sangrado en usuarios de AINEs. Su erradicación puede reducir el riesgo.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Enfermedades crónicas graves</td>
+                            <td class="py-2 px-4 border-b">Ej. artritis reumatoide, insuficiencia cardíaca, cirrosis.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">Duración del tratamiento con AINEs</td>
+                            <td class="py-2 px-4 border-b">El mayor riesgo suele ser en los primeros meses.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="text-blue-700 mt-6">Factores de Riesgo para Enteropatía por AINEs</h3>
+            <p class="mb-2">Son similares a los de la gastropatía, pero están menos definidos. Incluyen:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li>Uso prolongado de AINEs.</li>
+                <li>Dosis altas.</li>
+                <li>Posiblemente, el uso concomitante de inhibidores de bomba de protones (PPIs), ya que aunque los PPIs protegen el tracto GI superior, algunos estudios sugieren que podrían empeorar la enteropatía por AINEs al alterar la microbiota intestinal. Sin embargo, esto es controvertido y los PPIs son cruciales para la prevención de daño GI superior.</li>
+            </ul>
+        </section>
+
+        <section id="diagnostico" class="section-container card">
+            <h2>Diagnóstico de Lesiones GI por AINEs</h2>
+            <p class="mb-4">El diagnóstico se basa en la sospecha clínica (síntomas y antecedente de consumo de AINEs) y se confirma mediante estudios endoscópicos.</p>
+
+            <h3>Diagnóstico de Gastropatía por AINEs</h3>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Historia clínica:</strong> Detallar el tipo de AINE, dosis, duración del tratamiento y presencia de factores de riesgo.</li>
+                <li><strong>Endoscopia Digestiva Alta (EDA):</strong> Es el "gold standard". Permite la visualización directa de la mucosa esofágica, gástrica y duodenal, la identificación de lesiones (erosiones, úlceras), la toma de biopsias (para estudio histológico y detección de <em>H. pylori</em>) y, en caso de sangrado activo, la aplicación de terapia hemostática.</li>
+                <li><strong>Test para <em>H. pylori</em>:</strong> Se debe realizar en pacientes con úlceras o historia de úlceras que consumen AINEs. Puede ser mediante test de ureasa rápida durante la EDA, biopsia para histología, test de aliento con urea o antígeno en heces.</li>
+            </ul>
+
+            <h3>Diagnóstico de Enteropatía por AINEs</h3>
+            <p class="mb-2">La sospecha surge en pacientes en tratamiento con AINEs que presentan:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1 mb-2">
+                <li>Anemia ferropénica inexplicada.</li>
+                <li>Hipoalbuminemia.</li>
+                <li>Sangrado digestivo oculto o manifiesto de origen oscuro (tras EDA y colonoscopia negativas).</li>
+                <li>Síntomas abdominales crónicos como dolor, diarrea o síntomas obstructivos.</li>
+            </ul>
+            <p>Los métodos diagnósticos incluyen:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Cápsula endoscópica:</strong> Permite visualizar la mucosa del intestino delgado. Es útil para detectar erosiones, úlceras y fuentes de sangrado.</li>
+                <li><strong>Enteroscopia (asistida por balón o espiral):</strong> Permite la visualización directa y la toma de biopsias o aplicación de terapia en el intestino delgado, pero es más invasiva y no siempre disponible.</li>
+                <li><strong>Colonoscopia:</strong> Para evaluar el colon si se sospecha afectación colónica.</li>
+                <li><strong>Pruebas no invasivas:</strong>
+                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                        <li><strong>Sangre oculta en heces:</strong> Puede indicar sangrado crónico.</li>
+                        <li><strong>Calprotectina fecal:</strong> Es un marcador de inflamación intestinal. Puede estar elevada en la enteropatía por AINEs.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="prevencion" class="section-container card">
+            <h2>Estrategias de Prevención del Daño GI por AINEs</h2>
+            <p class="mb-4">La prevención es clave, especialmente en pacientes con factores de riesgo.</p>
+
+            <h3>Evaluación del Riesgo Gastrointestinal y Cardiovascular</h3>
+            <p class="mb-2">Antes de prescribir un AINE, se debe estratificar el riesgo GI y cardiovascular del paciente para elegir la estrategia más adecuada. (Ej. Riesgo GI: bajo, moderado, alto).</p>
+
+            <h3>Modificaciones del Tratamiento con AINEs</h3>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Evaluar la necesidad real del AINE:</strong> ¿Es imprescindible? ¿Existen alternativas?</li>
+                <li><strong>Usar la dosis efectiva más baja:</strong> Evitar dosis altas innecesarias.</li>
+                <li><strong>Usar por el menor tiempo posible:</strong> Reevaluar periódicamente la necesidad de continuar el tratamiento.</li>
+                <li><strong>Considerar alternativas analgésicas:</strong>
+                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                        <li>Paracetamol (acetaminofén): Para dolor leve a moderado, con mejor perfil de seguridad GI.</li>
+                        <li>Opioides débiles (ej. tramadol, codeína): Selectivamente, para dolor moderado a severo, por corto tiempo.</li>
+                        <li>Terapias físicas, rehabilitación, manejo no farmacológico del dolor.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-blue-700 mt-4">Gastroprotección Farmacológica (para daño GI superior)</h3>
+            <p class="mb-2">Indicada en pacientes con riesgo moderado o alto de complicaciones GI superiores.</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Inhibidores de Bomba de Protones (IBPs):</strong> Omeprazol, lansoprazol, esomeprazol, pantoprazol, rabeprazol. Son los fármacos de elección para la prevención de úlceras gástricas y duodenales inducidas por AINEs. Se administran una vez al día.</li>
+                <li><strong>Misoprostol:</strong> Análogo sintético de la PGE1. Es eficaz para prevenir úlceras gástricas y duodenales. Sin embargo, su uso está limitado por efectos adversos frecuentes (diarrea, dolor abdominal) y la necesidad de múltiples dosis diarias.</li>
+                <li><strong>Antagonistas de los receptores H2 (AR-H2):</strong> Ranitidina (retirada en algunos mercados), famotidina. Son menos eficaces que los IBPs para prevenir úlceras inducidas por AINEs, especialmente las gástricas. No se recomiendan como primera línea para gastroprotección en este contexto si se usan AINEs a dosis plenas.</li>
+            </ul>
+
+            <h3 class="text-blue-700 mt-4">Uso de AINEs COX-2 Selectivos (COXIBs)</h3>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li>Ejemplos: Celecoxib, etoricoxib.</li>
+                <li>Presentan menor riesgo de complicaciones GI superiores en comparación con los AINEs no selectivos (AINEs-NS), cuando se usan solos.</li>
+                <li><strong>Precauciones:</strong>
+                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                        <li><strong>Riesgo cardiovascular:</strong> Se han asociado con un aumento del riesgo de eventos cardiovasculares trombóticos (infarto de miocardio, ictus). Su uso debe evaluarse cuidadosamente en pacientes con factores de riesgo CV.</li>
+                        <li>No eliminan completamente el riesgo GI. El riesgo aumenta si se combinan con AAS (aspirina).</li>
+                        <li>Pueden causar enteropatía.</li>
+                        <li>En pacientes con alto riesgo GI, un COXIB puede necesitar combinarse con un IBP.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-blue-700 mt-4">Algoritmo de Prevención (Simplificado)</h3>
+            <p class="mb-2">La elección depende del riesgo GI y CV del paciente:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Bajo riesgo GI y CV:</strong> AINE-NS solo, a la dosis más baja y por el menor tiempo.</li>
+                <li><strong>Alto riesgo GI, bajo riesgo CV:</strong> AINE-NS + IBP, o un COXIB solo (si el riesgo GI no es muy alto). Si el riesgo GI es muy alto (ej. historia de úlcera complicada), COXIB + IBP.</li>
+                <li><strong>Alto riesgo CV, bajo/moderado riesgo GI:</strong> Naproxeno (considerado con menor riesgo CV entre los AINEs-NS) + IBP. Evitar COXIBs si es posible. Considerar alternativas a AINEs.</li>
+                <li><strong>Alto riesgo GI y CV:</strong> Evitar AINEs y COXIBs si es posible. Considerar alternativas analgésicas. Si un AINE es absolutamente necesario, la combinación de naproxeno + IBP podría ser la opción menos perjudicial, bajo estricta supervisión y tras sopesar riesgos/beneficios.</li>
+            </ul>
+            <p class="mt-2"><em>(Visualización sugerida: Diagrama de flujo basado en riesgo GI y CV)</em></p>
+        </section>
+
+        <section id="manejo" class="section-container card">
+            <h2>Manejo de la Lesión GI Inducida por AINEs</h2>
+            
+            <h3>Principios Generales del Manejo de Gastropatía por AINEs</h3>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Suspender el AINE:</strong> Siempre que sea posible, es el paso más importante.</li>
+                <li><strong>Iniciar tratamiento con IBP:</strong> A dosis terapéuticas (ej. omeprazol 20-40 mg/día, o equivalente) durante 4-8 semanas para promover la cicatrización de úlceras o erosiones.</li>
+                <li><strong>Erradicar <em>H. pylori</em>:</strong> Si la infección está presente, su erradicación es fundamental para la cicatrización de la úlcera y para prevenir recurrencias.</li>
+                <li><strong>Manejo de complicaciones:</strong>
+                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                        <li><strong>Hemorragia Digestiva Alta:</strong> Requiere manejo urgente hospitalario, incluyendo estabilización hemodinámica, IBP intravenoso, y endoscopia terapéutica si es necesario.</li>
+                        <li><strong>Perforación:</strong> Es una emergencia quirúrgica.</li>
+                    </ul>
+                </li>
+                <li><strong>Reevaluar la necesidad de AINEs:</strong> Si el tratamiento antiinflamatorio es indispensable, se debe elegir la opción más segura (ej. COXIB + IBP o AINE-NS + IBP) una vez que la lesión haya cicatrizado, y solo si el beneficio supera claramente el riesgo.</li>
+            </ul>
+
+            <h3>Manejo de la Enteropatía por AINEs</h3>
+            <p class="mb-2">El manejo es más complejo y menos estandarizado:</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Suspender el AINE:</strong> Es la medida principal y más efectiva.</li>
+                <li><strong>Soporte nutricional:</strong> En casos de malabsorción o enteropatía perdedora de proteínas. Suplementos de hierro para la anemia.</li>
+                <li><strong>Tratamiento farmacológico:</strong> No hay terapias claramente eficaces. Algunas opciones con evidencia limitada incluyen:
+                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                        <li>Misoprostol.</li>
+                        <li>Sulfasalazina o mesalazina.</li>
+                        <li>Metronidazol (si se sospecha sobrecrecimiento bacteriano o disbiosis).</li>
+                        <li>Probióticos (evidencia aún incipiente).</li>
+                    </ul>
+                </li>
+                <li><strong>Manejo de complicaciones:</strong> Las estenosis pueden requerir dilatación endoscópica o cirugía. El sangrado puede necesitar terapia endoscópica o intervención quirúrgica.</li>
+            </ul>
+        </section>
+
+        <section id="contexto-ecuador" class="section-container card">
+            <h2>Consideraciones Especiales en el Contexto Ecuatoriano</h2>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><strong>Alta tasa de automedicación con AINEs:</strong> Es un problema de salud pública importante. Muchos pacientes consumen AINEs sin prescripción ni conocimiento de los riesgos. El rol del médico en la educación al paciente sobre los peligros de la automedicación es crucial.</li>
+                <li><strong>Disponibilidad y costo de los fármacos:</strong> Evaluar la accesibilidad de los pacientes a IBPs y COXIBs, que pueden tener un costo mayor que los AINEs-NS genéricos.</li>
+                <li><strong>Prevalencia de <em>H. pylori</em>:</strong> La prevalencia de infección por <em>H. pylori</em> puede ser alta en ciertas regiones de Ecuador. Considerar la detección y erradicación en pacientes con factores de riesgo que requieren AINEs.</li>
+                <li><strong>Acceso a procedimientos diagnósticos:</strong> La disponibilidad de endoscopia digestiva alta, cápsula endoscópica y enteroscopia puede variar según el nivel de atención y la región geográfica.</li>
+                <li><strong>Educación sanitaria:</strong> Es fundamental promover campañas de concienciación sobre el uso racional de AINEs dirigidas tanto a profesionales de la salud como a la población general.</li>
+            </ul>
+        </section>
+
+        <section id="material-estudio" class="section-container card">
+            <h2>Material de Estudio para el Estudiante</h2>
+
+            <article id="caso-clinico" class="mb-8 p-4 border border-blue-200 rounded-lg bg-blue-50">
+                <h3 class="text-blue-700 !mt-0">Caso Clínico Relevante</h3>
+                <h4>Historia Clínica:</h4>
+                <p>Paciente masculino de 67 años, con antecedentes de hipertensión arterial en tratamiento con enalapril 10 mg/día y diabetes mellitus tipo 2 controlada con metformina 850 mg cada 12 horas. Desde hace 2 meses presenta gonalgia bilateral intensa debido a artrosis, por lo que ha estado automedicándose con ibuprofeno 800 mg cada 8 horas de forma casi continua, y ocasionalmente añade diclofenaco potásico cuando el dolor es muy fuerte. No refiere historia previa de enfermedad ácido-péptica.</p>
+                <p>Acude a emergencia por presentar desde hace 24 horas deposiciones negras, pastosas y malolientes (melena), acompañadas de mareo y palidez.</p>
+
+                <h4>Examen Físico (al ingreso):</h4>
+                <p>PA: 100/60 mmHg, FC: 110 lpm, FR: 20 rpm, T: 36.8°C.</p>
+                <p>Paciente pálido, mucosas secas. Ruidos cardíacos rítmicos, taquicárdicos, sin soplos. Abdomen blando, depresible, dolor leve a la palpación en epigastrio, sin signos de irritación peritoneal. Ruidos hidroaéreos presentes. Tacto rectal: ampolla rectal con restos de heces melénicas.</p>
+
+                <h4>Exámenes de Laboratorio Iniciales:</h4>
+                <ul class="list-disc list-inside ml-4">
+                    <li>Hb: 8.5 g/dL (Valor normal: 13-17 g/dL)</li>
+                    <li>Hcto: 26% (Valor normal: 40-50%)</li>
+                    <li>Plaquetas: 250,000/mm³</li>
+                    <li>INR: 1.1</li>
+                    <li>Glucosa: 130 mg/dL</li>
+                    <li>Urea: 55 mg/dL (Valor normal: 15-45 mg/dL)</li>
+                    <li>Creatinina: 1.3 mg/dL (Valor normal: 0.7-1.2 mg/dL)</li>
+                </ul>
+
+                <h4 class="mt-4">Preguntas para el estudiante:</h4>
+                <ol class="list-decimal list-inside ml-4 space-y-1">
+                    <li>¿Cuál es el diagnóstico sindrómico más probable del paciente?</li>
+                    <li>Identifique los factores de riesgo que presenta el paciente para desarrollar esta complicación.</li>
+                    <li>¿Cuál es el origen más probable de la melena en este paciente y qué mecanismo fisiopatológico lo explica?</li>
+                    <li>¿Qué procedimiento diagnóstico considera fundamental para confirmar la causa y localización del sangrado? Describa los hallazgos que esperaría encontrar.</li>
+                    <li>Esquematice el manejo inicial de este paciente en la sala de emergencias (ABCDE, fluidoterapia, transfusión, fármacos).</li>
+                    <li>Una vez estabilizado, ¿cuál sería el tratamiento específico para la lesión subyacente y qué recomendaciones daría al paciente respecto al uso de AINEs a futuro?</li>
+                </ol>
+            </article>
+
+            <article id="conceptos-clave" class="mb-8 p-4 border border-green-200 rounded-lg bg-green-50">
+                <h3 class="text-green-700 !mt-0">Resumen de Conceptos Clave (Hoja de Datos)</h3>
+                <h4 class="text-green-600">Alteraciones Gastrointestinales por AINEs</h4>
+                <ul class="space-y-3">
+                    <li><strong>¿Qué son?</strong> Los AINEs (Antiinflamatorios No Esteroideos) son fármacos ampliamente usados para dolor, fiebre e inflamación (ej. ibuprofeno, naproxeno, diclofenaco).</li>
+                    <li><strong>Problema:</strong> Pueden dañar el revestimiento del estómago e intestinos.</li>
+                    <li><strong>Mecanismo Principal:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Inhiben enzimas llamadas Ciclooxigenasas (COX-1 y COX-2).</li>
+                            <li><strong>COX-1:</strong> Produce prostaglandinas (PGs) protectoras del estómago (moco, bicarbonato, flujo sanguíneo). Su inhibición disminuye estas defensas.</li>
+                            <li><strong>COX-2:</strong> Principalmente implicada en inflamación y dolor. AINEs selectivos para COX-2 (COXIBs) tienen menor riesgo GI superior, pero no nulo.</li>
+                            <li>Daño tópico directo por AINEs ácidos.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Espectro de Lesiones:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li><strong>GI Superior (Estómago, Duodeno):</strong> Dispepsia (malestar, ardor), erosiones, gastritis, úlceras pépticas. Complicaciones graves: Hemorragia (vómito con sangre, melena), perforación.</li>
+                            <li><strong>GI Inferior (Intestino Delgado, Colon) - Enteropatía:</strong> Menos reconocida pero frecuente. Erosiones, úlceras, anemia (por sangrado crónico oculto), estenosis (estrechamientos).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Factores de Riesgo Principales:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Edad > 65 años.</li>
+                            <li>Historia previa de úlcera o sangrado GI.</li>
+                            <li>Dosis altas de AINEs o uso de múltiples AINEs.</li>
+                            <li>Uso simultáneo de: aspirina (incluso a dosis bajas), corticoides, anticoagulantes (warfarina), ISRS (antidepresivos).</li>
+                            <li>Infección por <em>Helicobacter pylori</em>.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Diagnóstico:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Sospecha por síntomas y uso de AINEs.</li>
+                            <li><strong>Endoscopia Digestiva Alta (EDA):</strong> Para ver esófago, estómago, duodeno.</li>
+                            <li><strong>Cápsula Endoscópica / Enteroscopia:</strong> Para intestino delgado.</li>
+                            <li><strong>Colonoscopia:</strong> Para colon.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Prevención (en pacientes de riesgo):</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Usar la dosis más baja de AINE por el menor tiempo.</li>
+                            <li>Considerar alternativas (paracetamol).</li>
+                            <li><strong>Gastroprotectores:</strong> IBPs (Omeprazol, esomeprazol, etc.) son los más efectivos para proteger el estómago. Misoprostol (eficaz, pero con efectos secundarios).</li>
+                            <li><strong>AINEs COX-2 Selectivos (COXIBs):</strong> Menor riesgo GI superior, pero considerar riesgo cardiovascular.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manejo de la Lesión:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li><strong>Suspender el AINE</strong> si es posible.</li>
+                            <li>Tratar con IBPs a dosis terapéuticas.</li>
+                            <li>Erradicar <em>H. pylori</em> si está presente.</li>
+                            <li>Manejar complicaciones (ej. hemorragia) según protocolos.</li>
+                        </ul>
+                    </li>
+                    <li><strong>¡Importante en Ecuador!</strong> Alta automedicación. Consultar al médico antes de tomar AINEs, especialmente si hay factores de riesgo.</li>
+                </ul>
+            </article>
+
+            <article id="autoevaluacion" class="mb-8 p-4 border border-purple-200 rounded-lg bg-purple-50">
+                <h3 class="text-purple-700 !mt-0">Cuestionario de Autoevaluación</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p><strong>1. ¿Cuál es el principal mecanismo por el cual los AINEs no selectivos causan daño gástrico?</strong></p>
+                        <ul class="list-none ml-4 space-y-1">
+                            <li>a) Estimulación directa de la secreción ácida.</li>
+                            <li>b) Inhibición de la COX-1, reduciendo la síntesis de prostaglandinas citoprotectoras.</li>
+                            <li>c) Inhibición selectiva de la COX-2.</li>
+                            <li>d) Aumento del flujo sanguíneo mucoso.</li>
+                        </ul>
+                        <details class="mt-2">
+                            <summary class="text-purple-600">Ver Respuesta</summary>
+                            <div class="p-2 bg-white rounded-b-md">Respuesta: b) Inhibición de la COX-1, reduciendo la síntesis de prostaglandinas citoprotectoras.</div>
+                        </details>
+                    </div>
+                    <div>
+                        <p><strong>2. ¿Cuál de los siguientes NO es un factor de riesgo reconocido para gastropatía por AINEs?</strong></p>
+                        <ul class="list-none ml-4 space-y-1">
+                            <li>a) Edad menor de 30 años.</li>
+                            <li>b) Historia de úlcera péptica.</li>
+                            <li>c) Uso concomitante de corticoides.</li>
+                            <li>d) Infección por <em>H. pylori</em>.</li>
+                        </ul>
+                        <details class="mt-2">
+                            <summary class="text-purple-600">Ver Respuesta</summary>
+                            <div class="p-2 bg-white rounded-b-md">Respuesta: a) Edad menor de 30 años. (La edad avanzada >65 es un factor de riesgo).</div>
+                        </details>
+                    </div>
+                    <div>
+                        <p><strong>3. La enteropatía por AINEs se refiere al daño localizado principalmente en:</strong></p>
+                        <ul class="list-none ml-4 space-y-1">
+                            <li>a) Esófago.</li>
+                            <li>b) Estómago.</li>
+                            <li>c) Intestino delgado y colon.</li>
+                            <li>d) Recto y ano.</li>
+                        </ul>
+                        <details class="mt-2">
+                            <summary class="text-purple-600">Ver Respuesta</summary>
+                            <div class="p-2 bg-white rounded-b-md">Respuesta: c) Intestino delgado y colon.</div>
+                        </details>
+                    </div>
+                    <div>
+                        <p><strong>4. Para un paciente con alto riesgo gastrointestinal que requiere un AINE, la estrategia preventiva de primera línea es:</strong></p>
+                        <ul class="list-none ml-4 space-y-1">
+                            <li>a) Añadir un antagonista H2 a dosis bajas.</li>
+                            <li>b) Añadir un inhibidor de bomba de protones (IBP).</li>
+                            <li>c) Tomar el AINE con leche.</li>
+                            <li>d) Usar paracetamol en lugar del AINE.</li>
+                        </ul>
+                        <details class="mt-2">
+                            <summary class="text-purple-600">Ver Respuesta</summary>
+                            <div class="p-2 bg-white rounded-b-md">Respuesta: b) Añadir un inhibidor de bomba de protones (IBP). (Nota: Si la pregunta se interpreta como qué hacer SI se va a usar un AINE. Si es qué hacer EN GENERAL, considerar paracetamol sería válido como alternativa analgésica con mejor perfil GI, aunque no es una "estrategia preventiva" para el uso de AINEs per se, sino un reemplazo).</div>
+                        </details>
+                    </div>
+                    <div>
+                        <p><strong>5. Verdadero o Falso: Los AINEs COX-2 selectivos (COXIBs) no presentan ningún riesgo de complicaciones gastrointestinales.</strong></p>
+                        <details class="mt-2">
+                            <summary class="text-purple-600">Ver Respuesta</summary>
+                            <div class="p-2 bg-white rounded-b-md">Respuesta: Falso. (Tienen menor riesgo GI superior que los AINEs no selectivos, pero el riesgo no es cero, y pueden causar enteropatía. Además, el riesgo aumenta si se combinan con AAS).</div>
+                        </details>
+                    </div>
+                </div>
+            </article>
+
+            <article id="guia-estudio" class="mb-8 p-4 border border-yellow-200 rounded-lg bg-yellow-50">
+                <h3 class="text-yellow-700 !mt-0">Guía de Estudio para el Tema</h3>
+                <h4 class="text-yellow-600">Puntos Clave a Dominar:</h4>
+                <ol class="list-decimal list-inside ml-4 space-y-2">
+                    <li><strong>Fisiopatología:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Describe el papel de las prostaglandinas (PGE2, PGI2) en la protección de la mucosa gastrointestinal.</li>
+                            <li>Explica cómo la inhibición de COX-1 por los AINEs lleva al daño mucoso.</li>
+                            <li>¿Cuál es la diferencia teórica en el perfil de seguridad GI entre AINEs no selectivos y COXIBs? ¿Se cumple siempre en la práctica?</li>
+                            <li>¿Cuáles son los mecanismos postulados para la enteropatía por AINEs?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manifestaciones Clínicas:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Enumera al menos 3 manifestaciones de gastropatía por AINEs (desde leves a graves).</li>
+                            <li>Enumera al menos 3 manifestaciones de enteropatía por AINEs.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Factores de Riesgo:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Identifica los 5 factores de riesgo más importantes para complicaciones GI por AINEs.</li>
+                            <li>¿Cómo influye la infección por <em>H. pylori</em> en el riesgo?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Diagnóstico:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>¿Cuándo sospecharías daño GI por AINEs?</li>
+                            <li>¿Cuál es el método diagnóstico de elección para gastropatía? ¿Y para enteropatía?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Prevención:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Describe las estrategias no farmacológicas y farmacológicas para prevenir el daño GI por AINEs.</li>
+                            <li>¿En qué pacientes está indicada la gastroprotección con IBP?</li>
+                            <li>¿Cuándo considerarías un COXIB? ¿Qué precauciones debes tener?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manejo:</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>¿Cuáles son los pilares del tratamiento de una úlcera inducida por AINEs?</li>
+                            <li>¿Qué hacer si un paciente con lesión por AINEs necesita continuar con antiinflamatorios?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Contexto Local (Ecuador):</strong>
+                        <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                            <li>Reflexiona sobre el problema de la automedicación con AINEs en nuestro medio y el rol del médico en la educación sanitaria.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </article>
+
+            <article id="mini-casos" class="mb-8 p-4 border border-indigo-200 rounded-lg bg-indigo-50">
+                <h3 class="text-indigo-700 !mt-0">Mini-Casos Adicionales para Análisis</h3>
+                <p class="mb-3">Analiza los siguientes casos. Para cada uno, discute: ¿Cuáles son los factores de riesgo GI del paciente? ¿Cuál es el riesgo GI estimado (bajo, moderado, alto)? Si el paciente necesita iniciar AINEs, ¿qué estrategia de prevención recomendarían? Si el paciente ya está tomando AINEs y presenta síntomas, ¿cuál sería el abordaje diagnóstico y terapéutico inicial?</p>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-indigo-600">Caso 1:</h4>
+                        <p>Mujer de 72 años con artrosis de rodilla, antecedente de dispepsia ocasional. Su médico le prescribe ibuprofeno 600 mg cada 8 horas. Toma AAS 100 mg/día por prevención cardiovascular secundaria.</p>
+                        <details class="mt-2">
+                            <summary class="text-indigo-500">Puntos clave para discusión</summary>
+                            <div class="p-2 bg-white rounded-b-md">Alto riesgo GI (edad, AAS, AINE no selectivo). Estrategia: AINE + PPI o COXIB + PPI (si el riesgo CV lo permite y el beneficio supera el riesgo GI residual).</div>
+                        </details>
+                    </div>
+                    <div>
+                        <h4 class="text-indigo-600">Caso 2:</h4>
+                        <p>Hombre de 45 años, deportista, con esguince de tobillo. Se automedica con diclofenaco 50 mg cada 8 horas desde hace 3 días. No tiene antecedentes médicos relevantes.</p>
+                        <details class="mt-2">
+                            <summary class="text-indigo-500">Puntos clave para discusión</summary>
+                            <div class="p-2 bg-white rounded-b-md">Bajo riesgo GI. AINE por corto tiempo es aceptable. Educar sobre no exceder dosis/tiempo.</div>
+                        </details>
+                    </div>
+                    <div>
+                        <h4 class="text-indigo-600">Caso 3:</h4>
+                        <p>Paciente de 60 años con artritis reumatoide en tratamiento con prednisona 5 mg/día y metotrexato. Refiere dolor epigástrico tipo urente desde hace 2 semanas, exacerbado por las comidas. Ha estado tomando naproxeno 500 mg cada 12 horas por dolor articular durante el último mes.</p>
+                         <details class="mt-2">
+                            <summary class="text-indigo-500">Puntos clave para discusión</summary>
+                            <div class="p-2 bg-white rounded-b-md">Alto riesgo GI (corticoides, AINE no selectivo, síntomas actuales). Diagnóstico: EDA urgente. Manejo: Suspender naproxeno, iniciar PPI dosis doble, test <em>H. pylori</em>. Considerar COXIB + PPI o alternativa analgésica si se requiere AINE a futuro.</div>
+                        </details>
+                    </div>
+                </div>
+            </article>
+
+            <article id="preguntas-examen" class="p-4 border border-red-200 rounded-lg bg-red-50">
+                <h3 class="text-red-700 !mt-0">Ejemplos de Preguntas de Examen</h3>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-red-600">Pregunta de opción múltiple:</h4>
+                        <p>Un paciente de 68 años con historia de úlcera duodenal curada hace 5 años requiere tratamiento con AINEs por osteoartritis severa. ¿Cuál de las siguientes estrategias ofrece la mejor protección gastrointestinal?</p>
+                        <ul class="list-none ml-4 space-y-1">
+                            <li>a) AINE no selectivo solo.</li>
+                            <li>b) AINE no selectivo + un antagonista H2 a dosis estándar.</li>
+                            <li>c) Un AINE COX-2 selectivo solo.</li>
+                            <li>d) AINE no selectivo + un inhibidor de bomba de protones (PPI).</li>
+                            <li>e) Paracetamol a dosis altas.</li>
+                        </ul>
+                        <p class="mt-1"><em>(Respuesta correcta: d)</em></p>
+                    </div>
+                    <div>
+                        <h4 class="text-red-600">Pregunta de respuesta corta:</h4>
+                        <p>Enumere cinco factores de riesgo mayores para el desarrollo de complicaciones gastrointestinales altas asociadas al uso de AINEs.</p>
+                         <p class="mt-1"><em>(Ej. Respuesta: Edad >65 años, historia de úlcera péptica complicada, uso de dosis altas de AINEs, uso concomitante de corticoides, uso concomitante de anticoagulantes.)</em></p>
+                    </div>
+                    <div>
+                        <h4 class="text-red-600">Pregunta de desarrollo (basada en caso):</h4>
+                        <p>Un paciente de 75 años, anticoagulado con warfarina por fibrilación auricular, inicia tratamiento con naproxeno por lumbalgia aguda. A las dos semanas consulta por melena. Describa su abordaje diagnóstico y terapéutico inicial, y qué estrategia de manejo analgésico y prevención GI consideraría a largo plazo si el dolor persiste.</p>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section id="recursos-adicionales" class="section-container card">
+            <h2>Recursos Adicionales Sugeridos</h2>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li>Revisar guías de práctica clínica sobre manejo de dispepsia y prevención de gastropatía por AINEs (ej. American College of Gastroenterology - ACG, guías locales si disponibles).</li>
+                <li>Artículos de revisión recientes sobre enteropatía por AINEs en revistas médicas indexadas (ej. PubMed, Scielo).</li>
+                <li>Capítulos correspondientes en libros de texto de Gastroenterología y Medicina Interna (ej. Harrison, Cecil, Sleisenger & Fordtran).</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-6 mt-8">
+        <p>&copy; 2024 Escuela de Medicina, Universidad Central del Ecuador. Material de estudio.</p>
+        <p class="text-sm text-gray-400">Este material es para fines educativos únicamente.</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Calculate position of target element relative to the viewport, considering sticky nav height
+                    const navHeight = document.querySelector('nav.sticky-nav').offsetHeight;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - navHeight - 20; // 20px extra offset
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
