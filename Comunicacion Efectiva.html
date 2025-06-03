@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semana 4: Medicina y Ciencia - Comunicación y Datos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6; /* Un gris muy claro para el fondo */
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-color: #3b82f6; /* Azul para la pestaña activa */
+            color: #3b82f6;
+            background-color: #eff6ff; /* Un azul muy claro para el fondo de la pestaña activa */
+        }
+        .content-section {
+            background-color: #ffffff; /* Blanco para las secciones de contenido */
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .content-section h2 {
+            font-size: 1.75rem; /* 28px */
+            font-weight: 600;
+            color: #1f2937; /* Gris oscuro para los títulos principales de sección */
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e5e7eb; /* Separador sutil */
+            padding-bottom: 8px;
+        }
+        .content-section h3 {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 600;
+            color: #374151; /* Gris medio para subtítulos */
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+        .content-section h4 {
+            font-size: 1.1rem; /* 18px */
+            font-weight: 600;
+            color: #4b5563; /* Gris un poco más claro para sub-subtítulos */
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+        .content-section p, .content-section ul, .content-section ol {
+            color: #4b5563; /* Gris para el texto general */
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .content-section ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .content-section ol {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+        .content-section strong {
+            color: #1f2937;
+        }
+        .dataset-table th, .dataset-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.875rem; /* 14px */
+        }
+        .dataset-table th {
+            background-color: #f9fafb; /* Fondo claro para encabezados de tabla */
+            font-weight: 600;
+        }
+        .code-block {
+            background-color: #1f2937; /* Fondo oscuro para bloques de código/datos */
+            color: #d1d5db; /* Texto claro */
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.875rem;
+            margin-bottom:16px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 0.75rem; /* 12px */
+            font-weight: 600;
+            border-radius: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .badge-blue {
+            background-color: #dbeafe; /* Azul claro */
+            color: #1e40af; /* Azul oscuro */
+        }
+        .badge-green {
+            background-color: #d1fae5; /* Verde claro */
+            color: #065f46; /* Verde oscuro */
+        }
+        .badge-yellow {
+            background-color: #fef3c7; /* Amarillo claro */
+            color: #92400e; /* Amarillo oscuro */
+        }
+        .button {
+            background-color: #3b82f6; /* Azul */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+        .button:hover {
+            background-color: #2563eb; /* Azul más oscuro al pasar el mouse */
+        }
+        .button-secondary {
+            background-color: #6b7280; /* Gris */
+        }
+        .button-secondary:hover {
+            background-color: #4b5563; /* Gris más oscuro */
+        }
+        /* Estilos para el cuestionario */
+        .question-item {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .answer {
+            background-color: #eef2ff; /* Fondo muy claro para respuestas */
+            padding: 8px;
+            margin-top: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #4338ca; /* Borde izquierdo violeta */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4 md:p-8">
+
+    <header class="text-center mb-8">
+        <div class="inline-block bg-white p-4 rounded-lg shadow">
+             <img src="https://placehold.co/100x50/003366/FFFFFF?text=UCE&font=roboto" alt="Logo UCE" class="mx-auto mb-2 h-12">
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-700 mt-4">Medicina y Ciencia (Razonamiento Clínico)</h1>
+        <p class="text-xl text-blue-600 font-semibold">Semana 4: Comunicación Efectiva y Visualización de Datos</p>
+    </header>
+
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-6 flex justify-center border-b border-gray-300">
+            <button class="tab-button py-3 px-6 text-lg font-medium text-gray-600 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-500 focus:outline-none active" data-tab="profesor">Para el Profesor</button>
+            <button class="tab-button py-3 px-6 text-lg font-medium text-gray-600 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-500 focus:outline-none" data-tab="estudiantes">Para Estudiantes</button>
+        </div>
+
+        <div id="profesor" class="tab-content">
+            <div class="content-section">
+                <h2>I. Para el Profesor</h2>
+
+                <h3>1. Plan de Clase Detallado (Sesión de 2 horas académicas)</h3>
+                <h4>Objetivos de Aprendizaje:</h4>
+                <ul>
+                    <li>Identificar los componentes clave de la comunicación efectiva (verbal y no verbal) en el entorno clínico.</li>
+                    <li>Aplicar principios de la toma de decisiones compartida en escenarios clínicos simulados.</li>
+                    <li>Interpretar y crear visualizaciones de datos básicas (gráficos de barras, dispersión, histogramas) relevantes para la práctica médica.</li>
+                    <li>Comunicar información sobre riesgos y beneficios de tratamientos a pacientes y colegas utilizando visualizaciones de datos sencillas.</li>
+                    <li>Utilizar Tableau Public para la creación básica de gráficos.</li>
+                </ul>
+
+                <h4>Cronograma Sugerido:</h4>
+                <ul>
+                    <li><strong>(0-15 min) Introducción y Dinámica Rompehielos:</strong>
+                        <ul>
+                            <li>Breve repaso de la semana anterior.</li>
+                            <li>Actividad: "Comunicación en Una Palabra": Preguntar a los estudiantes qué palabra asocian con "comunicación efectiva en medicina" y por qué. Anotar en pizarra/digital.</li>
+                        </ul>
+                    </li>
+                    <li><strong>(15-45 min) Comunicación Efectiva y Toma de Decisiones Compartida (Exposición interactiva):</strong>
+                        <ul>
+                            <li>Principios de comunicación verbal y no verbal.</li>
+                            <li>Escucha activa.</li>
+                            <li>Barreras de la comunicación.</li>
+                            <li>Modelo de toma de decisiones compartida (ej. Modelo de los 3 Pasos: Choice Talk, Option Talk, Decision Talk).</li>
+                            <li>Discusión con ejemplos aportados por los estudiantes sobre experiencias (positivas/negativas) de comunicación en entornos de salud.</li>
+                        </ul>
+                    </li>
+                    <li><strong>(45-75 min) Visualización de Datos en Medicina (Exposición interactiva y demostración):</strong>
+                        <ul>
+                            <li>Importancia de la visualización de datos para comunicar información compleja.</li>
+                            <li>Tipos de gráficos (barras, dispersión, histogramas): cuándo y cómo usarlos.</li>
+                            <li>Principios para una buena visualización (claridad, simplicidad, honestidad).</li>
+                            <li>Breve demostración guiada de Tableau Public: Cargar un dataset sencillo (ej. datos ficticios de pacientes con HTA y respuesta a dos fármacos) y crear un gráfico de barras comparativo.</li>
+                        </ul>
+                    </li>
+                    <li><strong>(75-110 min) Actividad Interactiva Principal: "Consulta Informada"</strong> (Ver detalle abajo).</li>
+                    <li><strong>(110-120 min) Conclusiones y Evaluación Formativa Rápida:</strong>
+                        <ul>
+                            <li>Resumen de puntos clave.</li>
+                            <li>Sesión de preguntas y respuestas.</li>
+                            <li>Aplicación de herramienta de evaluación formativa (ver abajo).</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Metodología:</h4>
+                <ul>
+                    <li>Clase invertida (solicitar lectura previa de artículos sobre comunicación efectiva).</li>
+                    <li>Exposición dialogada con uso de diapositivas.</li>
+                    <li>Discusión grupal.</li>
+                    <li>Demostración de software (Tableau Public).</li>
+                    <li>Aprendizaje basado en problemas/casos (actividad interactiva).</li>
+                </ul>
+
+                <h4>Recursos:</h4>
+                <ul>
+                    <li>Proyector multimedia.</li>
+                    <li>Acceso a internet para Tableau Public.</li>
+                    <li>Pizarra o rotafolio.</li>
+                    <li>Materiales impresos para la actividad interactiva.</li>
+                    <li>Dataset sencillo para demostración y actividad (ej. archivo .csv o .xlsx).</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>2. Materiales de Clase (Esquema de Diapositivas)</h3>
+                <p><strong>Número Aproximado de Diapositivas:</strong> 20-25</p>
+                <p><strong>Contenido Esencial por Diapositiva:</strong></p>
+                <ol>
+                    <li><strong>Título:</strong> Comunicación Efectiva y Visualización de Datos en Medicina. Semana 4, Medicina y Ciencia (Razonamiento Clínico). Logo UCE.</li>
+                    <li><strong>Objetivos de la Sesión:</strong> Listar los objetivos de aprendizaje.</li>
+                    <li><strong>¿Por Qué es Crucial la Comunicación en Medicina?:</strong> Impacto en adherencia al tratamiento, satisfacción del paciente, seguridad del paciente, resultados clínicos. Visual: Imagen que represente una interacción médico-paciente positiva.</li>
+                    <li><strong>Comunicación Verbal Efectiva (Diapositivas 4-6):</strong> Claridad, concisión, lenguaje adaptado al paciente, uso de preguntas abiertas y cerradas, parafraseo, resumen. Visual: Iconos representando cada principio.</li>
+                    <li><strong>Comunicación No Verbal (Diapositivas 7-8):</strong> Contacto visual, postura, gestos, expresión facial, tono de voz, espacio personal. Importancia de la congruencia verbal-no verbal. Visual: Ejemplos gráficos de posturas/expresiones y su posible interpretación.</li>
+                    <li><strong>Escucha Activa (Diapositiva 9):</strong> Técnicas: Mostrar interés, evitar interrupciones, reflejar emociones, confirmar comprensión. Visual: Diagrama simple del ciclo de la escucha activa.</li>
+                    <li><strong>Barreras en la Comunicación (Diapositiva 10):</strong> Físicas, semánticas, psicológicas, culturales. Ejemplos en el contexto ecuatoriano. Visual: Esquema de barreras.</li>
+                    <li><strong>Toma de Decisiones Compartida (TDC) (Diapositivas 11-12):</strong> Definición, importancia, beneficios. Pasos para implementarla (ej. Presentar opciones, discutir pros/contras según valores del paciente, tomar decisión juntos). Visual: Flujograma de la TDC.</li>
+                    <li><strong>Introducción a la Visualización de Datos (Diapositiva 13):</strong> ¿Por qué visualizar? Cerebro procesa mejor imágenes, identificar patrones, comunicar complejidad. Visual: Comparación de una tabla de datos vs. un gráfico de los mismos datos.</li>
+                    <li><strong>Tipos de Gráficos y su Aplicación (Diapositivas 14-16):</strong> Gráfico de Barras, Histograma, Gráfico de Dispersión. Visual: Ejemplo claro de cada tipo de gráfico con datos médicos ficticios.</li>
+                    <li><strong>Principios de una Buena Visualización (Diapositiva 17):</strong> Simplicidad, claridad en etiquetas y títulos, elección adecuada de colores, evitar distorsiones.</li>
+                    <li><strong>Comunicando Datos a Pacientes y Colegas (Diapositiva 18):</strong> Adaptar la complejidad. Usar visualizaciones para explicar riesgos (ej. frecuencias naturales, Icon Arrays) y beneficios. Visual: Ejemplo de un "Icon Array" para explicar riesgo.</li>
+                    <li><strong>Introducción a Tableau Public (Diapositiva 19):</strong> Breve descripción de la herramienta, ventajas. Mencionar que se usará para un ejercicio práctico. Visual: Captura de pantalla de la interfaz de Tableau Public.</li>
+                    <li><strong>Caso de Estudio (Diapositiva 20):</strong> Presentación resumida del caso (se entregará completo en la actividad).</li>
+                    <li><strong>Conclusiones (Diapositiva 21):</strong> Resumen de los puntos más importantes de la sesión.</li>
+                    <li><strong>Preguntas y Discusión (Diapositiva 22).</strong></li>
+                    <li><strong>Referencias (Diapositiva 23):</strong> Artículos del syllabus.</li>
+                </ol>
+            </div>
+
+            <div class="content-section">
+                <h3>3. Actividad Interactiva para el Aula: "Consulta Informada: Comunicando Riesgos y Beneficios con Claridad"</h3>
+                <p><strong>Contexto:</strong> Esta actividad se basa en el caso de estudio propuesto en el sílabo para la Semana 4: "Cómo presentar información sobre riesgos y beneficios de un tratamiento al paciente, utilizando visualizaciones de datos sencillas".</p>
+                <h4>Objetivos:</h4>
+                <ul>
+                    <li>Practicar la comunicación efectiva y la toma de decisiones compartida.</li>
+                    <li>Utilizar una visualización de datos simple para explicar riesgos y beneficios.</li>
+                    <li>Recibir retroalimentación constructiva.</li>
+                </ul>
+                <h4>Materiales:</h4>
+                <ul>
+                    <li><strong>Ficha del Caso Clínico (para cada grupo):</strong>
+                        <ul>
+                            <li>Paciente: Sr. Juan Pérez, 62 años, diagnosticado recientemente con Fibrilación Auricular no valvular. CHA₂DS₂-VASc = 3.</li>
+                            <li>Médico Internista (estudiante) debe discutir la necesidad de anticoagulación oral para prevención de ACV.</li>
+                            <li>Opciones de tratamiento: Anticoagulante Oral Directo (ACOD) - Ej: Rivaroxabán; Warfarina; No anticoagulación.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Datos para la visualización (simplificados):</strong>
+                        <ul>
+                            <li>Riesgo de ACV anual sin anticoagulación (con CHA₂DS₂-VASc=3): ~3.2%</li>
+                            <li>Riesgo de ACV anual con ACOD: ~1.0% (Reducción del Riesgo Relativo ~68%)</li>
+                            <li>Riesgo de ACV anual con Warfarina: ~1.2% (Reducción del Riesgo Relativo ~62%, requiere monitoreo INR)</li>
+                            <li>Riesgo de Sangrado Mayor anual con ACOD: ~2.5%</li>
+                            <li>Riesgo de Sangrado Mayor anual con Warfarina: ~3.0%</li>
+                            <li>Nota: Estos son valores aproximados para el ejercicio.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Perfiles de Paciente (1 por grupo):</strong> Paciente A (ansioso), Paciente B (escéptico), Paciente C (proactivo).</li>
+                    <li><strong>Hoja de Observación/Retroalimentación.</strong></li>
+                    <li><strong>Software/Herramienta:</strong> Papel para esbozar gráficos o Tableau Public.</li>
+                </ul>
+                <h4>Instrucciones Claras para los Participantes (Estudiantes):</h4>
+                <ol>
+                    <li><strong>Formación de Grupos (10 min):</strong> Grupos de 3-4. Roles: Médico, Paciente, Observador(es).</li>
+                    <li><strong>Preparación (15 min):</strong> Médico planifica, Paciente estudia perfil, Observador revisa hoja.</li>
+                    <li><strong>Simulación (10 min por grupo):</strong> Médico conduce consulta.</li>
+                    <li><strong>Retroalimentación (10 min por grupo):</strong> Observador, Paciente y Médico comparten.</li>
+                    <li><strong>Puesta en Común (10 min - Opcional):</strong> Discusión plenaria.</li>
+                </ol>
+                <h4>Hoja de Observación (Ejemplo de Criterios):</h4>
+                <ul>
+                    <li>Comunicación Verbal: Claridad, lenguaje adaptado, preguntas, escucha.</li>
+                    <li>Comunicación No Verbal: Contacto visual, postura, empatía.</li>
+                    <li>Toma de Decisiones Compartida: Opciones, valores, involucramiento.</li>
+                    <li>Uso de Visualización: Claridad, comprensión, explicación.</li>
+                    <li>Manejo de Preocupaciones del Paciente.</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>4. Herramientas de Evaluación Formativa</h3>
+                <h4>"Minuto de Papel" Modificado (al final de la clase):</h4>
+                <p>Pedir a los estudiantes que escriban en un papel:</p>
+                <ul>
+                    <li>"El concepto más importante que aprendí hoy sobre comunicación efectiva es..."</li>
+                    <li>"Una forma en que usaré la visualización de datos para explicar riesgos a un paciente es..."</li>
+                    <li>"¿Qué tipo de gráfico (barras, histograma, dispersión) usarías para mostrar la frecuencia de diferentes grupos sanguíneos en una población de pacientes y por qué?"</li>
+                </ul>
+                <p>Recoger las respuestas anónimas.</p>
+                <h4>Observación durante la Actividad Interactiva:</h4>
+                <p>Utilizar la "Hoja de Observación" para identificar fortalezas y debilidades.</p>
+            </div>
+        </div>
+
+        <div id="estudiantes" class="tab-content" style="display: none;">
+            <div class="content-section">
+                <h2>II. Para Estudiantes</h2>
+
+                <h3>1. Resumen de Conceptos Clave (Hoja de Datos)</h3>
+                <h4>Principios de Comunicación Efectiva:</h4>
+                <ul>
+                    <li><strong>Claridad:</strong> Mensaje fácil de entender, evitar jerga.</li>
+                    <li><strong>Concisión:</strong> Ir al grano, sin información superflua.</li>
+                    <li><strong>Empatía:</strong> Ponerse en el lugar del otro, validar emociones.</li>
+                    <li><strong>Escucha Activa:</strong> Prestar atención total, asentir, parafrasear, hacer preguntas clarificadoras.</li>
+                    <li><strong>Comunicación Verbal:</strong> Lenguaje adaptado, tono de voz adecuado.</li>
+                    <li><strong>Comunicación No Verbal:</strong> Contacto visual, gestos, postura, expresión facial. Congruente con mensaje verbal.</li>
+                </ul>
+                <h4>Toma de Decisiones Compartida (TDC):</h4>
+                <ul>
+                    <li><strong>Definición:</strong> Proceso colaborativo médico-paciente para tomar decisiones de salud.</li>
+                    <li><strong>Pasos Clave:</strong> Invitar a participar, presentar opciones (riesgos/beneficios), explorar preferencias, tomar la decisión.</li>
+                    <li><strong>Beneficios:</strong> Mayor satisfacción, mejor adherencia, mejores resultados.</li>
+                </ul>
+                <h4>Visualización de Datos:</h4>
+                <ul>
+                    <li><strong>¿Por qué?:</strong> Facilita comprensión de datos complejos, patrones y tendencias.</li>
+                    <li><strong>Tipos Comunes:</strong>
+                        <ul>
+                            <li><strong>Gráfico de Barras:</strong> Compara cantidades entre grupos/categorías.</li>
+                            <li><strong>Histograma:</strong> Muestra distribución de frecuencia de variable numérica continua.</li>
+                            <li><strong>Gráfico de Dispersión:</strong> Muestra relación entre dos variables numéricas.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Al Comunicar Datos:</strong> Usar formatos simples, explicar claramente, relacionar con impacto individual, verificar comprensión.</li>
+                </ul>
+                <h4>Tableau Public:</h4>
+                <ul>
+                    <li>Herramienta gratuita para crear visualizaciones interactivas.</li>
+                    <li>Útil para explorar datos y comunicar hallazgos.</li>
+                    <li>Link al tutorial del syllabus o uno recomendado.</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>2. Ejercicio Práctico: Visualizando Datos de Salud con Tableau Public</h3>
+                <h4>Objetivo:</h4>
+                <p>Familiarizarse con Tableau Public y crear visualizaciones simples.</p>
+                <h4>Dataset: "Datos_Pacientes_UCE_Ficticios.csv"</h4>
+                <p>El dataset se proporcionará como una tabla a continuación. Primero debes copiar estos datos y pegarlos en una Hoja de Google Sheets.</p>
+                <p><strong>Nombre de la Hoja de Google Sheets Sugerido:</strong> <code>Datos_HTA_Pacientes_UCE</code></p>
+                
+                <h4>Columnas y Datos Ficticios:</h4>
+                <button id="copyDataButton" class="button mb-4">Copiar Datos de la Tabla</button>
+                <div class="overflow-x-auto mb-4">
+                    <table id="datasetTable" class="min-w-full dataset-table">
+                        <thead>
+                            <tr>
+                                <th>ID_Paciente</th><th>Edad</th><th>Sexo</th><th>PAS_Inicial</th><th>PAD_Inicial</th><th>Comorbilidades</th><th>Opcion_Tratamiento_Sugerida</th><th>Opcion_Tratamiento_Elegida</th><th>Comunicacion_Riesgos_Beneficios_Clara</th><th>PAS_Seguimiento_3M</th><th>PAD_Seguimiento_3M</th><th>Efectos_Secundarios_Reportados</th><th>Adherencia_Tratamiento</th><th>Provincia_Residencia</th><th>Nivel_Socioeconomico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>PAC001</td><td>65</td><td>Masculino</td><td>155</td><td>95</td><td>Dislipidemia</td><td>Fármaco A + CEV</td><td>Fármaco A + CEV</td><td>Sí</td><td>140</td><td>85</td><td>No</td><td>Buena</td><td>Pichincha</td><td>Medio</td></tr>
+                            <tr><td>PAC002</td><td>58</td><td>Femenino</td><td>160</td><td>100</td><td>Ninguna</td><td>Fármaco B + CEV</td><td>Fármaco B + CEV</td><td>Sí</td><td>145</td><td>90</td><td>Sí (mareos)</td><td>Regular</td><td>Guayas</td><td>Bajo</td></tr>
+                            <tr><td>PAC003</td><td>72</td><td>Masculino</td><td>148</td><td>92</td><td>Diabetes Tipo 2</td><td>Fármaco A + CEV</td><td>Solo CEV</td><td>No</td><td>150</td><td>94</td><td>No</td><td>Mala</td><td>Azuay</td><td>Alto</td></tr>
+                            <tr><td>PAC004</td><td>49</td><td>Femenino</td><td>152</td><td>98</td><td>Ninguna</td><td>Solo CEV</td><td>Solo CEV</td><td>Sí</td><td>142</td><td>90</td><td>No</td><td>Buena</td><td>Manabí</td><td>Medio</td></tr>
+                            <tr><td>PAC005</td><td>61</td><td>Masculino</td><td>165</td><td>102</td><td>Obesidad</td><td>Fármaco B + CEV</td><td>Fármaco B + CEV</td><td>Sí</td><td>150</td><td>92</td><td>Sí (tos seca)</td><td>Buena</td><td>Pichincha</td><td>Medio</td></tr>
+                            <tr><td>PAC006</td><td>55</td><td>Femenino</td><td>150</td><td>90</td><td>Dislipidemia</td><td>Fármaco A + CEV</td><td>Fármaco A + CEV</td><td>No</td><td>145</td><td>88</td><td>No</td><td>Regular</td><td>Imbabura</td><td>Bajo</td></tr>
+                            <tr><td>PAC007</td><td>68</td><td>Masculino</td><td>158</td><td>96</td><td>Ninguna</td><td>Fármaco B + CEV</td><td>Fármaco A + CEV</td><td>Sí</td><td>142</td><td>86</td><td>No</td><td>Buena</td><td>Loja</td><td>Alto</td></tr>
+                            <tr><td>PAC008</td><td>75</td><td>Femenino</td><td>162</td><td>99</td><td>Artrosis</td><td>Solo CEV</td><td>Fármaco B + CEV</td><td>Sí</td><td>148</td><td>90</td><td>Sí (edema)</td><td>Buena</td><td>Tungurahua</td><td>Medio</td></tr>
+                            <tr><td>PAC009</td><td>53</td><td>Masculino</td><td>145</td><td>93</td><td>Ninguna</td><td>Fármaco A + CEV</td><td>Fármaco A + CEV</td><td>Sí</td><td>135</td><td>82</td><td>No</td><td>Buena</td><td>Pichincha</td><td>Alto</td></tr>
+                            <tr><td>PAC010</td><td>60</td><td>Femenino</td><td>155</td><td>97</td><td>Diabetes Tipo 2</td><td>Fármaco B + CEV</td><td>Fármaco B + CEV</td><td>No</td><td>150</td><td>95</td><td>Sí (cefalea)</td><td>Mala</td><td>Guayas</td><td>Bajo</td></tr>
+                            <tr><td>PAC011</td><td>66</td><td>Masculino</td><td>163</td><td>101</td><td>Ninguna</td><td>Fármaco A + CEV</td><td>Fármaco A + CEV</td><td>Sí</td><td>145</td><td>88</td><td>No</td><td>Buena</td><td>Azuay</td><td>Medio</td></tr>
+                            <tr><td>PAC012</td><td>50</td><td>Femenino</td><td>149</td><td>91</td><td>Dislipidemia</td><td>Solo CEV</td><td>Solo CEV</td><td>Sí</td><td>140</td><td>85</td><td>No</td><td>Buena</td><td>Manabí</td><td>Alto</td></tr>
+                            <tr><td>PAC013</td><td>70</td><td>Masculino</td><td>157</td><td>94</td><td>Obesidad</td><td>Fármaco B + CEV</td><td>Fármaco B + CEV</td><td>Sí</td><td>146</td><td>89</td><td>Sí (fatiga)</td><td>Regular</td><td>Pichincha</td><td>Bajo</td></tr>
+                            <tr><td>PAC014</td><td>57</td><td>Femenino</td><td>153</td><td>99</td><td>Ninguna</td><td>Fármaco A + CEV</td><td>Fármaco A + CEV</td><td>No</td><td>148</td><td>92</td><td>No</td><td>Regular</td><td>Imbabura</td><td>Medio</td></tr>
+                            <tr><td>PAC015</td><td>63</td><td>Masculino</td><td>161</td><td>98</td><td>Diabetes Tipo 2</td><td>Fármaco B + CEV</td><td>Solo CEV</td><td>Sí</td><td>155</td><td>96</td><td>No</td><td>Mala</td><td>Loja</td><td>Medio</td></tr>
+                            <tr><td>PAC016</td><td>73</td><td>Femenino</td><td>150</td><td>92</td><td>Artrosis</td><td>Solo CEV</td><td>Fármaco B + CEV</td><td>Sí</td><td>140</td><td>85</td><td>Sí (náuseas)</td><td>Buena</td><td>Tungurahua</td><td>Alto</td></tr>
+                            <tr><td>PAC017</td><td>51</td><td>Masculino</td><td>156</td><td>95</td><td>Ninguna</td><td>Fármaco A + CEV</td><td>Fármaco A + CEV</td><td>Sí</td><td>141</td><td>84</td><td>No</td><td>Buena</td><td>Pichincha</td><td>Bajo</td></tr>
+                            <tr><td>PAC018</td><td>69</td><td>Femenino</td><td>159</td><td>100</td><td>Dislipidemia</td><td>Fármaco B + CEV</td><td>Fármaco B + CEV</td><td>No</td><td>152</td><td>93</td><td>Sí (calambres)</td><td>Regular</td><td>Guayas</td><td>Medio</td></tr>
+                            <tr><td>PAC019</td><td>62</td><td>Masculino</td><td>147</td><td>90</td><td>Ninguna</td><td>Solo CEV</td><td>Solo CEV</td><td>Sí</td><td>138</td><td>83</td><td>No</td><td>Buena</td><td>Azuay</td><td>Alto</td></tr>
+                            <tr><td>PAC020</td><td>56</td><td>Femenino</td><td>164</td><td>103</td><td>Obesidad</td><td>Fármaco A + CEV</td><td>Fármaco A + CEV</td><td>Sí</td><td>149</td><td>91</td><td>Sí (palpitaciones)</td><td>Buena</td><td>Manabí</td><td>Bajo</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="copyFeedback" class="text-green-600 mb-4" style="display: none;">¡Datos copiados al portapapeles!</div>
+
+                <h4>Leyenda/Explicaciones de las Columnas:</h4>
+                <ul>
+                    <li><strong>ID_Paciente:</strong> Identificador único.</li>
+                    <li><strong>PAS_Inicial/PAD_Inicial:</strong> Presión Arterial Sistólica/Diastólica inicial (mmHg).</li>
+                    <li><strong>CEV:</strong> Cambios en el Estilo de Vida.</li>
+                    <li><strong>Comunicacion_Riesgos_Beneficios_Clara:</strong> Percepción subjetiva (Sí/No).</li>
+                    <li>... (y otras explicaciones relevantes de la solicitud original)</li>
+                </ul>
+
+                <h4>Instrucciones:</h4>
+                <ol>
+                    <li><strong>Descargar e Instalar Tableau Public:</strong> (Si aún no lo tienen) desde <a href="https://public.tableau.com/" target="_blank" class="text-blue-600 hover:underline">https://public.tableau.com/</a></li>
+                    <li><strong>Crear una Hoja de Google Sheets:</strong>
+                        <ul>
+                            <li>Abre Google Sheets (<a href="http://sheets.google.com" target="_blank" class="text-blue-600 hover:underline">sheets.google.com</a>).</li>
+                            <li>Crea una nueva hoja de cálculo en blanco.</li>
+                            <li>Nombra la hoja (p.ej., <code>Datos_HTA_Pacientes_UCE</code>).</li>
+                            <li>Copia la tabla de datos anterior (incluyendo los encabezados) y pégala en la hoja de Google Sheets comenzando desde la celda A1.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Conectar Tableau Public a Google Sheets:</strong>
+                        <ul>
+                            <li>Abre Tableau Public Desktop.</li>
+                            <li>En el panel "Conectar", bajo "A un servidor", selecciona "Google Sheets".</li>
+                            <li>Inicia sesión con tu cuenta de Google y autoriza a Tableau.</li>
+                            <li>Selecciona la hoja de cálculo que creaste.</li>
+                            <li>Arrastra la pestaña de la hoja al área "Arrastrar tablas aquí".</li>
+                            <li>Haz clic en "Ir a la hoja de trabajo".</li>
+                        </ul>
+                    </li>
+                    <li><strong>Crear las Siguientes Visualizaciones (Ideas para Semana 4):</strong>
+                        <ul>
+                            <li><strong>Gráfico de Barras:</strong>
+                                <ul>
+                                    <li>Número de pacientes por <code>Sexo</code>.</li>
+                                    <li>Número de pacientes por <code>Provincia_Residencia</code>.</li>
+                                    <li>Distribución de <code>Adherencia_Tratamiento</code>.</li>
+                                    <li>Comparación de <code>Opcion_Tratamiento_Sugerida</code> vs. <code>Opcion_Tratamiento_Elegida</code>.</li>
+                                    <li>Pacientes que reportaron <code>Efectos_Secundarios_Reportados</code> (Sí/No).</li>
+                                    <li>Pregunta: ¿Cuál es el diagnóstico más frecuente en esta muestra? (Adaptar pregunta al dataset provisto: ¿Cuál es la comorbilidad más frecuente?)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Histograma:</strong>
+                                <ul>
+                                    <li>Distribución de <code>Edad</code>.</li>
+                                    <li>Distribución de <code>PAS_Inicial</code> o <code>PAS_Seguimiento_3M</code>.</li>
+                                    <li>Pregunta: ¿En qué rango de edad se concentra la mayoría de los pacientes?</li>
+                                </ul>
+                            </li>
+                            <li><strong>Gráfico de Barras Apiladas (o agrupadas):</strong> Adherencia al Tratamiento según Género. (Adaptar al dataset: e.g., <code>Adherencia_Tratamiento</code> según <code>Sexo</code>).</li>
+                            <li><strong>(Opcional Avanzado) Gráfico de Dispersión:</strong>
+                                <ul>
+                                     <li><code>PAS_Inicial</code> vs. <code>PAD_Inicial</code>.</li>
+                                     <li><code>Edad</code> vs. <code>PAS_Inicial</code>.</li>
+                                     <li>Pregunta: ¿Observas alguna tendencia visual entre la edad y el colesterol LDL? (Adaptar: ¿Observas alguna tendencia visual entre la edad y la PAS_Inicial?)</li>
+                                </ul>
+                            </li>
+                             <li><strong>Visualización para el caso del Sr. Pérez (PAC001):</strong>
+                                <ul>
+                                    <li>Crear una visualización específica que muestre la reducción de PAS y PAD para el PAC001, y si tuvo efectos secundarios.</li>
+                                    <li>Comparar el resultado de PAC001 con el promedio del grupo o con otros pacientes con características similares.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Tablas:</strong> Mostrar una tabla con los datos de los pacientes que tuvieron "Mala" adherencia.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Guardar y Compartir (Opcional):</strong> Guardar en Tableau Public o tomar capturas.</li>
+                    <li><strong>Entrega:</strong> Presentar capturas con respuestas a las preguntas.</li>
+                </ul>
+                <h4>Recursos Adicionales:</h4>
+                <ul>
+                    <li>Tutorial de Tableau Public (del syllabus).</li>
+                    <li>Videos introductorios de Tableau Public (ej. "Tableau Public Tutorial for Beginners").</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>3. Cuestionario de Autoevaluación</h3>
+                <div id="quizContainer">
+                    </div>
+                <button id="toggleAnswersButton" class="button mt-6">Mostrar/Ocultar Respuestas</button>
+            </div>
+
+            <div class="content-section">
+                <h3>4. Guía de Estudio para el Tema</h3>
+                <ul>
+                    <li>Revisar los objetivos de aprendizaje de la Semana 4.</li>
+                    <li><strong>Lecturas Obligatorias/Recomendadas:</strong> Artículos sobre comunicación efectiva, Tutorial de Tableau Public.</li>
+                    <li><strong>Conceptos Fundamentales a Dominar:</strong> Componentes comunicación verbal/no verbal, escucha activa, TDC, uso de gráficos (barras, histogramas, dispersión), principios de visualización, adaptación de comunicación de datos.</li>
+                    <li><strong>Preguntas para Reflexionar:</strong>
+                        <ul>
+                            <li>¿Cómo pueden mis propios sesgos afectar mi comunicación con un paciente?</li>
+                            <li>¿Cómo puedo verificar si un paciente realmente ha entendido la información sobre riesgos y beneficios?</li>
+                            <li>Desafíos para la comunicación efectiva y TDC en el sistema de salud ecuatoriano y cómo superarlos.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Práctica Adicional:</strong> Analizar visualizaciones en revistas médicas. Explicar conceptos médicos a familiares/amigos con y sin visualizaciones.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-12 py-6 border-t border-gray-300">
+        <p class="text-sm text-gray-600">&copy; <span id="currentYear"></span> Medicina y Ciencia - UCE. Material de apoyo.</p>
+    </footer>
+
+    <script>
+        // Script para pestañas
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const targetTab = button.getAttribute('data-tab');
+                tabContents.forEach(content => {
+                    if (content.id === targetTab) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Script para el año actual en el footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Script para copiar datos de la tabla
+        const copyButton = document.getElementById('copyDataButton');
+        const datasetTable = document.getElementById('datasetTable');
+        const copyFeedback = document.getElementById('copyFeedback');
+
+        copyButton.addEventListener('click', () => {
+            let tableData = '';
+            const rows = datasetTable.rows;
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                let rowData = [];
+                for (let j = 0; j < cells.length; j++) {
+                    rowData.push(cells[j].innerText);
+                }
+                tableData += rowData.join('\t') + '\n';
+            }
+
+            navigator.clipboard.writeText(tableData)
+                .then(() => {
+                    copyFeedback.style.display = 'block';
+                    setTimeout(() => {
+                        copyFeedback.style.display = 'none';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Error al copiar datos: ', err);
+                    copyFeedback.innerText = 'Error al copiar. Intenta manualmente.';
+                    copyFeedback.style.color = 'red';
+                    copyFeedback.style.display = 'block';
+                     setTimeout(() => {
+                        copyFeedback.style.display = 'none';
+                        copyFeedback.innerText = '¡Datos copiados al portapapeles!';
+                        copyFeedback.style.color = 'green';
+                    }, 3000);
+                });
+        });
+
+        // Script para el cuestionario
+        const quizContainer = document.getElementById('quizContainer');
+        const toggleAnswersButton = document.getElementById('toggleAnswersButton');
+        let answersVisible = false;
+
+        const questions = [
+            {
+                question: "¿Cuál de los siguientes NO es un componente principal de la escucha activa?",
+                options: ["a) Mantener contacto visual.", "b) Interrumpir frecuentemente para dar tu opinión.", "c) Parafrasear lo que dijo el paciente.", "d) Asentir para mostrar comprensión."],
+                answer: "b",
+                explanation: "Interrumpir frecuentemente impide la escucha activa."
+            },
+            {
+                question: "La Toma de Decisiones Compartida implica que el médico toma la decisión final tras informar al paciente.",
+                options: ["Verdadero", "Falso"],
+                answer: "Falso",
+                explanation: "La decisión es conjunta entre médico y paciente."
+            },
+            {
+                question: "Un gráfico de barras es más útil para:",
+                options: ["a) Mostrar la tendencia de una variable a lo largo del tiempo.", "b) Comparar cantidades entre diferentes categorías.", "c) Mostrar la distribución de una variable numérica continua.", "d) Visualizar la relación entre dos variables numéricas."],
+                answer: "b",
+                explanation: "Los gráficos de barras son ideales para comparar cantidades entre categorías."
+            },
+            {
+                question: "Al comunicar un riesgo del 5% a un paciente, una forma efectiva usando \"Icon Arrays\" sería:",
+                options: ["a) Mostrar 5 iconos coloreados de un total de 10.", "b) Mostrar 1 icono coloreado de un total de 20.", "c) Mostrar 50 iconos coloreados de un total de 100.", "d) Explicar verbalmente que es un riesgo bajo."],
+                answer: "b",
+                explanation: "1 de 20 representa el 5%. La opción c (5 de 100) también es correcta, pero b es una simplificación visual directa."
+            },
+            {
+                question: "La comunicación no verbal incluye el tono de voz.",
+                options: ["Verdadero", "Falso"],
+                answer: "Verdadero",
+                explanation: "El tono de voz es un componente crucial de la comunicación no verbal (paralingüística)."
+            },
+            {
+                question: "¿Qué tipo de gráfico usarías para visualizar la distribución de los niveles de glucosa en sangre de 100 pacientes diabéticos?",
+                options: ["a) Gráfico de pastel.", "b) Gráfico de líneas.", "c) Histograma.", "d) Gráfico de dispersión."],
+                answer: "c",
+                explanation: "Un histograma es adecuado para mostrar la distribución de una variable numérica continua."
+            },
+            {
+                question: "Tableau Public es una herramienta de software de pago para análisis estadístico avanzado.",
+                options: ["Verdadero", "Falso"],
+                answer: "Falso",
+                explanation: "Tableau Public es gratuito y se enfoca principalmente en la visualización de datos."
+            },
+            {
+                question: "Una barrera común en la comunicación médico-paciente en el contexto ecuatoriano podría ser:",
+                options: ["a) El uso excesivo de tecnología por parte del médico.", "b) Diferencias dialectales o el uso de Kichwa por algunos pacientes y el desconocimiento por el médico.", "c) La excelente iluminación en los consultorios.", "d) La puntualidad de los pacientes."],
+                answer: "b",
+                explanation: "Las barreras lingüísticas y culturales son desafíos significativos en la comunicación."
+            },
+            {
+                question: "En la Toma de Decisiones Compartida, es fundamental:",
+                options: ["a) Que el médico imponga la opción terapéutica con mayor evidencia científica.", "b) Explorar los valores, preferencias y contexto del paciente.", "c) Limitar la cantidad de información para no confundir al paciente.", "d) Realizar la consulta en el menor tiempo posible."],
+                answer: "b",
+                explanation: "Entender y respetar los valores y preferencias del paciente es clave en la TDC."
+            },
+            {
+                question: "Para comunicar los resultados de un estudio sobre la eficacia comparativa de dos fármacos para la HTA en dos grupos de pacientes (jóvenes vs. adultos mayores), el gráfico más adecuado sería:",
+                options: ["a) Un histograma de la presión arterial final.", "b) Un gráfico de dispersión relacionando edad y dosis.", "c) Un gráfico de barras agrupadas, mostrando la reducción de PA para cada fármaco en cada grupo de edad.", "d) Un gráfico de pastel mostrando el porcentaje de pacientes que alcanzó la meta de PA."],
+                answer: "c",
+                explanation: "Un gráfico de barras agrupadas permite comparar múltiples categorías (fármacos y grupos de edad) simultáneamente."
+            }
+        ];
+
+        function renderQuiz() {
+            quizContainer.innerHTML = '';
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question-item');
+                let optionsHTML = '';
+                q.options.forEach(opt => {
+                    optionsHTML += `<p class="ml-4">${opt}</p>`;
+                });
+
+                questionDiv.innerHTML = `
+                    <p><strong>${index + 1}. ${q.question}</strong></p>
+                    ${optionsHTML}
+                    <div class="answer" style="display: ${answersVisible ? 'block' : 'none'};">
+                        <strong>Respuesta:</strong> ${q.options.find(opt => opt.startsWith(q.answer + ')')) || q.answer} <br>
+                        <em>${q.explanation}</em>
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        toggleAnswersButton.addEventListener('click', () => {
+            answersVisible = !answersVisible;
+            const answerDivs = document.querySelectorAll('.quizContainer .answer, #quizContainer .answer'); // Selector más específico
+            answerDivs.forEach(div => {
+                div.style.display = answersVisible ? 'block' : 'none';
+            });
+            toggleAnswersButton.textContent = answersVisible ? 'Ocultar Respuestas' : 'Mostrar Respuestas';
+        });
+        
+        // Renderizar el quiz inicialmente
+        renderQuiz();
+
+    </script>
+</body>
+</html>
