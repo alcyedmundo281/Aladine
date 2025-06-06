@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Interactivo del Gasto en Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a narrative journey. It starts with a "Hero" section that introduces the central paradox. A clear navigation bar allows users to jump to different thematic sections: 1) "La Paradoja", which presents the core problem with key metrics and comparative charts; 2) "El Flujo del Dinero", which visually maps the financial flows and details the key actors and their influence; 3) "El Impacto en la Gente", focusing on the consequences, especially out-of-pocket spending; and 4) "Hacia la Reforma", which outlines the research goals and proposed solutions. This thematic, non-linear structure was chosen over the report's linear chapter format to allow users to explore the information based on their interest, making complex information more digestible and engaging. The user flow is designed to guide from problem identification to potential solutions, fostering a deeper understanding. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Gasto Público en Salud (% PIB) vs. Promedio ALC. Goal: Compare. Viz: Bar Chart (Chart.js). Interaction: Tooltips on hover. Justification: Bar charts are excellent for direct comparison between a few categories. Library/Method: Chart.js/Canvas.
+        - Report Info: Gasto de Bolsillo (% Gasto Total) vs. Umbral OMS. Goal: Compare/Inform. Viz: Bar Chart (Chart.js) with a threshold line. Interaction: Tooltips. Justification: Clearly shows how far Ecuador is from the WHO's recommended threshold. Library/Method: Chart.js/Canvas.
+        - Report Info: Composición del Gasto de Bolsillo. Goal: Inform/Organize. Viz: Donut Chart (Chart.js). Interaction: Tooltips on hover showing percentage. Justification: A donut chart effectively shows the proportion of different components of a whole. Library/Method: Chart.js/Canvas.
+        - Report Info: Flujo de financiamiento. Goal: Organize/Relationships. Viz: Diagrama de Flujo (HTML/CSS). Interaction: Hover effects on nodes to display brief descriptions. Justification: A visual flow diagram is more intuitive for understanding complex systems than text alone. It simplifies the path from sources to beneficiaries. Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Actores y su influencia. Goal: Organize/Inform. Viz: Styled HTML cards in a grid. Interaction: None, static information. Justification: Card layout allows for a clean and organized presentation of different actors and their roles. Library/Method: HTML/CSS with Tailwind.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #4a4a4a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #c084fc; /* purple-400 */
+            border-bottom-color: #c084fc;
+        }
+        .stat-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .flow-node {
+            transition: all 0.3s ease-in-out;
+        }
+        .flow-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.5);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-purple-600">
+                Salud<span class="text-gray-700">Ec</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#paradoja" class="nav-link text-gray-600 font-medium">La Paradoja</a>
+                <a href="#flujo" class="nav-link text-gray-600 font-medium">El Flujo del Dinero</a>
+                <a href="#impacto" class="nav-link text-gray-600 font-medium">El Impacto en la Gente</a>
+                <a href="#reforma" class="nav-link text-gray-600 font-medium">Hacia la Reforma</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#paradoja" class="block px-6 py-3 text-gray-600 hover:bg-purple-50">La Paradoja</a>
+            <a href="#flujo" class="block px-6 py-3 text-gray-600 hover:bg-purple-50">El Flujo del Dinero</a>
+            <a href="#impacto" class="block px-6 py-3 text-gray-600 hover:bg-purple-50">El Impacto en la Gente</a>
+            <a href="#reforma" class="block px-6 py-3 text-gray-600 hover:bg-purple-50">Hacia la Reforma</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-16">
+
+        <!-- Hero Section -->
+        <section id="hero" class="text-center mb-16 md:mb-24">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-gray-800">La Paradoja del Gasto Sanitario en Ecuador</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-600">A pesar de una inversión pública creciente en salud, los hogares ecuatorianos enfrentan una de las cargas más altas de Sudamérica en gastos de bolsillo. ¿A dónde va realmente el dinero?</p>
+        </section>
+
+        <!-- Section 1: La Paradoja -->
+        <section id="paradoja" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-purple-700">El Corazón del Problema</h2>
+             <div class="text-center max-w-3xl mx-auto mb-12">
+                <p class="text-gray-700 leading-relaxed">
+                    Ecuador presenta una contradicción desconcertante: el Estado invierte una porción significativa de su presupuesto en salud, superando incluso el promedio regional. Sin embargo, este esfuerzo fiscal no se traduce en un alivio financiero para los ciudadanos, quienes continúan pagando una gran parte de sus gastos médicos directamente de su bolsillo. Esta sección explora esta paradoja a través de datos comparativos clave.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+                <div class="stat-card">
+                    <h3 class="text-xl font-semibold text-center mb-4">Gasto Público en Salud (% PIB, 2021)</h3>
+                    <div class="chart-container">
+                        <canvas id="gastoPublicoChart"></canvas>
+                    </div>
+                    <p class="text-sm text-center text-gray-500 mt-4">Ecuador invierte en salud un porcentaje de su PIB superior al promedio de América Latina y el Caribe, demostrando un compromiso fiscal notable.</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="text-xl font-semibold text-center mb-4">Gasto de Bolsillo (% Gasto Total, 2021)</h3>
+                    <div class="chart-container">
+                        <canvas id="gastoBolsilloChart"></canvas>
+                    </div>
+                    <p class="text-sm text-center text-gray-500 mt-4">A pesar de la alta inversión pública, el gasto que sale directamente del bolsillo de los ciudadanos supera ampliamente el umbral de riesgo financiero establecido por la OMS.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: El Flujo del Dinero -->
+        <section id="flujo" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-purple-700">Siguiendo la Pista del Dinero</h2>
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                 <p class="text-gray-700 leading-relaxed">
+                    Para entender la paradoja, es crucial rastrear el recorrido del financiamiento. El sistema es un laberinto de fuentes, administradores y proveedores. Esta sección visualiza ese flujo y presenta a los actores clave cuya influencia y decisiones determinan el destino final de cada dólar invertido en salud. La pregunta fundamental es: ¿quiénes son los verdaderos beneficiarios de este complejo sistema?
+                </p>
+            </div>
+
+            <!-- Flow Diagram -->
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-16">
+                 <h3 class="text-2xl font-bold text-center mb-6">Mapa Simplificado del Financiamiento</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center text-center">
+                    <!-- Fuentes -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-purple-600">Fuentes</h4>
+                        <div class="space-y-4">
+                            <div class="flow-node bg-purple-100 p-4 rounded-lg shadow">Público (Estado)</div>
+                            <div class="flow-node bg-purple-100 p-4 rounded-lg shadow">Seguridad Social (IESS, etc.)</div>
+                            <div class="flow-node bg-purple-100 p-4 rounded-lg shadow">Privado (Hogares, Seguros)</div>
+                        </div>
+                    </div>
+                    <!-- Administradores -->
+                    <div class="hidden md:block text-gray-300">
+                        <svg class="w-full h-24" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 50 L100 50" stroke="currentColor" stroke-width="2" stroke-dasharray="5,5"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-orange-500">Administradores / Pagadores</h4>
+                        <div class="space-y-4">
+                            <div class="flow-node bg-orange-100 p-4 rounded-lg shadow">Ministerio de Salud (MSP)</div>
+                            <div class="flow-node bg-orange-100 p-4 rounded-lg shadow">IESS / ISSFA / ISSPOL</div>
+                             <div class="flow-node bg-orange-100 p-4 rounded-lg shadow">Aseguradoras Privadas</div>
+                        </div>
+                    </div>
+                     <!-- Destinos -->
+                    <div class="hidden md:block text-gray-300">
+                        <svg class="w-full h-24" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 50 L100 50" stroke="currentColor" stroke-width="2" stroke-dasharray="5,5"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-4 text-teal-500">Proveedores / Receptores Finales</h4>
+                        <div class="space-y-4">
+                            <div class="flow-node bg-teal-100 p-4 rounded-lg shadow">Hospitales y Clínicas</div>
+                            <div class="flow-node bg-teal-100 p-4 rounded-lg shadow">Farmacias</div>
+                            <div class="flow-node bg-teal-100 p-4 rounded-lg shadow">Industria Farmacéutica</div>
+                            <div class="flow-node bg-teal-100 p-4 rounded-lg shadow">Profesionales de la Salud</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Players -->
+            <div>
+                 <h3 class="text-2xl font-bold text-center mb-8">Actores Clave en la Arena</h3>
+                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     <div class="stat-card">
+                         <h4 class="font-semibold text-lg text-purple-700">Actores Estatales</h4>
+                         <p class="text-gray-600 mt-2">Ministerios (Salud, Finanzas), agencias reguladoras, IESS. Definen políticas, asignan presupuestos y actúan como los principales pagadores del sistema.</p>
+                     </div>
+                     <div class="stat-card">
+                         <h4 class="font-semibold text-lg text-orange-600">Proveedores de Servicios</h4>
+                         <p class="text-gray-600 mt-2">Hospitales públicos y privados, clínicas, centros de salud. Son los receptores directos de una gran parte del gasto para la prestación de atención.</p>
+                     </div>
+                     <div class="stat-card">
+                         <h4 class="font-semibold text-lg text-teal-600">Industria y Gremios</h4>
+                         <p class="text-gray-600 mt-2">Farmacéuticas, proveedores de insumos, gremios profesionales. Ejercen una influencia significativa en las decisiones de compra, precios y políticas.</p>
+                     </div>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Section 3: El Impacto en la Gente -->
+        <section id="impacto" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-purple-700">El Gasto que Sienten los Hogares</h2>
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                 <p class="text-gray-700 leading-relaxed">
+                    El "gasto de bolsillo" no es solo una estadística; es una barrera real para el acceso a la salud. Representa el dinero que las familias deben desembolsar para medicamentos, consultas o procedimientos que el sistema público no cubre a tiempo o con la calidad esperada. Esta sección desglosa en qué gastan los ecuatorianos y subraya las consecuencias directas de las ineficiencias del sistema.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-5 gap-8 items-center">
+                <div class="md:col-span-2 text-center md:text-left">
+                    <h3 class="text-2xl font-bold mb-4">¿En qué se va el Gasto de Bolsillo?</h3>
+                    <p class="text-gray-600 mb-4">Los medicamentos constituyen la mayor parte del gasto directo de los hogares, una señal de posibles problemas en la disponibilidad y acceso a fármacos dentro del sistema público.</p>
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-r-lg" role="alert">
+                      <p class="font-bold">Dato Clave:</p>
+                      <p>En 2023, los hogares ecuatorianos financiaron directamente <span class="font-extrabold text-2xl">32.8</span> centavos de cada dólar gastado en salud.</p>
+                    </div>
+                </div>
+                <div class="md:col-span-3 stat-card">
+                    <h3 class="text-xl font-semibold text-center mb-4">Composición del Gasto de Bolsillo (Estimado)</h3>
+                    <div class="chart-container" style="max-width: 450px;">
+                        <canvas id="composicionGastoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Hacia la Reforma -->
+        <section id="reforma" class="scroll-mt-20 bg-purple-50 rounded-2xl p-8 md:p-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-purple-700">Buscando Respuestas para un Sistema más Justo</h2>
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                 <p class="text-gray-700 leading-relaxed">
+                   Resolver esta paradoja requiere más que simples incrementos presupuestarios. Es necesario un análisis profundo y valiente que responda a la pregunta fundamental: "¿Quién recibe el dinero?". Esta investigación se propone emprender ese camino para sentar las bases de una reforma sanitaria que sea verdaderamente equitativa, eficiente y transparente para todos los ecuatorianos.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h4 class="font-bold text-lg mb-2 text-gray-800">Objetivos Clave de la Investigación</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>Mapear en detalle todos los flujos financieros del sistema.</li>
+                        <li>Identificar a los actores clave y analizar sus dinámicas de poder.</li>
+                        <li>Examinar los mecanismos de pago y sus incentivos.</li>
+                        <li>Evaluar la gobernanza, transparencia y rendición de cuentas.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h4 class="font-bold text-lg mb-2 text-gray-800">Contribuciones Esperadas</h4>
+                     <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>Proveer evidencia robusta para políticas públicas efectivas.</li>
+                        <li>Proponer recomendaciones para reducir el gasto de bolsillo.</li>
+                        <li>Fortalecer la transparencia y el control ciudadano.</li>
+                        <li>Aportar a un debate nacional informado sobre la reforma de salud.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>&copy; 2025 Análisis del Sistema de Salud Ecuatoriano. Una visualización interactiva.</p>
+            <p class="text-sm text-gray-400 mt-2">Esta aplicación es una interpretación visual de una propuesta de investigación y utiliza datos públicos y estimaciones para fines ilustrativos.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if(mobileMenu.classList.contains('hidden') === false){
+                       mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 120) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#4a4a4a';
+
+            const dataGastoPublico = {
+                labels: ['Ecuador', 'Promedio América Latina y Caribe'],
+                datasets: [{
+                    label: '% del PIB',
+                    data: [5.28, 4.5],
+                    backgroundColor: [
+                        'rgba(168, 85, 247, 0.6)',
+                        'rgba(209, 213, 219, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(168, 85, 247, 1)',
+                        'rgba(156, 163, 175, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            new Chart(document.getElementById('gastoPublicoChart'), {
+                type: 'bar',
+                data: dataGastoPublico,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje del PIB (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const dataGastoBolsillo = {
+                labels: ['Gasto de Bolsillo Ecuador', 'Umbral de Riesgo OMS'],
+                datasets: [{
+                    label: '% del Gasto Total en Salud',
+                    data: [30.62, 20],
+                    backgroundColor: [
+                        'rgba(239, 68, 68, 0.6)',
+                        'rgba(251, 191, 36, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(220, 38, 38, 1)',
+                        'rgba(245, 158, 11, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            new Chart(document.getElementById('gastoBolsilloChart'), {
+                type: 'bar',
+                data: dataGastoBolsillo,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje del Gasto Total (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const dataComposicionGasto = {
+                labels: ['Medicamentos', 'Servicios Ambulatorios', 'Hospitalización', 'Otros'],
+                datasets: [{
+                    label: 'Composición del Gasto',
+                    data: [45, 25, 20, 10],
+                    backgroundColor: [
+                        'rgba(192, 132, 252, 0.8)',
+                        'rgba(129, 140, 248, 0.8)',
+                        'rgba(96, 165, 250, 0.8)',
+                        'rgba(52, 211, 153, 0.8)'
+                    ],
+                    borderColor: '#f8f7f4',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            };
+
+            new Chart(document.getElementById('composicionGastoChart'), {
+                type: 'doughnut',
+                data: dataComposicionGasto,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
