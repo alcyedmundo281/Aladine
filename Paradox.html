@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Interactivo: El Gasto en Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Soft Accents -->
+    <!-- Application Structure Plan: The SPA is structured as a narrative scroll, guiding the user through the core findings of the report. It starts with the "hook"—the Health Expenditure Paradox—using high-impact stats. It then proceeds to a quantitative overview (expenditure trends), a visual flow diagram of the financial system ("Tracing the Money"), a power analysis of key actors ("Who Decides?"), a breakdown of where money is spent ("Where Does it Go?"), and concludes with a SWOT analysis and actionable recommendations ("The Path Forward"). This thematic, storytelling structure was chosen over a direct report-chapter mapping to make the complex information more digestible and engaging for a non-academic audience. -->
+    <!-- Visualization & Content Choices: 
+        - Paradox Stats: Goal: Inform. Method: Large HTML text for immediate impact. Justification: Strongest way to introduce the core problem.
+        - Per Capita Spending: Goal: Change. Method: Line Chart (Chart.js). Justification: Best for showing clear trends over time.
+        - Expenditure Composition: Goal: Compare. Method: Donut Chart (Chart.js). Justification: Clearly shows parts of a whole (OOP vs Public).
+        - Financial Flow: Goal: Organize. Method: HTML/CSS Diagram. Justification: Visualizes the complex system simply, adhering to NO SVG/Mermaid constraint.
+        - Actor Influence: Goal: Compare/Organize. Method: Radar Chart (Chart.js). Justification: Translates the abstract Dahlian power analysis into a compelling, comparative visual.
+        - Spending by Provider: Goal: Compare. Method: Stacked Bar Chart (Chart.js). Justification: Shows composition within categories to highlight the OOP burden, especially in pharmacies.
+        - SWOT Analysis: Goal: Organize. Method: HTML/CSS Grid. Justification: A standard, clear framework for summarizing complex findings.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #F8F7F4;
+            color: #4A4A4A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 380px;
+            }
+        }
+        .nav-item {
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: color 0.3s, border-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-item:hover, .nav-item.active {
+            color: #D9534F;
+            border-bottom-color: #D9534F;
+        }
+        h1, h2, h3 {
+            font-weight: 700;
+        }
+        .kpi-box {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            text-align: center;
+        }
+        .kpi-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .kpi-label {
+            font-size: 1.1rem;
+            margin-top: 0.75rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-2">
+                <div class="text-xl font-bold text-[#457B9D]">Análisis del Gasto en Salud | Ecuador</div>
+                <div class="hidden md:flex space-x-4 text-sm font-semibold">
+                    <a href="#paradox" class="nav-item">El Paradigma</a>
+                    <a href="#trends" class="nav-item">Tendencias</a>
+                    <a href="#flow" class="nav-item">Flujo de Fondos</a>
+                    <a href="#power" class="nav-item">Poder y Decisión</a>
+                    <a href="#solutions" class="nav-item">Recomendaciones</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="paradox" class="py-16 text-center">
+            <h1 class="text-4xl md:text-5xl font-black text-[#457B9D] mb-4">La Paradoja del Gasto en Salud en Ecuador</h1>
+            <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-600 mb-12">
+                A pesar de una inversión pública significativa, las familias ecuatorianas enfrentan una de las cargas de gasto de bolsillo más altas de la región. Esta aplicación interactiva explora la pregunta central: <strong class="text-[#D9534F]">"¿Quién recibe el dinero?"</strong>
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="kpi-box">
+                    <div class="kpi-value text-[#457B9D]">~14.8%</div>
+                    <div class="kpi-label">del presupuesto total del Estado se destinó a Salud (2021)</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-value text-[#D9534F]">~32.6%</div>
+                    <div class="kpi-label">del gasto total en salud provino del bolsillo de los hogares (2022)</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="trends" class="py-16 bg-white rounded-lg shadow-lg mb-16 px-6">
+            <h2 class="text-3xl font-bold text-center mb-2">Una Década de Inversión Creciente</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">El gasto público en salud ha aumentado notablemente, como lo demuestra el gasto per cápita. Sin embargo, este esfuerzo no ha reducido proporcionalmente la carga financiera directa para los ciudadanos, lo que sugiere desafíos en la eficiencia y la asignación.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
+                <div class="lg:col-span-3">
+                    <h3 class="text-xl font-bold text-center mb-4">Evolución del Gasto en Salud por Persona (USD)</h3>
+                    <div class="chart-container">
+                        <canvas id="perCapitaChart"></canvas>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <h3 class="text-xl font-bold text-center mb-4">Composición del Gasto Total (2021)</h3>
+                    <div class="chart-container">
+                        <canvas id="compositionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="flow" class="py-16 text-center">
+            <h2 class="text-3xl font-bold text-center mb-2">Trazando la Ruta del Dinero</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">El sistema de salud ecuatoriano está fragmentado. Los fondos provienen de diversas fuentes y son gestionados por diferentes entidades, creando "pozos" de recursos separados que dificultan una distribución equitativa y eficiente.</p>
+            <div class="max-w-5xl mx-auto p-8 bg-white rounded-lg shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold mb-4 border-b-2 border-[#457B9D] pb-2">Fuentes de Financiamiento</h3>
+                        <div class="space-y-4 mt-4">
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">Presupuesto del Estado</div>
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">Aportes a la Seguridad Social (IESS)</div>
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm text-[#D9534F] font-semibold">Hogares (Gasto de Bolsillo)</div>
+                        </div>
+                    </div>
+                    <div class="text-center text-5xl text-[#F4A261] font-thin hidden md:block">
+                        →
+                    </div>
+                    <div class="text-center">
+                         <h3 class="text-xl font-bold mb-4 border-b-2 border-[#457B9D] pb-2">Administradores de Fondos</h3>
+                        <div class="space-y-4 mt-4">
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">Ministerio de Salud Pública (MSP)</div>
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">IESS, ISSFA, ISSPOL</div>
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">Proveedores y Aseguradoras Privadas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="power" class="py-16">
+            <h2 class="text-3xl font-bold text-center mb-2">Poder y Decisión: ¿Quién Gobierna el Gasto?</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Las decisiones financieras no son puramente técnicas; están influenciadas por una red compleja de actores con diversos grados de poder. Este análisis, inspirado en el marco de Robert Dahl, visualiza la influencia relativa de diferentes grupos en áreas clave de la política sanitaria.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-white rounded-lg shadow-lg p-6">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#457B9D]">Mapa de Influencia de Actores Clave</h3>
+                    <p class="text-gray-600 mb-4 text-sm">Este gráfico compara el poder percibido de los principales grupos de interés en cinco dominios críticos que determinan "quién recibe el dinero". Se observa una fuerte influencia de la industria farmacéutica en su área y un poder más distribuido en otras.</p>
+                    <ul class="text-xs text-gray-500 space-y-1">
+                        <li><strong class="text-[#457B9D]">Ministerios:</strong> Alto control sobre el presupuesto y la regulación general.</li>
+                        <li><strong class="text-[#D9534F]">Industria Farmacéutica:</strong> Dominio en la política de medicamentos y fuerte influencia mediática.</li>
+                        <li><strong class="text-[#F4A261]">Gremios Médicos:</strong> Influencia considerable en la regulación y política farmacéutica.</li>
+                        <li><strong class="text-gray-500">Sociedad Civil/Pacientes:</strong> Poder limitado, más visible en la influencia mediática que en la decisión presupuestaria.</li>
+                    </ul>
+                </div>
+                 <div class="chart-container">
+                    <canvas id="actorsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="solutions" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-2">El Destino Final del Gasto y el Camino a Seguir</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto">Analizar dónde termina el dinero y quién lo paga revela las ineficiencias del sistema. La alta carga de gasto de bolsillo en farmacias es un síntoma clave. Identificar las fortalezas y debilidades del sistema nos permite trazar un camino hacia una mayor equidad y eficiencia.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold text-center mb-4">Gasto por Proveedor y Pagador (% del total por proveedor)</h3>
+                    <div class="chart-container h-96">
+                        <canvas id="providerSpendingChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold text-center mb-4">Análisis FODA del Sistema de Financiamiento</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-sm">
+                        <div class="bg-[#A8DADC]/20 p-4 rounded">
+                            <h4 class="font-bold text-[#457B9D]">✔ Fortalezas</h4>
+                            <ul class="list-disc list-inside mt-2 space-y-1">
+                                <li>Alto compromiso de gasto público.</li>
+                                <li>Marco legal que ampara el derecho a la salud.</li>
+                                <li>Existencia de un ente rector (MSP) y sistema de seguridad social (IESS).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-[#D9534F]/20 p-4 rounded">
+                            <h4 class="font-bold text-[#D9534F]">❌ Debilidades</h4>
+                            <ul class="list-disc list-inside mt-2 space-y-1">
+                                <li>Sistema fragmentado e ineficiente.</li>
+                                <li>Gobernanza débil y falta de transparencia.</li>
+                                <li>Alta carga de gasto de bolsillo, especialmente en medicamentos.</li>
+                             </ul>
+                        </div>
+                        <div class="bg-[#F4A261]/20 p-4 rounded">
+                             <h4 class="font-bold text-[#F4A261]">💡 Oportunidades</h4>
+                             <ul class="list-disc list-inside mt-2 space-y-1">
+                                <li>Mejorar eficiencia con pagos estratégicos.</li>
+                                <li>Fortalecer la coordinación interinstitucional.</li>
+                                <li>Empoderar a la sociedad civil para la veeduría.</li>
+                             </ul>
+                        </div>
+                        <div class="bg-gray-500/20 p-4 rounded">
+                            <h4 class="font-bold text-gray-600">⚠️ Amenazas</h4>
+                            <ul class="list-disc list-inside mt-2 space-y-1">
+                                <li>Influencia de grupos de interés privados.</li>
+                                <li>Riesgos de corrupción y captura del estado.</li>
+                                <li>Inestabilidad política que afecta la continuidad de las políticas.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-16 bg-white p-8 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-bold text-center mb-6">Recomendaciones Clave para la Reforma</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
+                    <div class="border-l-4 border-[#457B9D] pl-4">
+                        <h4 class="font-bold">Fortalecer la Gobernanza</h4>
+                        <p class="text-gray-600">Mejorar la transparencia en decisiones financieras y fortalecer la rendición de cuentas de todos los actores.</p>
+                    </div>
+                    <div class="border-l-4 border-[#457B9D] pl-4">
+                        <h4 class="font-bold">Promover la Equidad</h4>
+                        <p class="text-gray-600">Diseñar políticas de asignación de recursos que prioricen explícitamente a las poblaciones vulnerables.</p>
+                    </div>
+                    <div class="border-l-4 border-[#457B9D] pl-4">
+                        <h4 class="font-bold">Mejorar la Implementación</h4>
+                        <p class="text-gray-600">Desarrollar estrategias para superar las barreras de implementación, alineando incentivos y fortaleciendo la gestión.</p>
+                    </div>
+                    <div class="border-l-4 border-[#F4A261] pl-4">
+                        <h4 class="font-bold">Equilibrar el Poder</h4>
+                        <p class="text-gray-600">Mitigar la influencia indebida de grupos de interés y empoderar las voces de los pacientes y la sociedad civil.</p>
+                    </div>
+                    <div class="border-l-4 border-[#F4A261] pl-4">
+                        <h4 class="font-bold">Atacar el Gasto de Bolsillo</h4>
+                        <p class="text-gray-600">Implementar intervenciones específicas para reducir costos directos, especialmente en medicamentos.</p>
+                    </div>
+                     <div class="border-l-4 border-[#F4A261] pl-4">
+                        <h4 class="font-bold">Fomentar la Investigación</h4>
+                        <p class="text-gray-600">Continuar la investigación basada en evidencia para monitorear el sistema y guiar futuras reformas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 mt-8 border-t border-gray-200">
+        <p class="text-sm text-gray-500">Aplicación interactiva basada en el plan de investigación "Tracing the Flow: An Implementation Research Plan for Understanding Health Expenditure and Power Dynamics in Ecuador".</p>
+        <p class="text-xs text-gray-400 mt-2">Este es un ejercicio de visualización de datos y no representa una publicación oficial de ninguna entidad gubernamental.</p>
+    </footer>
+
+    <script>
+        const warmPalette = {
+            blue: '#457B9D',
+            lightBlue: '#A8DADC',
+            coral: '#F4A261',
+            red: '#D9534F',
+            darkGray: '#4A4A4A',
+            lightGray: '#E0E0E0'
+        };
+
+        const tooltipTitleCallback = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                },
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 20
+                    }
+                }
+            }
+        };
+        
+        function wrapLabel(str, maxWidth = 16) {
+            if (str.length <= maxWidth) return str;
+            const words = str.split(' ');
+            let lines = [];
+            let currentLine = words[0];
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + ' ' + words[i]).length > maxWidth) {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                } else {
+                    currentLine += ' ' + words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        new Chart(document.getElementById('perCapitaChart'), {
+            type: 'line',
+            data: {
+                labels: ['2006', '2008', '2014', '2016', '2020', '2021'],
+                datasets: [{
+                    label: 'Gasto Corriente en Salud per cápita (USD)',
+                    data: [190.64, 232.88, 435.51, 450.83, 471.88, 494.31],
+                    borderColor: warmPalette.blue,
+                    backgroundColor: 'rgba(69, 123, 157, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: false, ticks: { callback: value => '$' + value }}},
+                ...tooltipTitleCallback
+            }
+        });
+
+        new Chart(document.getElementById('compositionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Gasto de Bolsillo (OOP)', 'Gasto Público (MSP/IESS)', 'Otro (Privado/Externo)'],
+                datasets: [{
+                    data: [31.1, 53.3, 15.6],
+                    backgroundColor: [warmPalette.red, warmPalette.blue, warmPalette.lightGray],
+                    borderColor: '#F8F7F4',
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                ...tooltipTitleCallback
+            }
+        });
+
+        new Chart(document.getElementById('actorsChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Presupuesto', ['Política', 'Farmacéutica'], 'Regulación', ['Influencia en', 'Medios'], ['Acceso a', 'Datos']],
+                datasets: [{
+                    label: 'Ministerios (Salud/Finanzas)',
+                    data: [9, 7, 8, 6, 8],
+                    borderColor: warmPalette.blue,
+                    backgroundColor: 'rgba(69, 123, 157, 0.2)',
+                    pointBackgroundColor: warmPalette.blue
+                }, {
+                    label: 'Industria Farmacéutica',
+                    data: [6, 9, 7, 8, 6],
+                    borderColor: warmPalette.red,
+                    backgroundColor: 'rgba(217, 83, 79, 0.2)',
+                    pointBackgroundColor: warmPalette.red
+                }, {
+                    label: 'Gremios Médicos',
+                    data: [5, 7, 6, 7, 5],
+                    borderColor: warmPalette.coral,
+                    backgroundColor: 'rgba(244, 162, 97, 0.2)',
+                    pointBackgroundColor: warmPalette.coral
+                }, {
+                    label: 'Sociedad Civil/Pacientes',
+                    data: [3, 4, 3, 5, 4],
+                    borderColor: warmPalette.darkGray,
+                    backgroundColor: 'rgba(74, 74, 74, 0.2)',
+                    pointBackgroundColor: warmPalette.darkGray
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: warmPalette.lightGray },
+                        grid: { color: warmPalette.lightGray },
+                        pointLabels: { font: { size: 12 } },
+                        suggestedMin: 0,
+                        suggestedMax: 10,
+                         ticks: {
+                            backdropColor: 'transparent',
+                            stepSize: 2
+                        }
+                    }
+                },
+                ...tooltipTitleCallback
+            }
+        });
+
+        new Chart(document.getElementById('providerSpendingChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Farmacias', 'Hospitales', 'Centros Ambulatorios', 'Otros'],
+                datasets: [{
+                    label: 'Gasto de Bolsillo (Hogares)',
+                    data: [85, 40, 45, 60],
+                    backgroundColor: warmPalette.red,
+                }, {
+                    label: 'Gasto Público (Gobierno/IESS)',
+                    data: [15, 60, 55, 40],
+                    backgroundColor: warmPalette.blue,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, ticks: { callback: value => value + '%' }},
+                    y: { stacked: true }
+                },
+                ...tooltipTitleCallback
+            }
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>
