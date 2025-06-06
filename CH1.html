@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: La Paradoja del Gasto en Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Energetic & Playful (Adapted) -->
+    <!-- Application Structure Plan: The infographic follows a compelling narrative structure designed for easy user digestion. It starts with a high-impact 'Hero' section to state the core paradox. Subsequent sections logically flow from 'The Problem' (context and stats), to 'The Consequences' (real-world impact on equity/efficiency), to 'The Solution' (the research approach). This story-driven path, supported by a sticky navigation, is more engaging than a simple data dump and better suited for explaining the complex issues from the research outline. -->
+    <!-- Visualization & Content Choices: 
+        - Paradox Stats (Inform): Large HTML/CSS numbers in the hero section for immediate impact. Goal: Inform. Justification: Grabs user attention instantly.
+        - OOP Comparison Chart (Compare): A Bar Chart (Chart.js) to compare Ecuador with regional/OECD averages. Goal: Compare. Justification: Best for direct comparison across a few categories. Label wrapping and custom tooltips are included as required.
+        - Key Metrics Cards (Inform): A grid of HTML/CSS cards for scannable key statistics. Goal: Inform. Justification: Breaks down important data into digestible pieces.
+        - Research Framework Diagram (Organize): A flowchart created with structured HTML/CSS and Tailwind to explain the methodological approach. Goal: Organize/Explain Process. Justification: Visually clarifies the relationship between theoretical lenses, which is superior to text alone. Confirms NO SVG/Mermaid.
+        - Consequences Section (Organize): A card-based layout to detail impacts on Equity, Efficiency, and Governance. Goal: Organize. Justification: Structures the text-heavy 'implications' section for better readability.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F8F9FA;
+            color: #343A40;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .nav-active {
+            color: #FFFFFF;
+            background-color: #0d9488;
+        }
+        .flow-arrow {
+            font-size: 2.5rem;
+            color: #6c757d;
+            line-height: 1;
+        }
+        .kpi-card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="navbar" class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-teal-700">Análisis del Gasto en Salud</h1>
+            <nav class="hidden md:flex space-x-2">
+                <a href="#paradoja" class="nav-link font-semibold text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-4 py-2 rounded-full transition-colors duration-300">La Paradoja</a>
+                <a href="#datos" class="nav-link font-semibold text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-4 py-2 rounded-full transition-colors duration-300">Datos Clave</a>
+                <a href="#consecuencias" class="nav-link font-semibold text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-4 py-2 rounded-full transition-colors duration-300">Consecuencias</a>
+                <a href="#investigacion" class="nav-link font-semibold text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-4 py-2 rounded-full transition-colors duration-300">La Investigación</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="paradoja" class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-br from-teal-50 to-cyan-50">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">
+                    La Paradoja del Gasto en Salud en Ecuador
+                </h2>
+                <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">
+                    A pesar de una notable inversión pública en salud, los ciudadanos ecuatorianos enfrentan una de las cargas de gasto de bolsillo más altas de la región. Esta infografía explora esta contradicción, sus datos, sus consecuencias y la investigación necesaria para responder a la pregunta clave:
+                </p>
+                <p class="mt-4 text-3xl md:text-4xl font-bold text-teal-600 italic">"¿Quién recibe el dinero?"</p>
+                
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="kpi-card text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="text-4xl">📈</span>
+                            <h3 class="text-2xl font-bold text-gray-800">Alto Gasto Público</h3>
+                        </div>
+                        <p class="text-5xl font-extrabold text-teal-600 mt-4">13.3%</p>
+                        <p class="mt-2 text-gray-500 font-semibold">del gasto público total se destinó a salud en 2021, un esfuerzo notable en la región.</p>
+                    </div>
+                    <div class="kpi-card text-left">
+                         <div class="flex items-center gap-4">
+                            <span class="text-4xl">💸</span>
+                            <h3 class="text-2xl font-bold text-gray-800">Alta Carga Privada</h3>
+                        </div>
+                        <p class="text-5xl font-extrabold text-rose-500 mt-4">32.8%</p>
+                        <p class="mt-2 text-gray-500 font-semibold">del gasto corriente en salud fue cubierto directamente por los hogares en 2023.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="datos" class="py-20 md:py-28">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Ecuador en el Contexto Internacional</h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        Para entender la dimensión del problema, es crucial comparar. El siguiente gráfico muestra cómo la carga del gasto de bolsillo en Ecuador supera con creces los promedios de América Latina y el Caribe y de los países de la OCDE, evidenciando una falla en la protección financiera a pesar del esfuerzo fiscal.
+                    </p>
+                </div>
+                <div class="mt-12">
+                    <div class="chart-container">
+                        <canvas id="oopChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="consecuencias" class="py-20 md:py-28 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Las Consecuencias de la Paradoja</h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        Esta desconexión entre el gasto público y la carga ciudadana no es solo una estadística. Genera profundos impactos negativos en la equidad, la eficiencia y la gobernanza del sistema de salud, alejando al país del objetivo de Cobertura Universal de Salud.
+                    </p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="kpi-card">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">Impacto en la Equidad</h3>
+                        <p class="text-gray-600">El alto gasto de bolsillo actúa como una barrera de acceso, afectando más a los pobres. Un <span class="font-bold text-rose-600">9% de la población</span> incurre en gastos catastróficos, empujando a miles de familias a la pobreza por motivos de salud.</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">Cuestiona la Eficiencia</h3>
+                        <p class="text-gray-600">Plantea dudas sobre si la inversión pública genera el máximo valor. La baja satisfacción ciudadana <span class="font-bold text-amber-600">(37%)</span> puede ser un síntoma de ineficiencias, mala asignación o duplicidades en un sistema fragmentado.</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">Debilita la Gobernanza</h3>
+                        <p class="text-gray-600">Un gasto de bolsillo elevado puede ser signo de fallas en la gobernanza: falta de transparencia, rendición de cuentas débil o captura de rentas. Rastrear el dinero es clave para fortalecerla.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="investigacion" class="py-20 md:py-28">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Un Enfoque Integrado para Encontrar Respuestas</h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        Para desentrañar la paradoja, se necesita más que un simple análisis contable. La investigación propuesta combina tres lentes analíticos potentes para obtener una visión completa, respondiendo no solo a dónde va el dinero, sino cómo y por qué.
+                    </p>
+                </div>
+                <div class="mt-16 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                    <div class="kpi-card text-center w-full md:w-1/4">
+                        <h4 class="text-xl font-bold text-teal-700">Análisis de Flujo de Fondos</h4>
+                        <p class="mt-2 text-gray-500">Mapea <span class="font-semibold">dónde</span> va el dinero.</p>
+                    </div>
+                    <div class="flow-arrow hidden md:block">&rarr;</div>
+                    <div class="flow-arrow block md:hidden transform rotate-90">&darr;</div>
+                    <div class="kpi-card text-center w-full md:w-1/4">
+                        <h4 class="text-xl font-bold text-teal-700">Ciencia de la Implementación</h4>
+                        <p class="mt-2 text-gray-500">Explica <span class="font-semibold">cómo</span> se ejecutan (o no) las políticas.</p>
+                    </div>
+                     <div class="flow-arrow hidden md:block">&rarr;</div>
+                     <div class="flow-arrow block md:hidden transform rotate-90">&darr;</div>
+                     <div class="kpi-card text-center w-full md:w-1/4">
+                        <h4 class="text-xl font-bold text-teal-700">Economía Política de la Salud</h4>
+                        <p class="mt-2 text-gray-500">Revela el <span class="font-semibold">porqué</span>, analizando poder e intereses.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg">Esta infografía se basa en el esquema de investigación "Who Gets the Money? An Implementation Research Study of Ecuador's Health Financing Paradox".</p>
+            <p class="mt-2 text-gray-400">El objetivo final es generar evidencia para fortalecer el sistema de salud ecuatoriano.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapLabel = (label) => {
+                const maxLength = 16;
+                if (label.length <= maxLength) return label;
+                
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+
+                words.forEach(word => {
+                    if ((currentLine + word).length > maxLength) {
+                        lines.push(currentLine.trim());
+                        currentLine = '';
+                    }
+                    currentLine += word + ' ';
+                });
+                lines.push(currentLine.trim());
+                return lines;
+            };
+
+            const ctx = document.getElementById('oopChart').getContext('2d');
+            const oopChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Ecuador', 
+                        wrapLabel('América Latina y el Caribe'), 
+                        'Países OCDE'
+                    ],
+                    datasets: [{
+                        label: 'Gasto de Bolsillo (% del Gasto Corriente en Salud)',
+                        data: [32.8, 28, 20],
+                        backgroundColor: [
+                            'rgba(220, 53, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(13, 148, 136, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(13, 148, 136, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '% del Gasto Corriente en Salud',
+                                font: { size: 14, weight: 'bold' },
+                                color: '#495057'
+                            },
+                            grid: {
+                                color: '#dee2e6',
+                                drawBorder: false
+                            }
+                        },
+                        y: {
+                           grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Comparación Internacional del Gasto de Bolsillo',
+                            font: { size: 18, weight: 'bold' },
+                            color: '#343A40',
+                            padding: {
+                                bottom: 20
+                            }
+                        },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: '#212529',
+                            titleFont: { size: 16 },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                      return label.join(' ');
+                                    } else {
+                                      return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const sections = document.querySelectorAll('main section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const navbar = document.getElementById('navbar');
+            
+            let lastScrollY = window.scrollY;
+            window.addEventListener('scroll', () => {
+                if (lastScrollY < window.scrollY) {
+                   navbar.classList.add('-top-20');
+                } else {
+                   navbar.classList.remove('-top-20');
+                }
+                lastScrollY = window.scrollY;
+                
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('nav-active', 'text-teal-700', 'bg-teal-100');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('nav-active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
