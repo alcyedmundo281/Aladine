@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Ultrasonido Cardiopulmonar en el Punto de Atención</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F0F4F8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .flow-chart-item {
+            border: 2px solid #003F5C;
+            background-color: #FFFFFF;
+            color: #003F5C;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .flow-chart-arrow {
+            font-size: 2rem;
+            color: #FFA600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#003F5C] mb-2">Ultrasonido Cardiopulmonar en el Punto de Atención (POCUS)</h1>
+            <p class="text-xl md:text-2xl text-[#7A5195]">El Quinto Pilar del Examen Físico: Revolucionando la Medicina</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row items-center justify-around">
+                <div class="text-center mb-4 md:mb-0">
+                    <p class="text-6xl font-bold text-[#FFA600]">30</p>
+                    <p class="text-lg text-[#003F5C]">Capítulos Expertos</p>
+                </div>
+                 <div class="text-center mb-4 md:mb-0">
+                    <p class="text-6xl font-bold text-[#EF5675]">&gt;300</p>
+                    <p class="text-lg text-[#003F5C]">Figuras Detalladas</p>
+                </div>
+                 <div class="text-center">
+                    <p class="text-6xl font-bold text-[#7A5195]">&gt;100</p>
+                    <p class="text-lg text-[#003F5C]">Vídeos Instructivos</p>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-[#003F5C] mb-4">¿Cómo Funciona el POCUS?</h2>
+                <p class="mb-6 text-gray-600">POCUS utiliza ondas de ultrasonido para crear imágenes en tiempo real de los órganos internos. Es una herramienta no invasiva que transforma la toma de decisiones clínicas al llevar el diagnóstico directamente a la cabecera del paciente.</p>
+                <div class="grid grid-cols-2 sm:grid-cols-5 items-center gap-2">
+                    <div class="flow-chart-item">Sonda</div>
+                    <div class="flow-chart-arrow">→</div>
+                    <div class="flow-chart-item">Ondas de Ultrasonido</div>
+                    <div class="flow-chart-arrow">→</div>
+                    <div class="flow-chart-item col-span-2 sm:col-span-1">Imagen en Pantalla</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-[#003F5C] mb-4">Fundamentos del Aprendizaje</h2>
+                 <p class="mb-4 text-gray-600">La formación en POCUS se basa en principios fundamentales, desde la física del ultrasonido hasta las técnicas de ecocardiografía y ultrasonido pulmonar.</p>
+                <div class="chart-container h-64 max-h-72">
+                    <canvas id="foundationsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-[#003F5C] mb-4">Diagnóstico de Insuficiencia Cardíaca Aguda</h2>
+                <p class="mb-4 text-gray-600">POCUS es crucial para el diagnóstico rápido de la insuficiencia cardíaca aguda (ICA). El ultrasonido pulmonar (LUS) busca signos de edema, como las "líneas B", que son un indicador clave.</p>
+                <div class="chart-container">
+                    <canvas id="heartFailureChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-[#003F5C] mb-4">Evaluación de la Embolia Pulmonar</h2>
+                <p class="mb-4 text-gray-600">Aunque no diagnostica directamente la embolia pulmonar (EP), POCUS revela signos indirectos cruciales como la sobrecarga del ventrículo derecho (VD), ayudando a estratificar el riesgo del paciente.</p>
+                <div class="text-left text-lg space-y-3">
+                    <p class="flex items-center"><span class="text-2xl text-[#FFA600] mr-3">●</span>Dilatación del Ventrículo Derecho</p>
+                    <p class="flex items-center"><span class="text-2xl text-[#FFA600] mr-3">●</span>Hipocinesia de la pared libre del VD</p>
+                    <p class="flex items-center"><span class="text-2xl text-[#FFA600] mr-3">●</span>Signo de McConnell</p>
+                    <p class="flex items-center"><span class="text-2xl text-[#FFA600] mr-3">●</span>Trombosis Venosa Profunda (TVP)</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-[#003F5C] mb-4">Precisión Diagnóstica del Ultrasonido Pulmonar</h2>
+                 <p class="mb-4 text-gray-600">LUS demuestra una alta sensibilidad y especificidad para condiciones pleurales comunes, superando a menudo a la radiografía de tórax en el punto de atención.</p>
+                <div class="chart-container">
+                    <canvas id="lusAccuracyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-center text-[#003F5C] mb-4">Monitorización y Guía de Intervenciones</h2>
+                <p class="text-center mb-6 text-gray-600">Más allá del diagnóstico, POCUS es vital para la monitorización continua de la respuesta a la terapia y para guiar procedimientos de forma segura.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-lg text-[#003F5C]">Respuesta a Fluidos</h3>
+                        <p class="text-gray-600">Evalúa cambios en el VTI del TSVI o la VCI para predecir si un paciente se beneficiará de la administración de fluidos.</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-lg text-[#003F5C]">Función Diastólica</h3>
+                        <p class="text-gray-600">Monitoriza las presiones de llenado del ventrículo izquierdo para guiar la terapia diurética en la insuficiencia cardíaca.</p>
+                    </div>
+                     <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-lg text-[#003F5C]">Toracocentesis Guiada</h3>
+                        <p class="text-gray-600">Mejora drásticamente la seguridad y el éxito del drenaje de derrames pleurales, minimizando los riesgos de neumotórax.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 bg-white rounded-lg shadow-lg p-6">
+                 <h2 class="text-2xl font-bold text-center text-[#003F5C] mb-4">El Futuro es Ahora: Formación y Tecnología</h2>
+                 <p class="text-center mb-6 max-w-3xl mx-auto text-gray-600">La adopción generalizada de POCUS depende de una formación estandarizada y de la integración de nuevas tecnologías como la Inteligencia Artificial, que promete automatizar la adquisición e interpretación de imágenes.</p>
+                <div class="relative pt-6">
+                    <div class="absolute left-0 top-1/2 w-full h-1 bg-[#7A5195] -translate-y-1/2"></div>
+                    <div class="relative flex justify-between">
+                        <div class="text-center w-1/3">
+                            <div class="mx-auto w-6 h-6 rounded-full bg-[#FFA600] border-4 border-white shadow"></div>
+                            <p class="mt-2 font-bold text-[#003F5C]">Pasado</p>
+                            <p class="text-sm text-gray-600">Examen Físico Tradicional</p>
+                        </div>
+                        <div class="text-center w-1/3">
+                             <div class="mx-auto w-6 h-6 rounded-full bg-[#FFA600] border-4 border-white shadow"></div>
+                            <p class="mt-2 font-bold text-[#003F5C]">Presente</p>
+                            <p class="text-sm text-gray-600">POCUS Integrado por Expertos</p>
+                        </div>
+                        <div class="text-center w-1/3">
+                            <div class="mx-auto w-6 h-6 rounded-full bg-[#FFA600] border-4 border-white shadow"></div>
+                            <p class="mt-2 font-bold text-[#003F5C]">Futuro</p>
+                            <p class="text-sm text-gray-600">POCUS Asistido por IA para Todos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>Infografía generada a partir del análisis de "Cardiopulmonary Point of Care Ultrasound" (ISBN 978-3-031-29472-3).</p>
+            <p>Este es un resumen visual y no reemplaza el juicio clínico ni la formación completa.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        function wrapLabels(label, maxWidth) {
+            if (typeof label !== 'string' || label.length <= maxWidth) {
+                return label;
+            }
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + ' ' + word).trim().length > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            });
+            if (currentLine.length > 0) {
+                lines.push(currentLine);
+            }
+            return lines;
+        }
+
+        const customTooltip = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    }
+                    return label;
+                }
+            }
+        };
+
+        const palette = {
+            blue: '#003F5C',
+            purple: '#7A5195',
+            pink: '#EF5675',
+            orange: '#FFA600'
+        };
+
+        const foundationsCtx = document.getElementById('foundationsChart').getContext('2d');
+        new Chart(foundationsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Física y Artefactos', 'Ecocardiografía (TTE/TEE)', 'Ultrasonido Pulmonar y Diafragmático'],
+                datasets: [{
+                    label: 'Capítulos por Área Fundamental',
+                    data: [3, 2, 1],
+                    backgroundColor: [palette.blue, palette.purple, palette.orange],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: customTooltip
+                }
+            }
+        });
+
+        const heartFailureCtx = document.getElementById('heartFailureChart').getContext('2d');
+        new Chart(heartFailureCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Líneas B (Edema)', 'Derrame Pleural', 'Función VI Reducida', 'VCI Dilatada'],
+                datasets: [{
+                    label: 'Frecuencia de Hallazgos POCUS en ICA (%)',
+                    data: [94, 62, 58, 70],
+                    backgroundColor: palette.pink,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                     legend: {
+                        display: false
+                    },
+                    tooltip: customTooltip
+                }
+            }
+        });
+
+        const lusAccuracyCtx = document.getElementById('lusAccuracyChart').getContext('2d');
+        const processedLabels = [
+            'Derrame Pleural', 
+            'Síndrome Alveolo-Intersticial', 
+            'Neumotórax', 
+            'Consolidación Pulmonar'
+        ].map(label => wrapLabels(label, 16));
+
+        new Chart(lusAccuracyCtx, {
+            type: 'radar',
+            data: {
+                labels: processedLabels,
+                datasets: [{
+                    label: 'Sensibilidad (%)',
+                    data: [93, 97, 95, 93],
+                    backgroundColor: 'rgba(239, 86, 117, 0.2)',
+                    borderColor: palette.pink,
+                    pointBackgroundColor: palette.pink
+                }, {
+                    label: 'Especificidad (%)',
+                    data: [96, 95, 99, 94],
+                    backgroundColor: 'rgba(0, 63, 92, 0.2)',
+                    borderColor: palette.blue,
+                    pointBackgroundColor: palette.blue
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                 plugins: {
+                    tooltip: customTooltip,
+                    legend: {
+                         position: 'bottom'
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        min: 70,
+                        max: 100,
+                        pointLabels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
