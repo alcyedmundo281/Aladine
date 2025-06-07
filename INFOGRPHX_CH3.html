@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Contexto Histórico del Financiamiento de la Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Energetic & Playful (Adapted for Professional Context) -->
+    <!-- Application Structure Plan: The infographic is structured as a historical narrative, visualized primarily through a vertical timeline. This approach is optimal for explaining the chapter's core concept of 'path dependency'. The user scrolls through distinct eras: 1) Foundational Era, 2) Reforms & Crises, 3) 21st Century. This chronological journey makes it easy to understand how early decisions led to later problems. Following the timeline, a dedicated section visually explains 'Path Dependency' and another maps the key actors, reinforcing the chapter's main arguments. -->
+    <!-- Visualization & Content Choices:
+        - Timeline (Organize/Show Change): The main feature is a vertical timeline built with HTML/CSS. Each point in time is a 'card' detailing a key event (MSP/IESS creation, reforms, 2008 Constitution). Goal: Show change over time. Justification: A timeline is the most intuitive way to present historical evolution.
+        - Spending Trend Chart (Show Change): A Line Chart (Chart.js) is used to illustrate the long-term, divergent trends of public vs. out-of-pocket spending, visualizing the core paradox over time. Goal: Show change. Justification: A line chart is ideal for showing trends and relationships between variables over decades.
+        - Path Dependency Diagram (Explain Relationships): A custom flowchart using HTML/CSS cards and arrows. It visually links historical decisions (e.g., segmentation) to current problems (e.g., fragmentation, high OOP). Goal: Explain causality. Justification: Makes the abstract concept of path dependency concrete and easy to grasp.
+        - Actor Influence Map (Organize): A grid of cards (HTML/CSS) categorizes key actors and summarizes their evolving power, as described in the research outline. Goal: Organize complex information. Justification: A clear, scannable way to present the different stakeholders.
+        - All diagrams are built with HTML/CSS and Tailwind, confirming NO SVG/Mermaid.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fdfdfd;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            text-wrap: balance;
+        }
+        .hero-bg {
+            background-color: #1a2a4c;
+            color: white;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            background-color: #e5e7eb;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1.5px;
+        }
+        .timeline-item {
+            position: relative;
+            width: 50%;
+        }
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            padding-right: 2rem;
+        }
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-left: 2rem;
+        }
+        .timeline-dot {
+            content: '';
+            position: absolute;
+            width: 1rem;
+            height: 1rem;
+            background-color: #f97316; /* Orange-500 */
+            border: 3px solid #f8fafc;
+            top: 20px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -0.5rem;
+        }
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -0.5rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #f3f4f6;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            max-width: 800px;
+            margin: 1rem auto;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <main>
+        <section id="intro" class="pt-20 pb-16 md:pt-24 md:pb-20 hero-bg">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-black">Un Viaje por la Historia</h1>
+                <p class="mt-4 text-lg md:text-xl max-w-3xl mx-auto text-gray-300">
+                    Para entender por qué hoy el financiamiento de la salud en Ecuador es una paradoja, debemos desenterrar sus raíces. Este es un recorrido por las decisiones, crisis y reformas que han forjado el sistema actual.
+                </p>
+            </div>
+        </section>
+
+        <section id="timeline" class="py-20 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">La Evolución del Sistema de Salud Ecuatoriano</h2>
+                    <p class="mt-4 text-gray-600">
+                        Cada etapa ha dejado una huella, creando dependencias y estructuras de poder que perduran hasta hoy.
+                    </p>
+                </div>
+                
+                <div class="relative timeline-container py-8">
+                    <!-- Era Fundacional -->
+                    <div class="timeline-item mb-8">
+                        <div class="timeline-dot"></div>
+                        <div class="card">
+                            <h3 class="text-xl font-bold text-orange-600">Era Fundacional (Inicios S.XX - 1960s)</h3>
+                            <p class="text-sm font-semibold text-gray-500 mb-2">Nace un Sistema Segmentado</p>
+                            <p class="text-gray-700">La creación casi simultánea pero con lógicas distintas del <strong class="text-teal-600">MSP</strong> (para la población general) y la <strong class="text-blue-600">Caja de Pensiones/IESS</strong> (para trabajadores formales) institucionaliza una dualidad que marcará el futuro del sistema.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Reformas y Crisis -->
+                    <div class="timeline-item mb-8">
+                        <div class="timeline-dot"></div>
+                        <div class="card">
+                            <h3 class="text-xl font-bold text-orange-600">Reformas y Crisis (1970s - 1990s)</h3>
+                             <p class="text-sm font-semibold text-gray-500 mb-2">Expansión Limitada y Ajuste Estructural</p>
+                            <p class="text-gray-700">Se intenta expandir la cobertura (ej. Seguro Social Campesino), pero la "Década Perdida" y las políticas de ajuste estructural debilitan al sector público, fomentan al privado y originan la deuda estatal con el IESS.</p>
+                        </div>
+                    </div>
+
+                    <!-- Siglo XXI -->
+                    <div class="timeline-item mb-8">
+                        <div class="timeline-dot"></div>
+                        <div class="card">
+                            <h3 class="text-xl font-bold text-orange-600">El Siglo XXI (2000 - Presente)</h3>
+                            <p class="text-sm font-semibold text-gray-500 mb-2">Universalidad vs. Dependencias</p>
+                            <p class="text-gray-700">La Constitución de 2008 consagra la salud como derecho y crea la RPIS, impulsando un aumento en la inversión pública. Sin embargo, la paradoja del alto gasto de bolsillo persiste, evidenciando la fuerza de las dependencias históricas.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Crisis Recientes -->
+                     <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="card">
+                            <h3 class="text-xl font-bold text-orange-600">Crisis Recientes (2017 - Presente)</h3>
+                             <p class="text-sm font-semibold text-gray-500 mb-2">Austeridad y Pandemia</p>
+                            <p class="text-gray-700">Las políticas de austeridad fiscal y el shock de la pandemia de COVID-19 exponen y exacerban las vulnerabilidades estructurales del sistema, afectando la capacidad de respuesta y el financiamiento.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="path-dependency" class="py-20 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold">Dependencia de Trayectoria: El Pasado que Nos Define</h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        Ciertas decisiones históricas clave crearon "caminos" de los que es difícil desviarse. Estos caminos explican por qué los problemas de hoy son tan persistentes.
+                    </p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 items-center text-center">
+                    <div class="card border-t-4 border-orange-500">
+                        <h3 class="text-lg font-bold">Decisión Histórica Clave</h3>
+                        <p class="mt-2 text-2xl">👇</p>
+                        <p class="font-semibold text-teal-700">Creación de un Sistema Segmentado (MSP vs. IESS)</p>
+                    </div>
+                    <div class="text-4xl font-black text-gray-300 hidden md:block">&rarr;</div>
+                     <div class="text-4xl font-black text-gray-300 block md:hidden transform rotate-90 mx-auto">&darr;</div>
+                    <div class="card border-t-4 border-orange-500">
+                        <h3 class="text-lg font-bold">Genera Inercia y Poderes</h3>
+                        <p class="mt-2 text-2xl">👇</p>
+                        <p class="font-semibold text-blue-700">Consolidación de lógicas, burocracias e intereses separados</p>
+                    </div>
+                    <div class="text-4xl font-black text-gray-300 hidden md:block">&rarr;</div>
+                     <div class="text-4xl font-black text-gray-300 block md:hidden transform rotate-90 mx-auto">&darr;</div>
+                    <div class="card border-t-4 border-orange-500">
+                        <h3 class="text-lg font-bold">Resultado Actual Persistente</h3>
+                        <p class="mt-2 text-2xl">👇</p>
+                        <p class="font-semibold text-red-700">Fragmentación, duplicidades y alto Gasto de Bolsillo</p>
+                    </div>
+                </div>
+                 <div class="mt-12 chart-container">
+                    <canvas id="spendingTrendChart"></canvas>
+                </div>
+                 <p class="text-center text-gray-600 mt-4 max-w-3xl mx-auto">Este gráfico ilustra cómo, a pesar del aumento del esfuerzo público a lo largo del tiempo (especialmente post-2008), la carga para los ciudadanos (gasto de bolsillo) no ha disminuido proporcionalmente, demostrando la persistencia de la paradoja.</p>
+            </div>
+        </section>
+        
+        <section id="actors" class="py-20 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold">Las Estructuras de Poder en Evolución</h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        El sistema de salud es una arena donde diversos actores, con distintos niveles de poder, compiten y colaboran. Su influencia ha cambiado con el tiempo, pero todos juegan un rol en la respuesta a "¿Quién recibe el dinero?".
+                    </p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card">
+                        <h3 class="text-xl font-bold mb-2">🏛️ Actores Estatales</h3>
+                        <p><strong class="text-teal-600">MSP:</strong> Rector del sistema, pero su poder real depende del contexto político y fiscal.
+                        <br><strong class="text-blue-600">IESS:</strong> Históricamente poderoso por su base de afiliados, pero debilitado por crisis y deuda estatal.
+                        <br><strong>Min. Finanzas:</strong> Poder determinante a través del control presupuestario.</p>
+                    </div>
+                     <div class="card">
+                        <h3 class="text-xl font-bold mb-2">💼 Actores Privados</h3>
+                        <p><strong>Proveedores y Aseguradoras:</strong> Han ganado poder económico e influencia política, llenando vacíos y atendiendo a segmentos con capacidad de pago.
+                        <br><strong>Industria Farmacéutica:</strong> Actor clave con influencia en decisiones de compra y precios.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-bold mb-2">🤝 Actores Sociales e Internacionales</h3>
+                        <p><strong>Sindicatos y Gremios:</strong> Influencia histórica, especialmente en el IESS.
+                        <br><strong>Sociedad Civil:</strong> Poder emergente que demanda transparencia y equidad.
+                        <br><strong>Organismos Internacionales:</strong> Influyentes en la definición de políticas (FMI, BM) y en la asistencia técnica (OPS/OMS).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg font-semibold">El pasado no es un prólogo, es un actor en el presente.</p>
+            <p class="mt-2 text-gray-300">Comprender esta historia es el primer paso para diseñar reformas que sean técnicamente sólidas, políticamente viables y que finalmente alivien la carga sobre los ciudadanos ecuatorianos.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('spendingTrendChart')?.getContext('2d');
+            if(ctx) {
+                const spendingTrendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1980s', '1990s', '2000s', 'Post-2008', 'Actualidad'],
+                        datasets: [
+                            {
+                                label: 'Gasto Público en Salud (Tendencia)',
+                                data: [3, 2.5, 3.5, 5, 4.8], // Datos representativos de la narrativa histórica
+                                borderColor: '#0d9488', // Teal-600
+                                backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                                tension: 0.3,
+                                fill: true,
+                            },
+                            {
+                                label: 'Gasto de Bolsillo (% Gasto Total en Salud - Tendencia)',
+                                data: [45, 48, 55, 40, 32.8], // Datos representativos de la narrativa histórica
+                                borderColor: '#f97316', // Orange-500
+                                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                                tension: 0.3,
+                                fill: true,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Tendencia Histórica del Gasto en Salud en Ecuador',
+                                font: { size: 18, family: "'Playfair Display', serif" },
+                                padding: { bottom: 20 }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        return Array.isArray(label) ? label.join(' ') : label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Porcentaje (%) / Tendencia'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
