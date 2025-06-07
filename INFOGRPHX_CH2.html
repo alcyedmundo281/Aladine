@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Marco Teórico para el Análisis del Financiamiento de la Salud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Application Structure Plan: The infographic is structured as a logical argument. It begins by establishing a problem (limitations of old models), proposes a solution (an integrated framework), deconstructs the solution into its core components (Implementation Science and Political Economy Analysis), explains each component in detail using visual aids, and finally, synthesizes them into a cohesive hybrid model. This narrative structure is ideal for explaining a complex theoretical framework, guiding the user from the 'why' to the 'what' and 'how'. -->
+    <!-- Visualization & Content Choices:
+        - Traditional vs. Integrated Framework (Compare/Organize): A side-by-side comparison diagram using HTML/CSS to highlight the "implementation gap" that traditional models fail to explain. Goal: Compare. Justification: Visually establishes the core problem and the need for a new approach.
+        - Implementation Science Models (Organize/Inform): An interactive tabbed section (HTML/CSS/JS) to present the IRLM, CFIR, and Proctor's Outcomes. Each tab contains a custom flowchart or diagram built with HTML/CSS to make the abstract models tangible. Goal: Organize complex information. Justification: Tabs prevent cognitive overload by presenting one model at a time.
+        - Dahl's Power Analysis (Organize/Inform): A multi-part diagram using HTML/CSS cards and arrows to break down Dahl's methodology, the "faces of power," and the key actors/decision arenas in Ecuador. Goal: Inform. Justification: Deconstructs a complex political theory into understandable visual components.
+        - Hybrid Model Synergy (Explain Relationships): The centerpiece diagram, a flowchart built with HTML/CSS, showing how the Political Economy Analysis (the 'why') informs the determinants and mechanisms within the Implementation Research Logic Model (the 'how'). Goal: Synthesize & Explain. Justification: This is the core thesis of the chapter, and a visual model is the clearest way to show the synergy.
+        - All diagrams are built with HTML/CSS and Tailwind, confirming NO SVG/Mermaid.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #F4F4F4;
+            color: #1f2937; /* Default text color set to a dark gray */
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Roboto Slab', serif;
+        }
+        .text-balance { text-wrap: balance; }
+        .hero-bg {
+            background-color: #0B4F6C;
+            background-image: linear-gradient(315deg, #0B4F6C 0%, #01BAEF 74%);
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            color: #0B4F6C;
+            border-bottom-color: #0B4F6C;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #75C5F0;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/90 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 shadow-md">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-2xl font-bold text-gray-800">Capítulo 2: Marco Teórico</h1>
+        </div>
+    </header>
+
+    <main>
+        <section id="intro" class="pt-24 pb-16 md:pt-32 md:pb-20 hero-bg text-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-balance">
+                    Un Nuevo Lente para Desentrañar la Paradoja
+                </h2>
+                <p class="mt-6 text-lg md:text-xl text-balance max-w-4xl mx-auto text-gray-200">
+                    Los modelos tradicionales de análisis del financiamiento en salud son insuficientes. Explican el "qué", pero fallan en el "cómo" y el "porqué". Para entender por qué un alto gasto público no reduce la carga para los ciudadanos, necesitamos un marco que integre la implementación y el poder.
+                </p>
+            </div>
+        </section>
+
+        <section id="framework" class="py-20 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-balance">El Marco Integrado: Uniendo Implementación y Poder</h2>
+                    <p class="mt-4 text-lg text-gray-800 text-balance">
+                        Esta investigación propone un modelo híbrido que combina dos campos potentes: la Ciencia de la Implementación (CI), para entender la brecha entre política y práctica, y el Análisis de Economía Política (AEP), para desvelar cómo el poder y los intereses moldean la realidad.
+                    </p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                    <div class="card border-l-4 border-cyan-500">
+                        <h3 class="text-2xl font-bold text-[#01BAEF]">Ciencia de la Implementación (CI)</h3>
+                        <p class="mt-2 text-lg font-semibold text-gray-800">El "Cómo"</p>
+                        <p class="mt-4 text-gray-800">Proporciona marcos para analizar sistemáticamente las barreras y facilitadores que determinan si una política de financiamiento se ejecuta como fue diseñada. Nos ayuda a entender por qué las buenas intenciones a menudo no se materializan en resultados tangibles.</p>
+                    </div>
+                     <div class="card border-l-4 border-blue-600">
+                        <h3 class="text-2xl font-bold text-[#276FBF]">Análisis de Economía Política (AEP)</h3>
+                        <p class="mt-2 text-lg font-semibold text-gray-800">El "Porqué"</p>
+                        <p class="mt-4 text-gray-800">Examina cómo las dinámicas de poder, los intereses de los actores y las estructuras institucionales determinan qué políticas se eligen y cómo se distribuyen los recursos. Explica las fuerzas ocultas que mantienen el status quo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="implementation-science" class="py-20 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-balance">Pilar 1: La Ciencia de la Implementación</h2>
+                     <p class="mt-4 text-lg text-gray-800 text-balance">
+                        Utilizamos modelos de CI establecidos para diseccionar el proceso de implementación y medir su éxito (o fracaso) de manera rigurosa.
+                    </p>
+                </div>
+
+                <div class="mt-12 max-w-5xl mx-auto">
+                    <div class="bg-white rounded-lg shadow-lg border">
+                        <div id="tabs-container" class="flex border-b">
+                            <button class="tab-btn flex-1 active" data-tab="irlm">IRLM</button>
+                            <button class="tab-btn flex-1" data-tab="cfir">CFIR</button>
+                            <button class="tab-btn flex-1" data-tab="proctor">Resultados de Proctor</button>
+                        </div>
+                        <div class="p-6 md:p-8">
+                            <div id="irlm" class="tab-content active">
+                                <h3 class="text-2xl font-bold text-gray-800">Modelo Lógico de Investigación de Implementación (IRLM)</h3>
+                                <p class="mt-2 text-gray-800">Actúa como el esqueleto de nuestra investigación, organizando cómo los determinantes (incluido el poder) llevan a estrategias, que activan mecanismos y producen resultados medibles.</p>
+                                <div class="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center">
+                                    <div class="card p-4 flex-1">Determinantes</div>
+                                    <div class="flow-arrow">&rarr;</div>
+                                    <div class="card p-4 flex-1">Estrategias de Implementación</div>
+                                    <div class="flow-arrow">&rarr;</div>
+                                    <div class="card p-4 flex-1">Mecanismos</div>
+                                    <div class="flow-arrow">&rarr;</div>
+                                    <div class="card p-4 flex-1">Resultados</div>
+                                </div>
+                            </div>
+                            <div id="cfir" class="tab-content">
+                                <h3 class="text-2xl font-bold text-gray-800">Marco Consolidado para la Investigación de Implementación (CFIR)</h3>
+                                <p class="mt-2 text-gray-800">Nos permite hacer un diagnóstico exhaustivo de las barreras y facilitadores en cinco dominios clave que influyen en la implementación de las políticas de financiamiento.</p>
+                                <div class="mt-6 grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+                                    <div class="card p-3">Intervención</div>
+                                    <div class="card p-3">Contexto Externo</div>
+                                    <div class="card p-3">Contexto Interno</div>
+                                    <div class="card p-3">Individuos</div>
+                                    <div class="card p-3 col-span-2 lg:col-span-1">Proceso</div>
+                                </div>
+                            </div>
+                            <div id="proctor" class="tab-content">
+                                 <h3 class="text-2xl font-bold text-gray-800">Marco de Resultados de Proctor et al.</h3>
+                                <p class="mt-2 text-gray-800">Define 8 resultados medibles para evaluar el éxito de la implementación, mucho antes de poder ver el impacto final en la salud de la población. Nos dice si la política fue aceptada, adoptada, si se ejecutó con fidelidad, etc.</p>
+                                <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                    <div class="card p-3 text-center">Aceptabilidad</div>
+                                    <div class="card p-3 text-center">Adopción</div>
+                                    <div class="card p-3 text-center">Adecuación</div>
+                                    <div class="card p-3 text-center">Factibilidad</div>
+                                    <div class="card p-3 text-center">Fidelidad</div>
+                                    <div class="card p-3 text-center">Costo</div>
+                                    <div class="card p-3 text-center">Penetración</div>
+                                    <div class="card p-3 text-center">Sostenibilidad</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+         <section id="pea" class="py-20 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-balance">Pilar 2: El Análisis de Economía Política y el Legado de Dahl</h2>
+                     <p class="mt-4 text-lg text-gray-800 text-balance">
+                        Adaptamos la metodología de Robert Dahl de "¿Quién Gobierna?" para identificar sistemáticamente quién tiene el poder de influir en las decisiones financieras clave en el sistema de salud ecuatoriano.
+                    </p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="card">
+                        <h3 class="text-xl font-bold mb-3">1. Identificar Arenas de Decisión</h3>
+                        <p class="text-gray-800">Nos enfocamos en procesos cruciales: aprobación del presupuesto de salud, políticas de inversión del IESS, inclusión de medicamentos, etc.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-bold mb-3">2. Mapear Actores y sus Recursos</h3>
+                        <p class="text-gray-800">Identificamos a todos los involucrados (gobierno, industria, gremios, sociedad civil) y analizamos sus "recursos de poder" (autoridad, dinero, información, conexiones).</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-bold mb-3">3. Analizar la Influencia Real</h3>
+                        <p class="text-gray-800">Mediante entrevistas y análisis de documentos, determinamos quién prevalece en las decisiones y por qué, revelando patrones de poder concentrado o disperso.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="synergy" class="py-20 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-balance">El Modelo Híbrido: Conectando Poder e Implementación</h2>
+                     <p class="mt-4 text-lg text-gray-800 text-balance">
+                        Aquí radica la innovación. No estudiamos el poder y la implementación por separado. Los integramos en un único modelo para obtener una explicación causal completa.
+                    </p>
+                </div>
+                <div class="mt-12 card max-w-5xl mx-auto p-8">
+                     <h3 class="text-2xl font-bold text-center">Cómo Funciona el Modelo Integrado</h3>
+                     <div class="mt-8 flex flex-col md:flex-row items-center text-center gap-4">
+                        <div class="flex-shrink-0 card border-blue-600 border-2 p-4">
+                            <h4 class="font-bold">Análisis de Poder (AEP)</h4>
+                            <p class="text-sm">Identifica los <span class="font-bold">intereses y recursos de poder</span> de los actores.</p>
+                        </div>
+                        <div class="flow-arrow transform md:rotate-0 rotate-90">&darr;</div>
+                        <div class="flex-1 card bg-gray-100 p-4">
+                            <h4 class="font-bold">INFORMA LOS DETERMINANTES DE IMPLEMENTACIÓN (CI)</h4>
+                            <p class="text-sm">El poder y los intereses actúan como <span class="font-bold">barreras o facilitadores</span> clave (contexto, liderazgo, etc.) dentro del modelo IRLM/CFIR.</p>
+                        </div>
+                         <div class="flow-arrow transform md:rotate-0 rotate-90">&darr;</div>
+                        <div class="flex-shrink-0 card border-cyan-500 border-2 p-4">
+                            <h4 class="font-bold">Resultados de Implementación (CI)</h4>
+                            <p class="text-sm">Se mide si la política se implementó con <span class="font-bold">fidelidad, fue aceptada, sostenible</span>, etc.</p>
+                        </div>
+                     </div>
+                     <p class="mt-8 text-center text-gray-800 font-semibold text-lg bg-yellow-100 p-4 rounded-lg">
+                        En resumen: El poder (AEP) explica el <span class="font-bold">"porqué"</span> de las fallas de implementación (CI), que a su vez explican por qué el dinero no llega a donde debería.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg">Este marco teórico guiará la investigación empírica para responder: "¿Quién recibe el dinero?".</p>
+            <p class="mt-2 text-gray-400">Su objetivo es generar "inteligencia accionable" para una reforma del financiamiento de la salud en Ecuador que sea técnicamente sólida y políticamente viable.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabsContainer = document.getElementById('tabs-container');
+            if (tabsContainer) {
+                const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+                const tabContents = tabsContainer.parentElement.querySelectorAll('.tab-content');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const tabId = button.dataset.tab;
+
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        tabContents.forEach(content => {
+                            content.classList.remove('active');
+                            if (content.id === tabId) {
+                                content.classList.add('active');
+                            }
+                        });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
