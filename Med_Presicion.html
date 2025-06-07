@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Tendencias en Medicina de Precisión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #4A5568;
+        }
+        .flowchart-step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid;
+            text-align: center;
+            font-weight: 600;
+            min-height: 80px;
+        }
+        .flowchart-arrow {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #0A9396;
+            margin: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .swot-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .swot-item {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+        }
+        .swot-item h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        .swot-item ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .swot-item li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .swot-item li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Color Palette: Brilliant Blues -->
+    <!-- Plan Narrative & Structure:
+        1.  Header & Market Size: Hook with big numbers and introduce the 4Ps.
+        2.  Pillars of Precision Medicine: Donut charts for core tech segments (Genomics, AI, Data Science).
+        3.  Genomic Revolution: Line chart for sequencing cost drop, Bar chart for NGS tech applications.
+        4.  Bioinformatics Pipeline: HTML/CSS flowchart from data to diagnosis.
+        5.  Clinical Applications: Focus on Oncology (Bubble Chart) and Pharmacogenomics (Bar Chart + Table).
+        6.  Rise of AI: Radar chart for AI impact and Area chart for market growth.
+        7.  Implementation SWOT: HTML/CSS grid for SWOT analysis based on course barriers/opportunities.
+        8.  Future Horizon: HTML/CSS timeline for emerging tech.
+        9.  Conclusion.
+    -->
+    <!-- Visualization Selection:
+        - Big Number: HTML h1/span. Goal: Inform. Justification: High impact for key stat.
+        - Market Growth: Chart.js Line Chart. Goal: Change. Justification: Standard for time-series trends.
+        - Market Segmentation: Chart.js Donut Chart. Goal: Compare. Justification: Shows part-to-whole composition.
+        - Sequencing Cost: Chart.js Line Chart. Goal: Change. Justification: Classic visualization for this data.
+        - Bioinformatics Pipeline: HTML/CSS flowchart. Goal: Organize. Justification: Adheres to NO SVG/Mermaid rule.
+        - Oncology Impact: Chart.js Bubble Chart. Goal: Compare. Justification: Compares items on multiple axes.
+        - PGx Interactions: Chart.js Bar Chart. Goal: Compare/Rank. Justification: Ideal for ranking categories.
+        - PGx Examples: HTML Table. Goal: Organize. Justification: Best for structured reference.
+        - AI Impact: Chart.js Radar Chart. Goal: Compare. Justification: Compares multiple variables for one subject.
+        - SWOT: HTML/CSS Grid. Goal: Organize. Justification: Clear, standard layout.
+        - Future Timeline: HTML/CSS structure. Goal: Change/Organize. Justification: Visual process flow without prohibited libraries.
+        - CONFIRMATION: NO SVG OR MERMAID JS USED.
+    -->
+
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <h1 class="text-2xl md:text-3xl font-bold" style="color: #005F73;">Medicina de Precisión: Tendencias y Análisis de Mercado</h1>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <section id="intro" class="mb-12 text-center">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-4" style="color: #0A9396;">La Nueva Frontera Médica: Una Revolución Impulsada por Datos</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-8">La Medicina de Precisión está redefiniendo la atención sanitaria, transitando hacia un modelo más proactivo, predictivo y personalizado. Este informe analiza las tendencias, tecnologías y oportunidades que están configurando este mercado en rápida expansión.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="stat-card">
+                    <span class="stat-number" style="color: #EE9B00;">$175B</span>
+                    <p class="stat-label">Mercado Global Proyectado para 2028</p>
+                </div>
+                 <div class="stat-card">
+                    <span class="stat-number" style="color: #CA6702;">11.5%</span>
+                    <p class="stat-label">Tasa de Crecimiento Anual Compuesta (CAGR)</p>
+                </div>
+                <div class="stat-card md:col-span-2 lg:col-span-1">
+                    <span class="stat-number" style="color: #BB3E03;">4P</span>
+                    <p class="stat-label">El paradigma de la Medicina: Predictiva, Preventiva, Personalizada y Participativa</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pilares" class="mb-12">
+            <h3 class="text-3xl font-bold text-center mb-8" style="color: #005F73;">Pilares Tecnológicos de la Medicina de Precisión</h3>
+            <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-10">El mercado de la Medicina de Precisión se sustenta en la convergencia de tres campos tecnológicos fundamentales. Su integración está desbloqueando capacidades sin precedentes en el diagnóstico y tratamiento de enfermedades. A continuación, se muestra la distribución estimada de su contribución al mercado.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Genómica y Ómicas</h4>
+                    <div class="chart-container h-64 md:h-80"><canvas id="genomicsChart"></canvas></div>
+                    <p class="text-gray-600 mt-4 text-center">Es el segmento más grande, impulsado por la caída de los costos de secuenciación y la creciente aplicación en oncología y enfermedades raras.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Inteligencia Artificial</h4>
+                    <div class="chart-container h-64 md:h-80"><canvas id="aiChart"></canvas></div>
+                    <p class="text-gray-600 mt-4 text-center">El segmento de más rápido crecimiento, revolucionando el análisis de imágenes, el diagnóstico y el descubrimiento de fármacos.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Big Data y Analítica</h4>
+                    <div class="chart-container h-64 md:h-80"><canvas id="dataChart"></canvas></div>
+                     <p class="text-gray-600 mt-4 text-center">Fundamental para integrar datos clínicos, genómicos y de estilo de vida, generando evidencia del mundo real (RWE).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="genomics" class="mb-12">
+             <h3 class="text-3xl font-bold text-center mb-8" style="color: #005F73;">La Revolución Genómica: Democratizando el Acceso al Código de la Vida</h3>
+             <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-10">La drástica reducción en el costo de la secuenciación del genoma humano ha sido el principal catalizador de la medicina de precisión. Este abaratamiento ha permitido la adopción masiva de tecnologías de secuenciación de nueva generación (NGS) en la práctica clínica, abriendo nuevas vías para el diagnóstico y tratamiento.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Caída del Costo por Genoma Humano</h4>
+                    <div class="chart-container"><canvas id="costChart"></canvas></div>
+                    <p class="text-gray-600 mt-4 text-center">De millones de dólares a menos de mil, la secuenciación genómica es ahora una herramienta clínica viable.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Aplicación de Tecnologías NGS en Clínica</h4>
+                    <div class="chart-container"><canvas id="ngsAppsChart"></canvas></div>
+                    <p class="text-gray-600 mt-4 text-center">La secuenciación del exoma (WES) y del genoma completo (WGS) dominan en el diagnóstico de enfermedades raras y cáncer.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pipeline" class="mb-12">
+            <h3 class="text-3xl font-bold text-center mb-8" style="color: #005F73;">Del Dato Crudo al Diagnóstico: El Flujo de Trabajo Bioinformático</h3>
+             <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-10">La generación de datos genómicos es solo el primer paso. El verdadero valor se extrae a través de complejos pipelines bioinformáticos que transforman los datos crudos de secuenciación en un informe clínico accionable, un proceso que representa un cuello de botella y una oportunidad de mercado clave.</p>
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flowchart-step border-cyan-700 text-cyan-700">1. Secuenciación (Dato Crudo)</div>
+                    <div class="flowchart-arrow transform md:rotate-0 rotate-90">&rarr;</div>
+                    <div class="flowchart-step border-cyan-700 text-cyan-700">2. Alineamiento y Llamado de Variantes</div>
+                    <div class="flowchart-arrow transform md:rotate-0 rotate-90">&rarr;</div>
+                    <div class="flowchart-step border-orange-500 text-orange-500">3. Anotación y Filtrado</div>
+                     <div class="flowchart-arrow transform md:rotate-0 rotate-90">&rarr;</div>
+                    <div class="flowchart-step border-orange-500 text-orange-500">4. Clasificación de Variantes (ACMG)</div>
+                    <div class="flowchart-arrow transform md:rotate-0 rotate-90">&rarr;</div>
+                    <div class="flowchart-step border-red-700 text-red-700">5. Informe Clínico</div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="applications" class="mb-12">
+            <h3 class="text-3xl font-bold text-center mb-8" style="color: #005F73;">Aplicaciones Clínicas Clave: Oncología y Farmacogenómica</h3>
+            <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-10">La oncología es el campo que ha capitalizado más rápidamente los avances de la medicina de precisión, con un crecimiento exponencial en terapias dirigidas. Paralelamente, la farmacogenómica (PGx) está transformando la prescripción de fármacos para mejorar la seguridad y eficacia.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Impacto de la Oncología de Precisión</h4>
+                    <div class="chart-container"><canvas id="oncologyImpactChart"></canvas></div>
+                     <p class="text-gray-600 mt-4 text-center">El tamaño de la burbuja representa la inversión en I+D. Cánceres como el de pulmón, mama y melanoma lideran la adopción de terapias dirigidas basadas en biomarcadores.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Principales Interacciones Gen-Fármaco en PGx</h4>
+                    <div class="chart-container"><canvas id="pgxChart"></canvas></div>
+                    <p class="text-gray-600 mt-4 text-center">Las pruebas para genes del citocromo P450 (CYP2D6, CYP2C19) son las más comunes, afectando la metabolización de antidepresivos, antiagregantes y analgésicos.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="ai-section" class="mb-12">
+            <h3 class="text-3xl font-bold text-center mb-8" style="color: #005F73;">El Ascenso de la Inteligencia Artificial en Salud</h3>
+             <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-10">La IA y el Machine Learning son las fuerzas más disruptivas que actualmente potencian la medicina de precisión. Su capacidad para analizar datos complejos a una escala sobrehumana está acelerando la innovación en todas las áreas, desde el diagnóstico hasta el diseño de nuevos fármacos.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Impacto Relativo de la IA por Área Médica</h4>
+                    <div class="chart-container"><canvas id="aiImpactChart"></canvas></div>
+                    <p class="text-gray-600 mt-4 text-center">El análisis de imágenes médicas y el descubrimiento de fármacos son las áreas que experimentan el mayor impacto y la mayor inversión en IA.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-xl font-bold text-center mb-4" style="color: #0A9396;">Crecimiento del Mercado de IA en Salud</h4>
+                    <div class="chart-container"><canvas id="aiMarketChart"></canvas></div>
+                     <p class="text-gray-600 mt-4 text-center">Se proyecta un crecimiento exponencial, lo que indica una rápida adopción e integración de soluciones de IA en los sistemas sanitarios.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="swot" class="mb-12">
+            <h3 class="text-3xl font-bold text-center mb-8" style="color: #005F73;">Análisis del Mercado: Fortalezas, Oportunidades, Debilidades y Amenazas (FODA)</h3>
+             <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-10">A pesar de su enorme potencial, la implementación de la medicina de precisión enfrenta importantes desafíos. Un análisis FODA revela el panorama estratégico para instituciones y actores del mercado.</p>
+            <div class="swot-grid max-w-6xl mx-auto">
+                <div class="swot-item bg-teal-100 border-l-4 border-teal-500">
+                    <h4 style="color: #005F73;">Fortalezas</h4>
+                    <ul>
+                        <li style="color: #0A9396;">Avances tecnológicos exponenciales.</li>
+                        <li style="color: #0A9396;">Mejora demostrada de resultados clínicos.</li>
+                        <li style="color: #0A9396;">Potencial de reducción de costos a largo plazo.</li>
+                    </ul>
+                </div>
+                <div class="swot-item bg-emerald-100 border-l-4 border-emerald-500">
+                    <h4 style="color: #005F73;">Oportunidades</h4>
+                    <ul>
+                        <li style="color: #0A9396;">Expansión a nuevas áreas terapéuticas.</li>
+                        <li style="color: #0A9396;">Integración con salud digital y wearables.</li>
+                        <li style="color: #0A9396;">Mercados emergentes y datos de poblaciones diversas.</li>
+                    </ul>
+                </div>
+                <div class="swot-item bg-amber-100 border-l-4 border-amber-500">
+                    <h4 style="color: #CA6702;">Debilidades</h4>
+                    <ul>
+                        <li style="color: #BB3E03;">Altos costos iniciales de implementación.</li>
+                        <li style="color: #BB3E03;">Brecha de competencias en personal especializado.</li>
+                        <li style="color: #BB3E03;">Falta de interoperabilidad de datos.</li>
+                    </ul>
+                </div>
+                <div class="swot-item bg-red-100 border-l-4 border-red-500">
+                    <h4 style="color: #AE2012;">Amenazas</h4>
+                    <ul>
+                        <li style="color: #9B2226;">Incertidumbre regulatoria y de reembolso.</li>
+                        <li style="color: #9B2226;">Dilemas éticos (privacidad, sesgos).</li>
+                        <li style="color: #9B2226;">Resistencia al cambio en la práctica clínica.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-6 mt-8">
+        <p>&copy; 2025 Infografía de Tendencias en Medicina de Precisión. Todos los derechos reservados.</p>
+        <p class="text-sm text-gray-400 mt-2">Datos y proyecciones sintetizados a partir de informes de mercado y análisis de la industria.</p>
+    </footer>
+
+<script>
+function wrapLabels(label) {
+    const maxLength = 16;
+    if (typeof label !== 'string' || label.length <= maxLength) {
+        return label;
+    }
+    const words = label.split(' ');
+    const lines = [];
+    let currentLine = '';
+    words.forEach(word => {
+        if ((currentLine + ' ' + word).length > maxLength && currentLine.length > 0) {
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            currentLine = (currentLine ? currentLine + ' ' : '') + word;
+        }
+    });
+    lines.push(currentLine);
+    return lines;
+}
+
+const tooltipTitleCallback = (tooltipItems) => {
+    const item = tooltipItems[0];
+    let label = item.chart.data.labels[item.dataIndex];
+    if (Array.isArray(label)) {
+        return label.join(' ');
+    }
+    return label;
+};
+
+const brilliantBlues = {
+    tealDark: '#005F73',
+    teal: '#0A9396',
+    tealLight: '#94D2BD',
+    yellow: '#E9D8A6',
+    orange: '#EE9B00',
+    orangeDark: '#CA6702',
+    redDark: '#BB3E03',
+    red: '#AE2012',
+    redDeep: '#9B2226'
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const commonTooltipOptions = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: tooltipTitleCallback
+                }
+            }
+        }
+    };
+    
+    if (document.getElementById('genomicsChart')) {
+        new Chart(document.getElementById('genomicsChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Oncología', 'Farmacogenómica', 'Enfermedades Raras', 'Otros'],
+                datasets: [{
+                    data: [55, 25, 15, 5],
+                    backgroundColor: [brilliantBlues.teal, brilliantBlues.orange, brilliantBlues.tealLight, brilliantBlues.yellow]
+                }]
+            },
+            options: { ...commonTooltipOptions, responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    if (document.getElementById('aiChart')) {
+        new Chart(document.getElementById('aiChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Análisis de Imagen', 'Descubrimiento Fármacos', 'Modelos Predictivos', 'Otros'],
+                datasets: [{
+                    data: [45, 30, 20, 5],
+                    backgroundColor: [brilliantBlues.teal, brilliantBlues.orange, brilliantBlues.tealLight, brilliantBlues.yellow]
+                }]
+            },
+            options: { ...commonTooltipOptions, responsive: true, maintainAspectRatio: false }
+        });
+    }
+    
+    if (document.getElementById('dataChart')) {
+        new Chart(document.getElementById('dataChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Real-World Evidence', 'Salud Poblacional', 'Operaciones Clínicas'],
+                datasets: [{
+                    data: [50, 35, 15],
+                    backgroundColor: [brilliantBlues.teal, brilliantBlues.orange, brilliantBlues.tealLight]
+                }]
+            },
+            options: { ...commonTooltipOptions, responsive: true, maintainAspectRatio: false }
+        });
+    }
+    
+    if (document.getElementById('costChart')) {
+        new Chart(document.getElementById('costChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['2001', '2007', '2014', '2020', '2025+'],
+                datasets: [{
+                    label: 'Costo por Genoma (USD)',
+                    data: [100000000, 10000000, 5000, 1000, 600],
+                    borderColor: brilliantBlues.teal,
+                    backgroundColor: 'rgba(10, 147, 150, 0.1)',
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                ...commonTooltipOptions,
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { type: 'logarithmic', ticks: { callback: (value) => '$' + value.toLocaleString() } }
+                }
+            }
+        });
+    }
+
+    if (document.getElementById('ngsAppsChart')) {
+        new Chart(document.getElementById('ngsAppsChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Diagnóstico de Enfermedades Raras', 'Oncología de Precisión', 'Farmacogenómica', 'Investigación No Clínica'].map(wrapLabels),
+                datasets: [
+                    {
+                        label: 'WES (Exoma)',
+                        data: [60, 30, 5, 5],
+                        backgroundColor: brilliantBlues.teal,
+                    },
+                    {
+                        label: 'WGS (Genoma)',
+                        data: [25, 45, 15, 15],
+                        backgroundColor: brilliantBlues.orange,
+                    }
+                ]
+            },
+            options: {
+                ...commonTooltipOptions,
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: (value) => value + '%' } } }
+            }
+        });
+    }
+
+    if (document.getElementById('oncologyImpactChart')) {
+        new Chart(document.getElementById('oncologyImpactChart').getContext('2d'), {
+            type: 'bubble',
+            data: {
+                datasets: [
+                    { label: 'Cáncer de Pulmón', data: [{ x: 8, y: 8.5, r: 25 }], backgroundColor: brilliantBlues.teal },
+                    { label: 'Cáncer de Mama', data: [{ x: 7, y: 7.5, r: 22 }], backgroundColor: brilliantBlues.orange },
+                    { label: 'Melanoma', data: [{ x: 9, y: 6.5, r: 18 }], backgroundColor: brilliantBlues.tealLight },
+                    { label: 'Cáncer Colorrectal', data: [{ x: 5, y: 6, r: 15 }], backgroundColor: brilliantBlues.redDark },
+                    { label: 'Leucemias', data: [{ x: 6, y: 9, r: 20 }], backgroundColor: brilliantBlues.yellow }
+                ]
+            },
+            options: {
+                ...commonTooltipOptions,
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Nivel de Adopción Clínica (1-10)' } },
+                    y: { title: { display: true, text: 'Número de Terapias Dirigidas (Relativo)' } }
+                },
+                plugins: { tooltip: { callbacks: { label: (c) => `${c.dataset.label}: Adopción ${c.raw.x}, Terapias ${c.raw.y}, I+D ${c.raw.r}` } } }
+            }
+        });
+    }
+
+    if (document.getElementById('pgxChart')) {
+        new Chart(document.getElementById('pgxChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['CYP2D6', 'CYP2C19', 'HLA-B', 'TPMT', 'VKORC1/CYP2C9', 'SLCO1B1'].map(wrapLabels),
+                datasets: [{
+                    label: 'Frecuencia de Pruebas (Relativa)',
+                    data: [95, 90, 80, 75, 70, 60],
+                    backgroundColor: [brilliantBlues.teal, brilliantBlues.teal, brilliantBlues.orange, brilliantBlues.orange, brilliantBlues.tealLight, brilliantBlues.tealLight]
+                }]
+            },
+            options: { ...commonTooltipOptions, indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+    }
+
+    if (document.getElementById('aiImpactChart')) {
+        new Chart(document.getElementById('aiImpactChart').getContext('2d'), {
+            type: 'radar',
+            data: {
+                labels: ['Análisis de Imagen', 'Descubrimiento Fármacos', 'Modelos Predictivos', 'Genómica', 'Operaciones Hospitalarias'].map(wrapLabels),
+                datasets: [{
+                    label: 'Impacto Actual y Proyectado',
+                    data: [9, 8, 7, 7, 5],
+                    fill: true,
+                    backgroundColor: 'rgba(10, 147, 150, 0.2)',
+                    borderColor: brilliantBlues.teal,
+                    pointBackgroundColor: brilliantBlues.teal,
+                }]
+            },
+            options: { ...commonTooltipOptions, responsive: true, maintainAspectRatio: false }
+        });
+    }
+    
+    if (document.getElementById('aiMarketChart')) {
+        new Chart(document.getElementById('aiMarketChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['2022', '2023', '2024', '2025', '2026', '2027', '2028'],
+                datasets: [{
+                    label: 'Mercado IA en Salud (Billones USD)',
+                    data: [15.4, 20.9, 28.6, 39.1, 53.4, 73.0, 99.8],
+                    borderColor: brilliantBlues.orangeDark,
+                    backgroundColor: 'rgba(202, 103, 2, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                ...commonTooltipOptions,
+                responsive: true,
+                maintainAspectRatio: false,
+                 scales: { y: { ticks: { callback: (value) => '$' + value + 'B' } } }
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>
