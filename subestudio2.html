@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: ¿Quién Gobierna el Gasto en Salud en Ecuador?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#0D6EFD] mb-2">¿Quién Gobierna el Gasto en Salud en Ecuador?</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Un análisis infográfico de los flujos de poder y dinero en el sistema sanitario ecuatoriano, basado en la investigación sobre la paradoja del gasto.</p>
+        </header>
+
+        <main>
+            <section id="paradoja" class="mb-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">La Paradoja del Gasto en Salud</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">A pesar de una significativa inversión pública, los ciudadanos ecuatorianos enfrentan una alta carga de gasto de bolsillo (GDB), revelando una desconexión crítica entre el gasto y la protección financiera efectiva.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-center mb-4 text-[#0A58CA]">Composición del Gasto Total en Salud</h3>
+                        <p class="text-sm text-center text-gray-500 mb-4">El Gasto de Bolsillo representa casi un tercio del gasto total, una cifra elevada que evidencia la carga directa sobre los hogares.</p>
+                        <div class="chart-container h-64 md:h-80">
+                            <canvas id="gastoTotalChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6 text-center">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h4 class="text-lg font-semibold text-gray-500">Inversión Pública</h4>
+                            <p class="text-4xl font-bold text-[#0D6EFD] my-2">~5%</p>
+                            <p class="text-sm text-gray-600">del PIB se destina a gasto público en salud, un compromiso estatal notable.</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h4 class="text-lg font-semibold text-gray-500">Gasto de Bolsillo</h4>
+                            <p class="text-4xl font-bold text-red-500 my-2">~31%</p>
+                             <p class="text-sm text-gray-600">del gasto total en salud es pagado directamente por las familias.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="actores" class="mb-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">El Campo de Batalla: Actores y Poder</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">Distintos actores compiten por influir en las decisiones de financiamiento, cada uno movilizando diferentes recursos de poder.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-center mb-4 text-[#0A58CA]">Recursos de Poder por Actor Clave</h3>
+                    <p class="text-sm text-center text-gray-500 mb-4">La influencia no es monolítica. El poder fiscal, la información técnica y la capacidad de lobby son recursos cruciales que definen el peso de cada actor en las negociaciones.</p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="poderActoresChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="presupuesto" class="mb-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Arena Clave 1: El Presupuesto Nacional de Salud</h2>
+                     <p class="max-w-3xl mx-auto text-gray-600">La formulación del presupuesto del Ministerio de Salud Pública (MSP) es un proceso de alta tensión, donde las necesidades sanitarias chocan con las restricciones fiscales.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 md:col-span-1 lg:col-span-2">
+                        <h3 class="text-xl font-bold text-center mb-4 text-[#0A58CA]">Flujo del Proceso Presupuestario</h3>
+                        <p class="text-sm text-center text-gray-500 mb-6">Un proceso lineal en teoría, pero lleno de negociaciones informales y puntos de presión en la práctica.</p>
+                        <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4 text-center">
+                            <div class="flex-1 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <p class="font-bold">1. Solicitud del MSP</p>
+                                <p class="text-xs">Basada en necesidades de salud.</p>
+                            </div>
+                            <div class="text-2xl font-bold text-blue-400">→</div>
+                            <div class="flex-1 p-4 bg-red-50 rounded-lg border border-red-200">
+                                <p class="font-bold">2. Ajuste del MEF</p>
+                                <p class="text-xs">Impone techos fiscales.</p>
+                            </div>
+                            <div class="text-2xl font-bold text-red-400">→</div>
+                            <div class="flex-1 p-4 bg-green-50 rounded-lg border border-green-200">
+                                <p class="font-bold">3. Debate en Asamblea</p>
+                                <p class="text-xs">Negociación y presión política.</p>
+                            </div>
+                             <div class="text-2xl font-bold text-green-400">→</div>
+                            <div class="flex-1 p-4 bg-gray-100 rounded-lg border border-gray-300">
+                                <p class="font-bold">4. Aprobación Final</p>
+                                <p class="text-xs">Suele reflejar el poder fiscal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6 md:col-span-1 lg:col-span-2">
+                        <h3 class="text-xl font-bold text-center mb-4 text-[#0A58CA]">La Brecha Presupuestaria: Solicitado vs. Aprobado</h3>
+                        <p class="text-sm text-center text-gray-500 mb-4">Históricamente, el presupuesto aprobado por el Ministerio de Finanzas (MEF) es inferior al solicitado por el MSP, limitando la capacidad operativa del sector salud.</p>
+                        <div class="chart-container">
+                            <canvas id="presupuestoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="medicamentos" class="mb-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Arena Clave 2: El Mercado Farmacéutico</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">Los medicamentos son el principal componente del Gasto de Bolsillo. La fijación de precios y la compra pública son arenas de intensa disputa de intereses.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                     <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-center mb-4 text-[#0A58CA]">Desglose del Gasto de Bolsillo (GDB)</h3>
+                        <p class="text-sm text-center text-gray-500 mb-4">Los medicamentos representan la mayor carga financiera para las familias, superando a consultas y otros servicios.</p>
+                         <div class="chart-container">
+                            <canvas id="gastoBolsilloChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-center mb-4 text-[#0A58CA]">Tácticas de Influencia de la Industria Farmacéutica</h3>
+                        <p class="text-sm text-center text-gray-500 mb-4">La industria utiliza un abanico de estrategias para defender sus intereses económicos, influyendo en precios y políticas.</p>
+                        <div class="chart-container">
+                            <canvas id="tacticasIndustriaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="gobernanza" class="mb-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Conclusión: Un Pluralismo Segmentado</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600">El poder no está centralizado, sino distribuido en "élites sectoriales" que dominan arenas específicas, creando un sistema donde las reglas formales son a menudo superadas por la influencia informal.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
+                    <h3 class="text-xl font-bold text-center mb-4 text-[#0A58CA]">Matriz de Poder por Arena de Decisión</h3>
+                    <p class="text-sm text-center text-gray-500 mb-6">Síntesis comparativa de quién prevalece en cada campo de batalla del financiamiento de la salud.</p>
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Arena de Decisión</th>
+                                <th scope="col" class="px-6 py-3">Actor con Influencia Decisiva</th>
+                                <th scope="col" class="px-6 py-3">Resultado Principal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b">
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Presupuesto Público</th>
+                                <td class="px-6 py-4 font-bold text-red-600">Ministerio de Finanzas (MEF)</td>
+                                <td class="px-6 py-4">Prioridades fiscales limitan los fondos para salud.</td>
+                            </tr>
+                            <tr class="bg-gray-50 border-b">
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Gasto e Inversión IESS</th>
+                                <td class="px-6 py-4 font-bold text-yellow-600">Gobierno (por deuda) y Directivos</td>
+                                <td class="px-6 py-4">Autonomía limitada, gestión influenciada políticamente.</td>
+                            </tr>
+                            <tr class="bg-white border-b">
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Tarifario Sector Privado</th>
+                                <td class="px-6 py-4 font-bold text-green-600">Gremios de Proveedores Privados</td>
+                                <td class="px-6 py-4">Negociación de tarifas que asegura rentabilidad privada.</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Precios de Medicamentos</th>
+                                <td class="px-6 py-4 font-bold text-purple-600">Industria Farmacéutica</td>
+                                <td class="px-6 py-4">Precios elevados capturan una porción alta del gasto.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-200">
+            <p class="text-sm text-gray-500">Infografía generada a partir del análisis cualitativo del informe de investigación sobre el financiamiento del sistema de salud de Ecuador.</p>
+        </footer>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const palette = {
+        blue1: '#0D6EFD',
+        blue2: '#0A58CA',
+        blue3: '#084298',
+        blue4: '#6EA8FE',
+        blue5: '#9EC5FE',
+        red: '#DC3545',
+        yellow: '#FFC107',
+        green: '#198754',
+        gray: '#6C757D'
+    };
+
+    const labelWrapper = (label, maxLength = 16) => {
+        if (label.length <= maxLength) {
+            return label;
+        }
+        const words = label.split(' ');
+        const lines = [];
+        let currentLine = '';
+        words.forEach(word => {
+            if ((currentLine + ' ' + word).trim().length > maxLength) {
+                lines.push(currentLine.trim());
+                currentLine = word;
+            } else {
+                currentLine = (currentLine + ' ' + word).trim();
+            }
+        });
+        if (currentLine) {
+            lines.push(currentLine.trim());
+        }
+        return lines;
+    };
+
+    const tooltipConfig = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        return Array.isArray(label) ? label.join(' ') : label;
+                    }
+                }
+            }
+        }
+    };
+    
+    const defaultChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        ...tooltipConfig
+    };
+
+    const ctxGastoTotal = document.getElementById('gastoTotalChart').getContext('2d');
+    new Chart(ctxGastoTotal, {
+        type: 'doughnut',
+        data: {
+            labels: ['Gasto de Bolsillo (GDB)', 'Gasto Público (MSP)', 'Seguridad Social (IESS)', 'Otros'],
+            datasets: [{
+                label: 'Composición del Gasto',
+                data: [31, 39, 25, 5],
+                backgroundColor: [palette.red, palette.blue1, palette.blue2, palette.gray],
+                borderColor: '#FFFFFF',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            ...defaultChartOptions,
+            plugins: {
+                ...defaultChartOptions.plugins,
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    const ctxPoderActores = document.getElementById('poderActoresChart').getContext('2d');
+    new Chart(ctxPoderActores, {
+        type: 'radar',
+        data: {
+            labels: [
+                'Control Fiscal', 
+                'Info. Técnica/Epidemiológica', 
+                'Capacidad de Lobbying', 
+                'Poder de Compra', 
+                'Control Regulatorio',
+                'Movilización Social'
+            ],
+            datasets: [{
+                label: 'Ministerio de Finanzas (MEF)',
+                data: [9, 3, 7, 2, 6, 2],
+                backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                borderColor: palette.red,
+                pointBackgroundColor: palette.red,
+            }, {
+                label: 'Ministerio de Salud (MSP)',
+                data: [2, 9, 5, 7, 8, 6],
+                backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                borderColor: palette.blue1,
+                pointBackgroundColor: palette.blue1,
+            },
+            {
+                label: 'Industria Farmacéutica',
+                data: [4, 8, 9, 3, 5, 4],
+                backgroundColor: 'rgba(108, 117, 125, 0.2)',
+                borderColor: palette.gray,
+                pointBackgroundColor: palette.gray,
+            }]
+        },
+        options: {
+            ...defaultChartOptions,
+             scales: {
+                r: {
+                    angleLines: { display: true },
+                    suggestedMin: 0,
+                    suggestedMax: 10,
+                    ticks: {
+                        stepSize: 2
+                    }
+                }
+            },
+            plugins: {
+                ...defaultChartOptions.plugins,
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    const ctxPresupuesto = document.getElementById('presupuestoChart').getContext('2d');
+    new Chart(ctxPresupuesto, {
+        type: 'line',
+        data: {
+            labels: ['2020', '2021', '2022', '2023', '2024'],
+            datasets: [{
+                label: 'Presupuesto Solicitado por MSP',
+                data: [4.2, 4.5, 4.8, 5.1, 5.3],
+                borderColor: palette.blue1,
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                fill: true,
+                tension: 0.3
+            }, {
+                label: 'Presupuesto Aprobado por MEF',
+                data: [3.5, 3.7, 3.9, 4.1, 4.2],
+                borderColor: palette.red,
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            ...defaultChartOptions,
+            plugins: {
+                ...defaultChartOptions.plugins,
+                title: { display: false },
+                legend: { position: 'bottom' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Miles de Millones USD'
+                    }
+                }
+            }
+        }
+    });
+    
+    const ctxGastoBolsillo = document.getElementById('gastoBolsilloChart').getContext('2d');
+    new Chart(ctxGastoBolsillo, {
+        type: 'bar',
+        data: {
+            labels: ['Medicamentos', 'Consultas Médicas', 'Servicios Hospitalarios', 'Laboratorios e Imágenes', 'Otros'],
+            datasets: [{
+                label: '% del Gasto de Bolsillo',
+                data: [45, 25, 15, 10, 5],
+                backgroundColor: [palette.red, palette.blue1, palette.blue2, palette.blue3, palette.gray],
+                borderColor: [palette.red, palette.blue1, palette.blue2, palette.blue3, palette.gray],
+                borderWidth: 1
+            }]
+        },
+        options: {
+             ...defaultChartOptions,
+            indexAxis: 'y',
+            plugins: {
+                ...defaultChartOptions.plugins,
+                legend: { display: false },
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Porcentaje (%)'
+                    }
+                }
+            }
+        }
+    });
+    
+    const ctxTacticasIndustria = document.getElementById('tacticasIndustriaChart').getContext('2d');
+    new Chart(ctxTacticasIndustria, {
+        type: 'bar',
+        data: {
+            labels: [
+                labelWrapper('Lobbying y Relaciones Políticas'),
+                labelWrapper('Marketing a Profesionales de Salud'),
+                labelWrapper('Control de Patentes y Litigios'),
+                labelWrapper('Influencia en Evidencia Científica'),
+                labelWrapper('Campañas a Pacientes y Públicas')
+            ],
+            datasets: [{
+                label: 'Nivel de Influencia Percibido',
+                data: [9.2, 8.8, 8.5, 7.5, 6.8],
+                backgroundColor: [palette.blue3, palette.blue2, palette.blue1, palette.blue4, palette.blue5],
+            }]
+        },
+        options: {
+             ...defaultChartOptions,
+             plugins: {
+                ...defaultChartOptions.plugins,
+                legend: { display: false },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Influencia (Escala 1-10)'
+                    }
+                }
+            }
+        }
+    });
+
+});
+</script>
+</body>
+</html>
