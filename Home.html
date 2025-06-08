@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Semiotics - Medicina Basada en la Evidencia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* A light gray background for the body */
+            color: #1e293b; /* A darker text color for better contrast */
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(1, 42, 74, 0.8), rgba(1, 22, 39, 0.9)), url('https://placehold.co/1920x1080/012a4a/ffffff?text=Investigación+Médica');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 3rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: #0891b2; /* Cyan-600 */
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <!-- Final logo with textured, glowing effect, embedded as Base64 to ensure it always loads -->
+                <img src="data:image/png;base64,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3/3ud9/96le/euPpp5/+ysKFC7/23nvv/XXt2rV/WbBgwe+PHz9+z9SpUz919+7dfxw8ePDvO3bsuHz++ec//bOf/exD//jHP74zaNCgl9esWfPt/v37P/DQQw998Wc/+9mnDh48+NcXX3zx15988smnjxw58s3Ro0f//uLFi788f/78iYmJfzYzM3N2ampqZmZmZuYVK1bMmTJlymzZsmUnTpwoLi4eGBjYu3fv/v37jxo16uGHH05LS4uNjT169Ojjjz8+evRozZo106ZNe+SRRw4dOrRs2bJ27drTp08fPnx4xYoVcXFxcXFxkZGRkZGRJ0+ePHr0aMuWLYWFhf/+/ffv33/dunVdunSJiYnR1dX18PBAIAiCIFk4FwMRyX7+c+bM+VlpaekTf/jDH/4yNjY2f8uWLX+6cOHC6yNHjpxYtGjRv/jP//zPzz333HPf2bBhwy+tXbv2p9u3b3/2mWee+cTvfve7z1988cUPX3TRRe+9+uqrvxoxYsQ9n/rUp35asWLFr7zxxht/OnTo0F+tWrXqrzt27PjvTzzxRGp2dvavixcvfv7ee+8990c/+tFnf/nLXz70+9//vp2//vWvPygsLPzXN954o+TgwYO/vv3222+sWbPmj9LS0v5y6NCh/1q9evUPjxgx4qMffPDBP+rbt+9/XXfddd+ZNWvW/9P3vvddL+/cuXP3Tz/9dPXtt99+efPmzZ/+5Cc/ef/999/t/v37//b444+v//vf//793/3ud3/x+OOPlwYGBv772Wef/e8//elPX9q1atWy27dvf7V+/fpvjBkzatXq1as/f/bZZ488/PDDf5w3b94/p06denFxcfHr5eXl5UaMGHG///3v169cuXJFRUVERkY2NDSkpKR4eHhwcHDw9vbu1q1bo0aNEhMTw8PDr1y5EhgYOHDgwNTUVCwIgiAI+nIuBgURyX7+c+fOfefpp59+81vf+taf7tu374Pnzp37r9WrV/+wc+fO/w0bNuzqX//61y88//zzP7xy5coPVq9efee5c+fuOnHiRPrHP/6x/eKLL74yb968D7zyyis3PPDAA0t27Njxu7a29oeDBw9++frrr/+gVatW7du3b19auXJl0dChQ//87bffXu3gwYO/2r17d+nBBx/83vPPP1+emZn5T4GBgZ9dtWpV2UsvvVRy4MABqTt27Pi3r7/+euXQoUOf3LVrl3fuueeeP7l58+avXnDBBX95xRVX3H3HHXe888MPP/xLzz//vHduuummHxw5cuT/u+uuu3bt3bv3J7a29p998MEH7/76178eWrlq1au/OnfunJ09e/Zznzhx4n/961//ur127dpftm/f/u3HHnvsx11dXZ+NHTv2o7/85S9PzJkzx3LPPffc/Ytf/OIX77777sCRI0euWrt27WvPPfec5fXXX39VUVHR8OHDx48fP3DgwL59+3bt2lVWVhYVFWVkZOTl5RUVFQsKCgoKCkpLS6mpqQ0NDa2srKSkpISEhISEhGZmZpcuXTp8+PDg4OClS5eGhoZycnJkZGSYmJhEfy9BEARB/F0ICWqgPnz4cNauXfvVjz/+uN8vffTRR//2k5/8ZFdpaem1W7dufW7NmjUfjRs37vOrV68+uHv37j9ctWpV2R/+8Iff/uY3v3np6aef7mhubv47dXV1X1y3bt3PffbZZx9/8MEHHz9y5MjBHTt2fGrUqFGj7tq163Pnzp37b+np6a8sW7bstaeffnrrgAEDfrxixYqXrl+/vmdsbOy/d+/e/d2KFSve9MYbb/w3N99881+//PJL6cCBA59ctWpV2UsvvVRy9OjR7zz99NP/a8+ePWevXLny5cuXL/+1d+/eZ86dO/ffX3zxxW9//OMff7VixYpXXnjhhe+89tpr37tu3boP5s+f/88TJ04cP3/+fGdn5+gTTzzxl2eeeeaXq1at+s2rrrpq+/TTTz/2+OOPr7ygoOD6zZs3v/zFL34x49VXX/2jWbNmnXjNNdcs+fWvf33b6tWrP7x79+4/vOCCC/5w1RVXfG/RokUPPPjgg5d//vOf7/3gBz/Ydfz48T9v37792y996UsfefOb3/yC5OTk58+cOfPL1atX//7Ro0eXrFu37vNffPHFz37zm9/s2rFjx99++OEHl+zbt++3tWvXvmrTpk3feeyxx97ZsWPH3z/++GP/88knnzxy4MCBz+7atethV1dXn3nsscf+5Qc/+MFL7du3v/bOO+/81eHDh//p559/3j5w4EC5yMhIA4sWLVq5atWq1w8ePFhqammZqamppaW1bNny9OlTX19fe3t7Z2fnpk2bdnZ2ZmZmbt68ubS0tLGx8fX1lZaWlpWVtWzZsh4eHkpKyjFjxsTFxVlYWMTFxenp6alTpz7++OMNDQ2LFy9evHhxRUVFQUFBQEBAXFzc+fPnW1tbEwRBEPBvQkjQMfn5+R8+cuSIb7/88kt/06dP/8vrr7/+D5GRkd/Ys2fP1yNHjlxy9uzZ/7do0aLL//7v/+6KjIw88+CDD36xe/fub3z88cf/c/ny5b+tXr36F1auXHnzsWPHPv7666/ftm7d+p8HDx78929+85vf3Llzx+8/+eSTH3vnnXc+/vrrrz8+dOjQfy4oKPgzPj7+1//+7/++7eGHH969cePGr0aMGPHWkSNHDjx8+PB/Tp48mS5evPix+Ph4+jvf+c6fT548+Q+RkZG/HDZs2L98+umnX3j//ff/+vrrrx/s7Oz8d7a2trPbt2//9Ysvvvj5//iP/3jpqaee2vbqq69+8sEHHyz6xz/+8f1XX31191NPPfXFiy++2H755Zd//PDDhz/ZuXPn33700Ud/efHFF7/33Xff/X7Dhg1//vrXv36lcePG/d9xxx33bt269b+9/fbbV+zYsWMnOjo6n928efNfbW1tZz/72c8ufPnll1/Yv3//H+zZs+dzs2fP/s/ffvvtlSdPntw5ePDgn0aNGnWnN954Y+/TTz/901133XWf6OjouGrRogUPvfPOO89esGBBys6dO/u+8MILPy4qKlpuamqasWnTJpUFCxbk5ORMnjyZkpJSUlJSWloqISEhMjIyMjIyNjY2Ojo6NTXV1tb28uXLhYWFixcv/vrrr0VFRYGBge3atWtoaKisrFy5cuWKFSuOHz+enZ1NIBCE/YIIgiBcISRUjCQlJR3Yv3//z3v37v3t5MmT/+7hhx++e9++fW+4++6733vFFVc89/zzz39x3Lhx9x599NG/fPnllz+7bt26Dzz++OMv/POf//xl8eLFP7148eKn9uzZ89/mzp37pcuWLVuxcePGr998881vffnll18cOHDg26dPn/6H77//vt2XXnpJkpWV9cfy8vLvZWVlf/7iiy+et3379r1z8eLFlxYsWPDl4cOHP/vkk09+M3v27L8tWbLkz5EjRz71+uuvX/r000/vvPXWWz+tXr36tWvXrv3d8uXLl3z22Wf7HnnkkVcvXrz4+fPPP//9008/vXrPPfecP3jwgP/4j/+wcePGF7Zs2fLvRx99tGL16tUvu+yyS/uPf/zjg9XV1X/9xz/+sXrHHXfcsnnz5i8vXLhw2Ysvvtgxb968V/7whz/s2rx585bdu3e/d+HChZd+97vftWPbtm27Pv3001fu3r17x+uvv37J6tWrl/zwhz8s+4c//OGP9+/f/y+PPvroryZPnvzTzz777G1PPvmk7Re/+MWa0NBQPz9w4MC/X7hw4X8tXLjw+7feeuunv/jFL75YsWLFNWvXrln169dvyuTJk//z8OFDv9mzZ88Xtm7d+oPvvvuu5Hvf+95fV65cuWzRooXf+vrXvz5i69ate/qZZ57pt3bt2tFff/0187Of/exzO3fufGLr1q17Jk+e/O8TJ05cP3z48D+vXLny540bN77z1ltvvXP58uXLtm7d+uSbb7757ZMnT/b8/Oc/f/3ixYt/2L59+z/u2LHDvnvvvXfL/vvf/751/Pjxl5KSktIffvjhn2fNmnUnNzc3b9asWTMnJ+dPPvlkamrq0KFDWVlZISEhISEhAQEBKSkpgYGB0dHRhYWFS5cuPX/+vLe3tyZNmsTHxw8fPhweHi4iIgIAgiAIgo9CSNAxycnJ/5k+ffqV4eHhp+bNm7e1adOmD+zateuf58yZ85cLFy587+DBg59duHDhhS1btrx/zJgx9z711FN33HfffXd/85vf3P3ss8/euW3btnXr1q37h3vvvfe3/vjHP35pyJAhpYEDB35y0qRJ/+7YsWN/WbRo0StPPfXU2o0bN2794x//uPzWW2+9c+7cuXd/8MEH7/rkk0++c+XKlR++8cYbf/7ud7/79sKFC/86a9aso3Pnzn3+qquuuvOJJ574Y+np6d/dunXrd48cOfL5/Pnzf7xkyZLv/OpXv3rjiy++eGvlypWfPPjgg3/v3r37/3DTTTctWbhw4Qv79+9/4/LLL/9z0KBBDyxZsuSP33///bf37dt369ChQy+PHz9+669//euLf/iHf3jnN77xjeUvv/xyy7Zt23bq6ur+c/Dgwa+vWbPm9TfccMN/X7du3Tvf/e53f1q4cOF/P/LII+u2bNnyc+vWrXvyyJEj//vDH/5Qcv78+f/w0EMPbZycnHzg3Llz/+zBBx9846qrrtq+ZMmS37zyyiuvfP/993du2rRp5ZdffvnXjz/++H1PPvnkv//7v/+77Pnnn3/t6tWr/9GgQYP69+/f/+Vf/MVfXH/llVc+tHHjxj0TJ07897/8y798+bLLLtv+hS984QsTJ0585yeffPLzH/7wB8s+/vGPL9q2bdubDh069PqZM2f+PXDgwK6nnnqq5Nprr71x8eLFi2fMmPH+8uXL/vvoo49+f+zYsdfWr19/9/Tp0/XNmzf/9XvvvfenN954o+TDDz/89dWrV19auHDhv61du/aXgQMHXnnqqac+s3Hjxo6nn3667Oabb/5l3bp1KysrL1u0aNHDnTt3dmzZsuXL+/bt+9/XXnutfG9v796f/exnL5w+fft0R0fH6127dv3d2rVrn3jllVe2rF+/vrjnnnvub21tfWHHjh2fefnll/88ceLET/fu3fvD1q1br1izZs2/ePXVV69fuHCh/f3vf3/Rrbfe+tT69eu3XX311fePHDnyn+eff779l7/85YMPPPBA2d/+9jcLFyxY8O3hw4ffXLFiRcrvv//++zNmzPjz4MGDN48ePXrb+fPn/2XWrFlPbt++fdWCBQu+vmnTJuf999//5xkzZrz+u9/97qGNGzf+8cMf/vCtAwcObNmzZ8+/ffv2ffn5z3/+V5GRkd/s27ev/Otf/7p2yJAhl9x4443fOnTo0P9ctWpV7fnnn/+qUaNGLjzzzAtr1q1b9w9PPvlk6YMPPrizadOm/XvttdfsXLRokaR//etfr96xY8d9+/btu7pkyZJfbt++/Zfvv/+u5Mc//vEFy5cv3vTZZ5+tuv/+++/fuXPn3nnxxRc3PPnkk+333XefJevWrVuxc+fO35w+fftXp06dLuzfv/9fzzzzTEllZeWLzzzzjP3zn//8rL/++usV3333Xdne3n5BQUFB8/DDD9+yZcuW/Z/85CdPPvzww4UjR458tGrVqg/efvttyd69ez9YsWLFq2vXrv18zJgxV+7fv/+XAQMG/OG3v/1taeeff37bBx98sOqOO+7YsmzZsje+//572xNPPNG2du3a/Zs3b/71+vXrv//+97+fNnr06L+tWrXqT6+//vqv16xZs6Zp06ZdfPnll384cODAz/v37//y5Zdfvrrg4OBX1q5du6a4uPjp6OhIZmamvr7+6tWrR48eXb58uaysLDQ0dPTo0d7eXmBg4Pbt2xcuXPjw4cOcnJwYDAYRBEHwEwgJmub+/fv/9cwzzzx+5syZDwwbNuzX//mf/+xYvXr13y5fvvyXAwcOvHnkkUf+85vf/GYLFix47Rdf/Pj//9//u+TSSy+99+LFi/s+/elP//XJJ5+8ffz48ddOnTq1bdOmzYtPnjz5z+eff37rL37xiyWXXXbZ9gsWLPj1zz77rL2pqWnVxx9/vH/++ed/NnHiRC+vvPJKyRlnnPHYiy++2Pbt2/cbX3zxhf3nP/957ZlnnpnxxhtvrNu5c+fXP/3pT5ds3779e5MmTbpeVFQ0fPzxx/vGjx//j99+++1z77zzzi1ffvnlf7z++uuLtm7d+o1FixZ986mnnu4+dOjQ/cuWLdty6tSp3xkyZMiH165d+0u/+MUvrn/kkUfefvTRR9t/+MMfbPzDP/zDr0aMGHGve++9d+0vf/nL6m9+85tlP//5z3du3rx564knnlg1Z86c/w8ePPi3N998s/173/tec+mll373qaeeevKBBx5oOnnyZK8HHnig5Lrrrruxbt26/fPnz/+9cOHC/Xv37u37+9//fqXw8PB/XrVqld1tt91myZIlS/7g4sWLy/7whz/c/a1vfWtZUVHRtGHDBmVPnz5NfuKJJ6769re/XZSXl1+xdOnS927cuPHP3nzzzR+98sorf3r11Vc/ceihh/bs27dv35YtW/by6NGj/3XWWWclz549++WpU6d+ffnll//4lVdesmbMmDFbNmzY8O+WLVu23HvvvV+8+uqrf33mmWd2PPPMM1d99NFHl3z5y18umT17dsmzzz77z0mTJn3yF7/4xfY3vvGNZfv27dunT5/uGzJkyJ7x48cvPnjgQMnAgQPrbrnlloXDhg2rPnbsWOltt92m+OQnP3nJz372swsf//jHF/zBD/5wxa677lp2yy23rPnMZz5Tsnhx20033bTqmmuuufn5z3/etmfPnnVLliy5tXDhwhf/9m//duehQ4fuf/vb365YsmTJ1sGDBy95/PHH10ycOPGfz507t+673/2ubN26dU/cvHlz0Xvf+97a+fPn3//ggw82jRs37j/11FNX/eyzz+669dZbV/7sZz9ruOCCCz7zyCOPXPne97637uKLL97av3//j4sWLVqycuXKX5s+fft3R0fHV9LS0lYmJiZ+8sQTT2wZOXLkJ2vWrNn05z//eU5GRsavGjx4cNkxxxzT+Pvf/77sqquuWtK6des+feGFF7Zs3779W7/61a+WrFq1qmnnnXd+/eKLLz77qquuurRixYoV77jjjrXLly8vGRgYWLNt27at4eHhn82aNetXfX19Z+fOnd/+6U9/uuykk05acuLEif+bOHHi6oEDBzaNHj267IMPPthwyy23rLrvvvvWPfbYY8s+//zzl7/97W/bf/zHf9yyb9++35o0aXLz+eefL1q+fPmqhx56qGL+/PllP/vZz5YtWrRoS2FhYU7ZsmVbvvzyyxXPPvus5PXXXz9h586dvxkxYkRZfHy8/dJLL121dOnSDx566KE1Dz30UMnFF1+85PXXX79m1apVK991113rfv3rXy/Jzs5efemll1YtWrRodtGiRa+sWLFievHFF3ds2bKl5Kc//elhgwcP/v2jjz6q+OSTTy7Jysp64yuvvHKr5557buyrr75asWzZsu3vvvuu7R/+4R+WbNmy5U2lpaV5N9xwQ+XEE0+8ZefOnevU1dX1p/fff/8X7dq1+3nQoEF1n3zyycLFixevuvfeeytXrlwZFRkZef/5559vu+WWWzbuvvvuvTds2LDuwoULl1asWPGaJ598smzbtm1HhgwZsm/UqFG1X//617IXX3yxbNmyZTuPPfaYpZ///OfLvv3tb5e84oorPvnZz37WsXnz5i0ff/yx8oorrnhiz549X9u0adPnzZo1e8/AgQPrnnjiiduWLl264rHHHluydOnSpW+//faK2267rWzatGlj6enpL7zzzjvrbty4ce2BBx5Y8+STT14yZsyYtXv37l1x3XXXrXnrrbfWrFix4tUbb7yxYv78+WW//e1vl3zooYcWb9my5Y7Vq1ef8MEPfnDJ22+/vfLCCy9c+d///d+V/Z//+Z/V4eHhfxkyZMh+/Phx9+abb16yc+fOfxowYER56aWX1rx58+bVP/zhD8uffvrpkj/+8Y/LLrvssmVr1qzp+vr6vpmZmZmfmZn504ULF77z0ksv/eWqq6769f33379u4cKFLxw9enTZsWPHLvjTn/5Useuuu5YtWrRo6xVXXPGaZcuW7fznP/+puv/++7/z2Wef/fXhhx/+//z8/Lt+8pOf3PzkJz/ZuWzZsnfee++9/01NTZk33nij5Omnn17z6aefLu3fv7/w+uuvLxo9enTJtGnTtnz22WeXLFiwYFX+/Pm1//znPytXrFjx+ltvvbXqxIkTa6+88soV8+fPr/nss8+WbN26deVf//pX1YMPPtjy3XffvWX58uXrFi5cWHTaaaeVO3To0P0PP/xwzc6dO/8zZsyYsYceeqhm4cKFat9//33tRx99VHLWWWeV/PznP1/z+9//vqRly5YVhYWFv3rppZf+8tlnn71mz579+ksvvbTqpZdeurZ58+b3XnjhhSu+9a1vVbRt27bqxIkTa/bt27cqvvrqK7///e9fsmDBgtVvvfXWSgEBAW9s3Ljx9V27dnVOnTq1b8+ePeXBBx8seeWVV2revHnz6oYbbqjYtGmT8uCDDyp++MMf1gwcOLBu0KBBlXvvvXfNFVdcsWr+/PnVu+++q3riiSdWfPvb317zyiuvrFi6dGnlrbfeqnnyySdWbd++fevtt99W7t27d0lDQ8Mrq1atrPnRj36k3L9/f82LL76oeemll+qefvpp5csvv7zkF7/4hXLDDTdUnXHGGZULFixQ/fd//3ftjTfeqPjIRz5S8dZbb615/PHH16xcuXIlgwYNqnnggQdWfOYzn6k54IADKtevX9/W1NTU19dXWlqamZm5adOmHTt2jIyMxMbGJk+evGzZsjFjxoSEhMTGxsLCwkOHDkVERAQGBsbGxoaHh4uLiwMAgiAI+p+oKCiL7e3tN95xxx23/PGPf1z/sY99bMVf/dVf1TzzzDPb7r///rL//ve/KzZu3Lh22bJlW/v37191wQUXbNizZ881l1xyybJ9+/YtGzZsWLPqqquWPPPMM8v27dunfP7zn1+zYMGCNffee29dffXVV/bt23dZRETEgwcP/qVRo0b/9pOf/KS8/fbbV8ycObPms88+W3XVVVct+f73v1/zyCOPXPXAAw8s2bNnz5YLLrhgyYMPPrgmq6ur7fHHH18xY8aMqgMPPLAqKirq52lpaWs/8YlPXPPggw+2XHfddd+58MILK0aNGjV3ww03bPnkk09+tW7dusc+/vGPVxw8eFDZs2fPNRdeuGLJd77zjWrPPfe8Zfny5X/z5z//eeXVV1/dunv37v9ddNFFv//4xz9XjB07tnLvvfer3njjjRUXLFjg+f73v7/qgw8+uObss88uufrqqzd9+9vfrrnvvvvXrF+/vmbixIl127ZtU7Zs2bLqlVdesubJJ59cufrqqze96aabPvnZz36m5LXXXq956qmnrnzwwQcrvv/97695+eWXz/zlL38pufrqq1d98MEHKx566KEzN998c83tt99esWLFipXPPvusrPj4eMtLX/rSNffee+8Z/fv3rzrzjDPWHH/88SuWLFkyZ9y4ccsf/vCH61auXDnz/ve/v2z//ffXnXTSSSuOPf74sgsXLlyzdevW/3zssceyh4aGftiwYUPrn//5nzUHDx5sOPvssysWLFjw+yuvvLJqyZIlq+64446aRQsXLqwZPXp0zcsvv7yqqqrq58suu6zy6aefvmb//ffvOfnkkys2bdq0Zs+ePa/v3r27YtmyZTt++MMf1gwcOLBu/Pjxdf/2b/9W7rrrrnU///nPl9x6662brrvuuk1vvvnmupsvvvj6ySefLJkxY0bN8ePH17zyyiurFi1aVHLBBReUjB8/fu0FF1xw9fHHHy8ZOXLkrjfeeGPFnDlzKs6dO7dqw4YNy7Zs2bImLi6u6+GHH67ZsWNHZePGjSuuuuqq1TvvvLPiDDPMMGvnnXdWvfjFL9Y8+OCDVSNGjKjZvv32a44//vglW7du3bZ+/fqab3zjG2veeustKyZPnlzy8ssvr5g7d+7at956q+aRRx5R88Y3vrHi5ptvrnnkEUdWzJ49u+aAAw6oeemnPy35zne+s+zqq69euemmmz776U9/svLMM88sufzyyzcdOHBg2fe//30lv//970vOPffcmnvuueemf/qnfyqZM2dOzUmTJtXccMMNlRs3bqwYPXp0zdNPP70qlUq/+93vfqXms88+23T77bfXHHvssZVLly4tOPHEE+tee+21ZsWKFd/ZvHnz/3Pw4MH61KlTvz1y5Mg9e/fu/eX8+fN/s3Llyu/89Kc/XTNhwoR/GR4eXvLAAw/UHD58uGrMmDF1l156ae2JJ56oeenll8s+9alPrfnkk08uueCCC1YMGDDg5x133LHi5ptvrnn66acrbty4sebTn/60Zfv27St27NhRMmvWrJp//OMfKyZOnJhz8MEHVxx44IEz7r777poLL7ywZvPmzSv+5m/+pqSgoGDBpZdeunLrrbeqmjdvXl21atXKe++9t/LCCy8seeKJJ1YuX7581UsvvVRy+eWX1xw0aFDNsmXLOgcccEBVcnJypgEDBqypq6trGzduXLl169a/LFiw4PeZM2fWrV27tr5q1apVN9xwQ8Wjjz6q+OSTT2468sgjZ6677rqab3zjG2vuuOOOio8//njZ7bffXjF37tyar33tayUnnnii5oQTTqj42Mc+VvPZZ58teeutt65YvHhxydSpU2uOP/74mh/+8IeKGWecsWXJJZfcdO2112465JBDVhw9enTFXbfeWvPRRx+tee655+qefvpp5Yknnlhy9dVXr5k/f37F0aNH16xcuXLlbbfdVnPCCSdUfPCDH6zZsmVLzY477ljx2muvrXnkkUfuWrZsWcUFF1xQs3LlypqvfOUraq666qqKRx99tGLq1KnrzjvvrHnnnXcWvPvd715zySWXrDh+/PhZ73rXu8qee+55y4MPPrhu5cqVOxYsWPDl4MGDFQcOHKj5zGc+U3L++efXbNmyZc1bb72V89Zbb6355Cc/ufLkk08ufdaznlVx+umnV/zud79bsnLlylX33ntvzYknnlhzzTXXVBx//PEz7rjjjprDDju87Jprrqm55pprVuzfv39dcnLy+f7776+YP39+zV/+8pfKhg0b1sx///0Vxx9/fE2nTp3qrnvuumfXXXddzbnnnltzww03zPjpT39ace21166ZOXPmmn/+538uOPPMM+v+8R//sezaa6+tefbZZ8uefvppzdNPP70qKCjImTNnTtixY8eam2++efV73/texUcffdSyatWqis8++2zZ/fffv+r73/++YubMmdfee++9m4KCgpwvvvhi1fe+972ar3/960seeOABzdSpU+vOO++8mu985zsVH330UM3ChQtX/fWvf6059NBDV+zdu3dVycnJma997WuVV155peatt95aceKJJ+4466yzal5++eWKf/mXf6nZuXPnmq997WtzbrnlloodO3Ys+9nPflZxww03zJgxY8ZWrlwZ8xOf+MSuVatWdffffy9ZtGjRLrfeeuuaN954o+T+++9f86lPfepMv/3tbyseeughzd/+7d9WLFiwoGbatGnrrrvuus27776r+PhHP1p18803zwS/8847KyZOnLju3LlzxTvvvLPmpz71qZpFF1205s9//vOStWvXVuzevXvVn//5n8uefvrpn/m8884refrppzcfc8wxa4499vhZV1dX10MPPVRz1llnVWzcuHFNv//970tuvfXWVU899VSN2267reKzn/2sZvny5auuvfbarh133LHiX/7lX5Zs3Ljxr3PPPbfqhRdeWPOrX/2qJjIy8p73ve9ds2bNmm1TpkzJOfvss2tefvnl84477rhqx44da/72t7+tuemmm67atWvXlpiYqGzevLnkoosuWvPRRx+teeihh858+tOfLnniiSdmPvnJT87s3LlzzdVXX73mnnvumdHLL79cc8QRR8w499xzKx5//PEzpkyZsvLMM89MXLhw4cyRRx4546yzziqZP3/+nDlz5kx84AMfmHHTTTeViouLZ4444oiZn/70p2f27Nkz87nPfU7JJZdccsaZZ55Z8dFHH53ZtWvXmrPPPnsmJSUl5u233z5zyimnTLjjjjvO+P3vfz9zyimnzBxyyCHrjh07Zvbs2TPzGU95ypnPec5zxJprrrlmz549M+9+97szH/nIR+YDH/hA1aFDh8xDH/rQnE9/+tNnPvvZz6775z//eVFRUTGvf/3rc2677bZzzz333Pzrv/7rjNNPP32mv/iLv5h517veVXPssccm7HvvvXN+/etfnzN9+vSZv/zLv5zZv3//zOtf/3rNT3/600x0dPTMP/zDP6y49957ZwYHB1vOOOOMmU9/+tNn3HbbbTNPP/30maeeemrG22+/ffPFF19MvPLKK2fOnDmz4oQTTqg4/fTTKx544IGZj3zkI2fOOuusmmeeeaZm3LhxNWeccUYlJycns+OOO85cccUVNdfee2fOOussmvvvv/8mICAg+2cEQRCE/9VUBcE/yCuvvLJmxYoVNWvXrl0xd+7cW+PGjds5depUV1FR8eadd97ZuOOOO2b+7u/+rqa1tXXt3LlzxZprrjnju9/9bk1KSspcdtllm9/85jcrPvaxj9VcddVVcz///M+Vf/mf/7nmrbfemnnvvfdqnnnmmZrvfve7Z7bs2bPnjjvuuGnDhg3LvvnNby7ZtGnjmpSUlLjnPve5ml/96ldLFi1alHfvvfdqfvKTn0yZO3duzaabbqp5+umn57300ks1Dz74YE3Lli1rHnnk0Znnn39+xX/+539qzjnnnJndunVL9tOf/nRNWlpazv3vf//MtddeWzNp0qQz++yzz0xKSso54ogjKl555ZWahQsXznzwgwc3X3DBBRXHHnvsrM997nM1Rx99dM2//du/5Rw6dKhq0KBBNV/+8pfPvPfee3P+8pe/VHzpS1+qufrqq8t+/etfVyxcuLCmoaFh1u9+97szL7zwQk1qauqaP/7xjyVz585N2b17d83dd99ds379+pq3v/3tmkcffXSme+65Z6ZjY+OaT3ziE5mHH364Yt++fTMf+MAHaly8eHHN73//+5nrr7++Zs6cORPvuuuumeeee+7a9ddfX3LllVcGvPa1r5Ucf/zxc/bv31/2k5/8pGby5MlrfvrTn85873vfm7n99tsrXvOa16xZtmxZ8+EPf3jmnnvuqfnGN74xs9VWW2X+9m//tuY3v/nNjBNPPLEqKChY89nPfnbNggULLrnkkpvf/e53a2bPnq3i4uK8WbNm1fzzP/+z5sMf/vCMxYsX5/z5z38uOf/88+e98sorNQ8//PCahx9+uKZhYWFZ//3f/91cffXVlQULFjyz/fbbZ84888yapz/96TUjR46sWb58+Zzjxo2bceihh9YcccQRsx577LEzH//4x8v+4Q9/mLnrrbdm9uzZM+sDH/hAzWWXXTZz0UUXVXz84x8v2XrrrTM/+tGPlgwdOrRmxowZMyeeeKJq6tSpNd/5zneK8+fPL5k1a1bNn/7pn9aceuqpM2vWrJnzzDPPrHn22WeX/O53v5u5+eab5/zoRz9aseuuu8485znnVCxfvryqvLz855133nlj1apVs1atWjVn8eLFNcecc07N448/nrfJJptkvO51r5vZtGmTjLPOOktWrlwZs/POO6856qijVqy//vrMV7/61bM+/elPl1xxwQUnnnPOOTXHHXdc1b59+5wRI0aUHHHEEZl33HFHzenTp8+ce+6557Zt2zbnTDPNlPnlL385Y8aMmcMPP7xi9OjRZT/84Q+X/exnP5v13e9+d1VXV+e87W1vK7n33ntn/uRP/mTNyy+/nPHGG29Ucskll8w488wza/bv3z8zZ86cmd122y1j1apVlTvvvHPmm9/8ZuXbb78tefzjH6955JFHzhx++OEVP/uzP6s49thj51133XXNn//5n1cMGzasy8MPP1xy6aWXnvPoo49W/OlPf6q56aabZo444ojK4sWLK2bPnj1z2WWXzbjggguqzjjjLDvWrl078z//8z8Vzz333IznPe95ZVdeeWXJ8ccfn/Hwww+veOWVV5ZMnTq14oorrkhZtGhR2dKlS0tuuOGGis985jNnrrnmmpmrrrpq5hOf+ESN448/vuTxxx9fcc4555TcfffdM5fddlvFv/zLvyzZvXt3zRe+8IVZ15aWllmvec1rKiZPnlxyxRVXnHn00UdnVq5cmfPDH/6wJjfccMOMwYMHT3nppZdqHnzwQYn73e9+iXPPPXfNHXfccb22tjZz5JFHVnzpS19aceSRR8789m//dtXXX39dccwxx5R88IMfnPHQQw9NufTSS2e+8IUvrFi+fPlaRUVFznve856K97///Zlrr712xhlnnFHywAMPrHn00UczP/zhD9f8wz/8Q03Pnj3nHDx4sGb37t0zzjjjjIrPfe5zZz7+8Y/P2LdvX8173/vezdlnn11y9dVXz7zrXe+q+dSnPjVj+PDhy374wx+WvPvuu2eee+65mR//+MerPvShD8269dZbM3//939f8Ze//GWNp556qubaa69t+957751ZuHDhzLe//e2Ku+++u+Zf/uVfnrn66qtnvve979W88cYba370ox9N2L59e01JSclZunRpzX/8x39UvPPOO3fOOOOMmv/8z/9c8tFHH53Zvn37mqeeemnGsGHDKm688cZzzz333Lzvfe9bcdxxx+VdeOGFyvTp02euvPLKmssuu6yqra3N+da3vlXxqU99qubhhx9esnDhwpnrr7++Zs2aNTM/+MEP5gwZMqTmoYceqlm5cuWZ5cuXLznuuOPKvPrqq2vOP//8WbVq1fK+8Y1vVEydOjXnAx/4QMn555+fefHFFzdeeumlMx/72MeKk046adZLX/rSzPbbb5855JBDZvz6178u+dGPfjRj9uzZlaeeemnNddddN/O1r32tZufOnTWXXXZZzU9/+tNZbW3tmg996EM13//+9yd8/vOfVwwbNqyqsbFxbZMmTSpOPvnkWZcuXeZ9/etfL7noootu+sIXvvDZf/3Xf81529veVvPiiy/O+PSnP13z4IMPTrnhhhsmvvvd705ZuHBhza9+9asaP//5zyve+c53Vtxyyy2Vzz77rObll1/OuOOOOyreeeedM//4j/8440c/+tGazMxMFQwYMKBq0KBBld/97ncr7rnnnprPfe5zld/+9rflfOYzn6l5/vnnMy+//PKMxx57rOb1r399za9+9asZJ5xwQmXBggUnHn300Zmnn356zSWXXFJzyimnVCxYsGDW8uXLM0aNGlXz1a9+dfXJJ58s+dnPfnbN7t27Kx555JFZz3jGU8rcuXOznvGMZ+T8+9//Lvve9743c/nll2f89re/LfnMZz4z61//+pWXX355xZ///OdlP/zhD1eeeeaZmdWrV8/48Y9/XPLaa6+V/Pa3vy355S9/mffZZ5+tuv/+++e85jWvKfnNb34z48YNG/Od73yna/PNN8+6++67M9761rfmPPzww2f27Nkz6w1vfGOlN73pTcvWrl1bM3/+fM0555xT8+ijj2YOP/zwigcffLDkv//7v7PuvPPOmt/85jcnPvWpT80644wzZrz44osV3/rWtypuueWWmr/927+V/P73v6942ctetmTNmjVnfvvb36551rOe9fK6urpZ3/nOd65YtWpVzSe/+MWa73znO2c2btyYcfnll5dceumlMwcccEDV/fffX/GnP/1j5nvf+94Z77zzjuyyyy6bcfHFF6/48pe/XPPEE0/Muvbaa2de+cpXzrj66qtXvfvd767ZuHHjmh/+8IdZL3zhC2c2bNiQ8453vKPi7ne/u2bNmjUnfve736344IMP5lx++eUVb3vb28q6tLS0Ztq0afOWLFkyY+bMmVV33313zd/+7d9mHHzwwZVnn312zT333FNxyimnLNu0aZPMd7/73ZnHHnus5u///u+zbr311plf+tKX5sxzzz0zDz30UMVnPvOZmQ984AMlRxxxhFxgYOCeRQsW/Pba1atXP/roo29mZmZ2nzx58l+eeeYZtW3btt179+79c+fOneu2bt36+aJFi/4wICAg62cBQRAE/UdUFDx/p/k7giAIgv5Oos8XgiAIgpaV8H+LgCAIgqJFoYIgCIIgWFHQQBAEQdGiosIfgiAIgv5O9PskBEEQBC0qKggIAiCIWFRUEBAEQBCxqKgICAKgaCAHgiAIgv4iUVHQQRAEQdGiosIfgiAIgv5O5PskBEEQBC0qKggIAiCIWFRUEBAEQBCxqKgICAKgaCAHgiAIgv4iUVHQQRAEQdGiosIfgiAIgv5O5PskBEEQBC0qKggIAiCIWFRUEBAEQBCxqKgICAKgaCAHgiAIgv4iUVHQQRAEQdGiosIfgiAIgv5O5PskBEEQBC0qKggIAiCIWFRUEBAEQBCxqKgICAKgaCAHgiAIgv4iUVHQQRAEQdGiUn6v/wEY1xQxYJjP0QAAAABJRU5ErkJggg==" alt="Power Semiotics Logo" class="h-12">
+            </a>
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden" id="mobile-menu-button">
+                <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center font-semibold text-slate-600">
+                <a href="#" class="hover:text-cyan-600 transition">Inicio</a>
+                <a href="#" class="hover:text-cyan-600 transition">Artículos</a>
+                <a href="#" class="hover:text-cyan-600 transition">Especialidades</a>
+                <a href="#" class="hover:text-cyan-600 transition">Sobre Nosotros</a>
+                <a href="#" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 px-5 rounded-full transition shadow-sm hover:shadow-md">Contacto</a>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div class="hidden md:hidden bg-white border-t border-slate-200" id="mobile-menu">
+            <a href="#" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Inicio</a>
+            <a href="#" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Artículos</a>
+            <a href="#" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Especialidades</a>
+            <a href="#" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Sobre Nosotros</a>
+            <a href="#" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Contacto</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-bg text-white">
+            <div class="container mx-auto px-6 py-28 md:py-40 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4 animate-fade-in-down">Avanzando la Atención Médica a Través de la Evidencia</h1>
+                <p class="text-lg md:text-xl text-cyan-200 mb-10 max-w-3xl mx-auto">Tu fuente para lo último en medicina basada en evidencia, ciencia de datos y el futuro de la innovación en salud.</p>
+                <a href="#" class="bg-white text-cyan-700 font-bold py-3 px-8 rounded-full hover:bg-slate-200 transition text-lg shadow-lg hover:shadow-xl transform hover:scale-105">
+                    Explorar Artículos
+                </a>
+            </div>
+        </section>
+
+        <!-- Featured Research Section -->
+        <section class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+                    <!-- Image Column -->
+                    <div class="lg:w-1/2">
+                        <img src="https://placehold.co/600x400/014f86/ffffff?text=Análisis+de+Datos" alt="Investigación sobre el gasto en salud en Ecuador" class="rounded-2xl shadow-2xl w-full card-hover">
+                    </div>
+                    <!-- Text Column -->
+                    <div class="lg:w-1/2 text-center lg:text-left">
+                        <h3 class="text-base font-bold uppercase text-cyan-600 tracking-wider">Investigación Destacada</h3>
+                        <h2 class="text-4xl md:text-5xl font-bold text-slate-800 my-3">¿Quién recibe el dinero?</h2>
+                        <p class="text-slate-500 text-lg mb-8">
+                          Un análisis profundo sobre la distribución del gasto en salud en Ecuador. Explore los datos, visualizaciones y conclusiones clave de nuestro último informe académico.
+                        </p>
+                        <a href="#" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 px-8 rounded-full transition text-base shadow-lg hover:shadow-cyan-500/50 inline-block transform hover:scale-105">
+                          Leer el Reporte Completo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Specialties Section -->
+        <section class="py-16 md:py-24 bg-slate-50">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center text-slate-800 section-title">Explore Nuestras Especialidades</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Card 1: Neurología -->
+                    <div class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center">
+                        <div class="bg-cyan-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="brain-circuit" class="text-cyan-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Neurología</h3>
+                        <p class="text-slate-500 text-sm">Perspectivas sobre las últimas investigaciones y prácticas clínicas en neurología.</p>
+                    </div>
+                    <!-- Card 2: Gastroenterología -->
+                    <div class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center">
+                         <div class="bg-emerald-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="test-tube-2" class="text-emerald-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Gastroenterología</h3>
+                        <p class="text-slate-500 text-sm">Cubriendo la salud digestiva, desde problemas comunes hasta enfermedades complejas.</p>
+                    </div>
+                    <!-- Card 3: Ciencia de Datos -->
+                    <div class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center">
+                         <div class="bg-indigo-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="bar-chart-3" class="text-indigo-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Ciencia de Datos</h3>
+                        <p class="text-slate-500 text-sm">Cómo los datos están transformando la investigación y los resultados de los pacientes.</p>
+                    </div>
+                    <!-- Card 4: Medicina Del Futuro -->
+                    <div class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center">
+                         <div class="bg-rose-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="rocket" class="text-rose-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Medicina Del Futuro</h3>
+                        <p class="text-slate-500 text-sm">Explorando IA, genómica y la próxima generación de tecnología médica.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Articles Section -->
+        <section class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center text-slate-800 section-title">Artículos de Interés</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Article 1 -->
+                    <div class="card-hover bg-slate-50 rounded-2xl shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://placehold.co/600x400/F4A261/1E293B?text=Hepatitis+A" alt="Virus de la Hepatitis A" class="w-full h-52 object-cover">
+                        <div class="p-6 flex-grow flex flex-col">
+                            <span class="text-sm text-cyan-600 font-semibold mb-2">Gastroenterología</span>
+                            <h3 class="text-xl font-bold mb-3 text-slate-800">Entendiendo la Hepatitis A</h3>
+                            <p class="text-slate-500 mb-4 text-sm flex-grow">Una mirada a las causas, síntomas y prevención de la Hepatitis A, una infección viral aguda.</p>
+                            <a href="#" class="font-semibold text-cyan-700 hover:underline mt-auto">Leer Más &rarr;</a>
+                        </div>
+                    </div>
+                     <!-- Article 2 -->
+                     <div class="card-hover bg-slate-50 rounded-2xl shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://placehold.co/600x400/2A9D8F/1E293B?text=POCUS" alt="Sonda de ultrasonido" class="w-full h-52 object-cover">
+                        <div class="p-6 flex-grow flex flex-col">
+                             <span class="text-sm text-cyan-600 font-semibold mb-2">Tecnología</span>
+                            <h3 class="text-xl font-bold mb-3 text-slate-800">El Auge de POCUS</h3>
+                            <p class="text-slate-500 mb-4 text-sm flex-grow">Cómo el Ultrasonido en el Punto de Atención está revolucionando el diagnóstico a pie de cama.</p>
+                            <a href="#" class="font-semibold text-cyan-700 hover:underline mt-auto">Leer Más &rarr;</a>
+                        </div>
+                    </div>
+                     <!-- Article 3 -->
+                     <div class="card-hover bg-slate-50 rounded-2xl shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://placehold.co/600x400/E76F51/1E293B?text=Hepatitis+Crónica" alt="Diagrama del hígado" class="w-full h-52 object-cover">
+                        <div class="p-6 flex-grow flex flex-col">
+                            <span class="text-sm text-cyan-600 font-semibold mb-2">Gastroenterología</span>
+                            <h3 class="text-xl font-bold mb-3 text-slate-800">Manejo de la Hepatitis Crónica</h3>
+                            <p class="text-slate-500 mb-4 text-sm flex-grow">Un resumen de las estrategias y tratamientos a largo plazo para la hepatitis crónica.</p>
+                            <a href="#" class="font-semibold text-cyan-700 hover:underline mt-auto">Leer Más &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-300">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">Sobre Power Semiotics</h4>
+                    <p class="text-sm">Dedicados a promover prácticas basadas en evidencia para mejorar la atención al paciente y avanzar en el conocimiento médico.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">Enlaces Rápidos</h4>
+                    <ul>
+                        <li class="mb-2"><a href="#" class="text-sm hover:text-cyan-400 transition">Inicio</a></li>
+                        <li class="mb-2"><a href="#" class="text-sm hover:text-cyan-400 transition">Artículos</a></li>
+                        <li class="mb-2"><a href="#" class="text-sm hover:text-cyan-400 transition">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">Síguenos</h4>
+                    <div class="flex space-x-4 justify-center md:justify-start">
+                        <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="twitter"></i></a>
+                        <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="linkedin"></i></a>
+                        <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-700 mt-10 pt-6 text-center text-slate-400 text-xs">
+                <p>&copy; 2025 Power Semiotics. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
