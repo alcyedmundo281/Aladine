@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: La Paradoja del Gasto en Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .stat-card h3 {
+            color: #0077b6;
+        }
+        .stat-card .stat-number {
+            color: #004f7c;
+        }
+        .highlight {
+            color: #ff9f1c;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-center text-[#004f7c]">Mapeando el Dinero: La Paradoja del Gasto en Salud en Ecuador</h1>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <section id="paradox" class="mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-[#004f7c]">El Corazón de la Paradoja</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-lg text-gray-600">A pesar de una significativa inversión pública en salud, los hogares ecuatorianos enfrentan una de las cargas de gasto de bolsillo más altas de la región. Este es el enigma que exploramos.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                <div class="stat-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold">Gasto Público en Salud (% del PIB, 2021)</h3>
+                    <p class="stat-number text-5xl font-bold mt-2">5.4%</p>
+                    <p class="mt-2 text-gray-500">Un esfuerzo fiscal considerable del Estado.</p>
+                </div>
+                <div class="stat-card bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold">Gasto de Bolsillo (% del Gasto Total, 2023)</h3>
+                    <p class="stat-number text-5xl font-bold mt-2 highlight">32.8%</p>
+                    <p class="mt-2 text-gray-500">Una pesada carga financiera directa para los ciudadanos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="overview" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#004f7c]">Panorama General: Tendencias del Gasto Agregado</h2>
+                <p class="text-center text-gray-600 mb-8">El gasto total en salud en Ecuador ha crecido, tanto en relación a la economía como por persona. Sin embargo, este crecimiento esconde dinámicas complejas que impactan directamente en la protección financiera de la población.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="w-full">
+                        <h3 class="text-xl font-semibold text-center mb-2">Evolución del Gasto en Salud (% del PIB)</h3>
+                        <div class="chart-container">
+                            <canvas id="gastoPIBChart"></canvas>
+                        </div>
+                         <p class="text-center text-sm text-gray-500 mt-2">Muestra el esfuerzo económico nacional destinado a la salud.</p>
+                    </div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-semibold text-center mb-2">Evolución del Gasto Per Cápita en Salud (USD)</h3>
+                        <div class="chart-container">
+                            <canvas id="gastoPerCapitaChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">Aunque creciente, sigue por debajo del promedio regional.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="oop-focus" class="mb-12">
+             <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#004f7c]">El Problema Central: La Carga Persistente del Gasto de Bolsillo</h2>
+                <p class="text-center text-gray-600 mb-8">El Gasto de Bolsillo (OOP) es el indicador más claro de la paradoja. A pesar de las reformas y el aumento de la inversión pública, la carga sobre los hogares no ha disminuido significativamente, estabilizándose en niveles preocupantemente altos.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-xl font-semibold text-center mb-2">Tendencia del Gasto de Bolsillo (% del Gasto Total)</h3>
+                        <div class="chart-container h-96">
+                            <canvas id="gastoOOPChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">La reducción se estancó, evidenciando un problema estructural.</p>
+                    </div>
+                    <div>
+                         <h3 class="text-xl font-semibold text-center mb-2">¿En qué gastan los hogares? (Composición del OOP)</h3>
+                        <div class="chart-container">
+                            <canvas id="oopCompositionChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">Casi la mitad del gasto directo se destina a la compra de medicamentos.</p>
+                    </div>
+                </div>
+             </div>
+        </section>
+        
+        <section id="who-pays" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#004f7c]">¿Quién Paga? La Mezcla de Financiamiento</h2>
+                <p class="text-center text-gray-600 mb-8">El sistema de salud ecuatoriano es financiado predominantemente por fuentes públicas. Sin embargo, esta mayoría pública no logra desplazar la alta dependencia del gasto privado directo de los hogares, que sigue siendo el principal financiador individual después del gobierno central.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-xl font-semibold text-center mb-2">Fuentes de Financiamiento en Salud (2023)</h3>
+                        <div class="chart-container">
+                            <canvas id="financiamientoChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="prose lg:prose-lg text-gray-700">
+                        <h4>La Dinámica Público-Privada</h4>
+                        <p>El <span class="font-bold text-[#0077b6]">61.5%</span> del financiamiento proviene del sector público (Gobierno y Seguridad Social), lo que demuestra un fuerte compromiso estatal.</p>
+                        <p>Sin embargo, el <span class="font-bold highlight">37.3%</span> es financiado directamente por los hogares. Esta cifra es excepcionalmente alta y revela que la cobertura pública nominal no se traduce en una protección financiera real y efectiva.</p>
+                        <p>La participación de seguros privados voluntarios es mínima, dejando al gasto de bolsillo como el principal mecanismo de financiamiento privado.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="who-gets" class="mb-12">
+             <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#004f7c]">¿Quién Recibe el Dinero? Proveedores y Niveles de Atención</h2>
+                <p class="text-center text-gray-600 mb-8">El análisis de los proveedores revela que una parte significativa del gasto se concentra en la atención hospitalaria, tanto pública como privada. Este enfoque hospital-céntrico desvía recursos de la atención primaria, que es fundamental para un sistema de salud eficiente y preventivo.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-xl font-semibold text-center mb-2">Producción de Servicios por Proveedor (2023)</h3>
+                        <div class="chart-container">
+                            <canvas id="produccionProveedorChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">Los hospitales públicos y privados dominan la prestación de servicios.</p>
+                    </div>
+                     <div>
+                        <h3 class="text-xl font-semibold text-center mb-2">Gasto por Nivel de Atención (Público vs. Privado, 2022)</h3>
+                        <div class="chart-container">
+                            <canvas id="gastoNivelAtencionChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">Fuerte concentración del gasto en los niveles secundario y terciario.</p>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <section id="what-for" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#004f7c]">¿En Qué se Gasta? Un Sistema Orientado a la Cura</h2>
+                <p class="text-center text-gray-600 mb-8">La distribución del gasto por funciones de atención médica confirma un enfoque abrumadoramente curativo en detrimento de la prevención y la salud pública. Tanto el gobierno como los hogares destinan la mayor parte de sus recursos a tratar enfermedades en lugar de prevenirlas.</p>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                     <div>
+                         <h3 class="text-xl font-semibold text-center mb-2">Prioridades de Gasto del Gobierno (2022)</h3>
+                         <div class="chart-container">
+                            <canvas id="gastoFuncionGobiernoChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">Solo un <span class="font-bold highlight">3.3%</span> se destina a Salud Pública.</p>
+                     </div>
+                     <div>
+                         <h3 class="text-xl font-semibold text-center mb-2">Prioridades de Gasto de los Hogares (2022)</h3>
+                         <div class="chart-container">
+                            <canvas id="gastoFuncionHogaresChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">El gasto se concentra en servicios ambulatorios y farmacéuticos.</p>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="flow" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#004f7c]">Trazando el Flujo del Dinero: Un Diagrama Simplificado</h2>
+                <p class="text-center text-gray-600 mb-8">Este diagrama ilustra los dos grandes flujos financieros. El flujo público, aunque grande, no es suficiente para evitar que un importante flujo de dinero privado salga directamente de los bolsillos de los ciudadanos para pagar servicios y, sobre todo, medicamentos.</p>
+                <div class="w-full overflow-x-auto p-4">
+                    <div class="flex flex-col md:flex-row justify-around items-center md:items-start space-y-8 md:space-y-0 md:space-x-8">
+                        <div class="text-center">
+                            <div class="p-4 bg-[#0077b6] text-white rounded-lg shadow-lg">
+                                <h4 class="font-bold">Fuentes Públicas</h4>
+                                <p class="text-sm">(Gobierno + IESS)</p>
+                            </div>
+                            <div class="h-16 w-1 bg-[#0077b6] mx-auto my-2"></div>
+                            <div class="p-4 bg-blue-100 text-[#004f7c] rounded-lg shadow-md">
+                                <p class="font-semibold">Hospitales y Centros de Salud Públicos</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-center relative md:top-24">
+                            <div class="p-6 bg-gray-200 rounded-full shadow-inner">
+                                <span class="text-4xl">👥</span>
+                                <h4 class="font-bold text-gray-700">Ciudadanos</h4>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="p-4 bg-[#ff9f1c] text-white rounded-lg shadow-lg">
+                                <h4 class="font-bold">Gasto de Bolsillo</h4>
+                                <p class="text-sm">(Hogares)</p>
+                            </div>
+                            <div class="h-16 w-1 bg-[#ff9f1c] mx-auto my-2"></div>
+                            <div class="p-4 bg-orange-100 text-[#d95f02] rounded-lg shadow-md">
+                                <p class="font-semibold">Hospitales Privados, Consultorios y Farmacias</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+         <section id="conclusion">
+            <div class="bg-[#004f7c] text-white rounded-lg shadow-xl p-8">
+                <h2 class="text-3xl font-bold text-center mb-6">Conclusiones Clave</h2>
+                <ul class="space-y-4 max-w-3xl mx-auto text-lg">
+                    <li class="flex items-start">
+                        <span class="text-[#48cae4] font-bold mr-3">✔</span>
+                        <div><strong class="text-[#ff9f1c]">La Paradoja es Estructural:</strong> El alto gasto público no se traduce en protección financiera. El problema no es solo cuánto se gasta, sino cómo y en quién.</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-[#48cae4] font-bold mr-3">✔</span>
+                        <div><strong class="text-[#ff9f1c]">Concentración del Gasto:</strong> Los recursos se concentran en atención hospitalaria y curativa, descuidando la atención primaria y la prevención, lo que eleva los costos a largo plazo.</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-[#48cae4] font-bold mr-3">✔</span>
+                        <div><strong class="text-[#ff9f1c]">El Gasto de Bolsillo Persiste:</strong> Los medicamentos son el principal motor del gasto directo de los hogares, indicando posibles fallas en la regulación y el acceso a través del sistema público.</div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-12 py-6 bg-gray-800 text-white text-center">
+        <p class="text-sm">Infografía basada en el análisis de datos de las Cuentas Satélite de Salud del INEC, OMS y OPS.</p>
+        <p class="text-xs text-gray-400 mt-1">Generado por IA para visualización de investigación. No constituye un informe oficial.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapLabel = (str, maxLen) => {
+                if (str.length <= maxLen) {
+                    return str;
+                }
+                const words = str.split(' ');
+                const lines = [];
+                let currentLine = '';
+                words.forEach(word => {
+                    if ((currentLine + ' ' + word).trim().length > maxLen && currentLine.length > 0) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                });
+                if (currentLine.length > 0) {
+                    lines.push(currentLine);
+                }
+                return lines;
+            };
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                }
+                return label;
+            };
+            
+            const sharedChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#333333'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#333333' },
+                        grid: { color: '#e0e0e0' }
+                    },
+                    x: {
+                        ticks: { color: '#333333' },
+                        grid: { display: false }
+                    }
+                }
+            };
+            
+            const palette = {
+                darkBlue: '#004f7c',
+                mediumBlue: '#0077b6',
+                lightBlue: '#48cae4',
+                orange: '#ff9f1c',
+                gray: '#f0f0f0'
+            };
+
+            const gastoPIBData = {
+                labels: ['2019', '2020', '2021'],
+                datasets: [
+                    {
+                        label: 'Gasto Público en Salud (% PIB)',
+                        data: [5.1, 5.2, 5.4],
+                        borderColor: palette.darkBlue,
+                        backgroundColor: 'rgba(0, 79, 124, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    },
+                     {
+                        label: 'Gasto Corriente Total (% PIB)',
+                        data: [7.7, null, 8.29],
+                        borderColor: palette.lightBlue,
+                        backgroundColor: 'rgba(72, 202, 228, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            };
+            new Chart(document.getElementById('gastoPIBChart'), { type: 'line', data: gastoPIBData, options: sharedChartOptions });
+            
+            const gastoPerCapitaData = {
+                labels: ['2010', '2012', '2014', '2016', '2018', '2020', '2021'],
+                datasets: [{
+                    label: 'Gasto Per Cápita (USD)',
+                    data: [288.67, 389.76, 435.51, 450.83, 494.71, 471.88, 494.31],
+                    borderColor: palette.mediumBlue,
+                    backgroundColor: 'rgba(0, 119, 182, 0.5)',
+                    pointRadius: 4,
+                    pointBackgroundColor: palette.mediumBlue
+                }]
+            };
+            new Chart(document.getElementById('gastoPerCapitaChart'), { type: 'line', data: gastoPerCapitaData, options: {...sharedChartOptions, plugins: { legend: { display: false }}} });
+
+            const gastoOOPData = {
+                labels: ['2010', '2013', '2016', '2019', '2021', '2023'],
+                datasets: [{
+                    label: 'Gasto de Bolsillo (% Gasto Total)',
+                    data: [47.8, 38.5, 33.3, 31.4, 31.1, 32.8],
+                    borderColor: palette.orange,
+                    backgroundColor: 'rgba(255, 159, 28, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            };
+            new Chart(document.getElementById('gastoOOPChart'), { type: 'line', data: gastoOOPData, options: {...sharedChartOptions, plugins: { legend: { display: false }}} });
+            
+            const oopCompositionData = {
+                labels: ['Productos Farmacéuticos', 'Servicios Ambulatorios', 'Servicios con Internación', 'Otros'],
+                datasets: [{
+                    label: 'Composición del Gasto de Bolsillo',
+                    data: [46.3, 25.7, 15, 13],
+                    backgroundColor: [palette.orange, palette.darkBlue, palette.mediumBlue, palette.lightBlue],
+                    borderColor: palette.gray,
+                    borderWidth: 2
+                }]
+            };
+            new Chart(document.getElementById('oopCompositionChart'), { type: 'doughnut', data: oopCompositionData, options: {...sharedChartOptions, scales: { x: { display: false }, y: { display: false }}} });
+            
+            const financiamientoData = {
+                labels: ['Financiamiento Público (Gobierno + Seg. Social)', 'Financiamiento Privado (Hogares OOP)'],
+                datasets: [{
+                    data: [61.5, 37.3],
+                    backgroundColor: [palette.darkBlue, palette.orange],
+                    borderColor: palette.gray,
+                    borderWidth: 2
+                }]
+            };
+             new Chart(document.getElementById('financiamientoChart'), { type: 'pie', data: financiamientoData, options: {...sharedChartOptions, scales: { x: { display: false }, y: { display: false }}} });
+
+            const produccionProveedorData = {
+                labels: [wrapLabel('Hospitales Públicos (MSP)'), wrapLabel('Hospitales Privados'), wrapLabel('Centros Ambulatorios IESS'), wrapLabel('Centros Ambulatorios Privados')],
+                datasets: [{
+                    label: 'Producción (Millones USD, 2023)',
+                    data: [1581, 1346, 950, 780],
+                    backgroundColor: [palette.darkBlue, palette.mediumBlue, palette.lightBlue, palette.orange],
+                    borderRadius: 5
+                }]
+            };
+            new Chart(document.getElementById('produccionProveedorChart'), { type: 'bar', data: produccionProveedorData, options: {...sharedChartOptions, plugins: { legend: { display: false }}}});
+            
+            const gastoNivelAtencionData = {
+                labels: ['Primer Nivel', 'Segundo Nivel', 'Tercer Nivel'],
+                datasets: [
+                    {
+                        label: 'Público',
+                        data: [1478, 2134, 1165],
+                        backgroundColor: palette.darkBlue
+                    },
+                    {
+                        label: 'Privado',
+                        data: [296, 736, 1156],
+                        backgroundColor: palette.orange
+                    }
+                ]
+            };
+            new Chart(document.getElementById('gastoNivelAtencionChart'), { type: 'bar', data: gastoNivelAtencionData, options: {...sharedChartOptions, scales: {x: {stacked: true}, y: {stacked: true}}} });
+
+            const gastoFuncionGobiernoData = {
+                labels: ['Servicios Ambulatorios', 'Servicios con Internación', 'Salud Pública', 'Otros'],
+                datasets: [{
+                    data: [59.6, 33.3, 3.3, 3.8],
+                    backgroundColor: [palette.darkBlue, palette.mediumBlue, palette.orange, palette.lightBlue],
+                }]
+            };
+             new Chart(document.getElementById('gastoFuncionGobiernoChart'), { type: 'doughnut', data: gastoFuncionGobiernoData, options: {...sharedChartOptions, scales: { x: { display: false }, y: { display: false }}} });
+
+             const gastoFuncionHogaresData = {
+                labels: ['Servicios Ambulatorios', 'Otros (incl. Fármacos)', 'Servicios con Internación', 'Odontología'],
+                datasets: [{
+                    data: [43.2, 29.9, 18.7, 6.5],
+                    backgroundColor: [palette.darkBlue, palette.orange, palette.mediumBlue, palette.lightBlue],
+                }]
+            };
+             new Chart(document.getElementById('gastoFuncionHogaresChart'), { type: 'doughnut', data: gastoFuncionHogaresData, options: {...sharedChartOptions, scales: { x: { display: false }, y: { display: false }}} });
+        });
+    </script>
+</body>
+</html>
