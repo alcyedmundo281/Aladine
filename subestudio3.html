@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: La Paradoja del Gasto en Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .flow-line::after {
+            content: '';
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 2rem;
+            background-color: #d1d5db;
+        }
+        .flow-line-horizontal {
+            display: none;
+        }
+        @media (min-width: 1024px) {
+            .flow-line::after {
+                display: none;
+            }
+            .flow-line-horizontal::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                right: -2.5rem;
+                transform: translateY(-50%);
+                width: 2.5rem;
+                height: 2px;
+                background-color: #d1d5db;
+                display: block;
+            }
+            .flow-line-horizontal:last-child::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700">
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center my-8 md:my-16">
+            <h1 class="text-4xl md:text-6xl font-black text-[#003f5c] mb-4">La Paradoja del Gasto en Salud de Ecuador</h1>
+            <p class="text-xl md:text-2xl text-slate-600 max-w-4xl mx-auto">A pesar de una significativa inversión pública, los hogares ecuatorianos enfrentan una de las cargas más altas de gasto de bolsillo. <span class="font-bold text-[#665191]">¿Quién recibe realmente el dinero?</span></p>
+        </header>
+
+        <section id="paradox" class="my-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-[#003f5c]">
+                    <p class="text-5xl md:text-6xl font-extrabold text-[#003f5c]">~5.3%</p>
+                    <h3 class="text-lg font-semibold mt-2">del PIB es Gasto Público en Salud (2021)</h3>
+                    <p class="text-sm text-slate-500 mt-2">Un compromiso notable que refleja la priorización de la salud en el presupuesto nacional.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-[#d45087]">
+                    <p class="text-5xl md:text-6xl font-extrabold text-[#d45087]">~31%</p>
+                    <h3 class="text-lg font-semibold mt-2">del Gasto Total en Salud es de Bolsillo</h3>
+                    <p class="text-sm text-slate-500 mt-2">Una carga financiera directa y pesada para las familias, que contradice el alto gasto público.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-[#ffa600]">
+                    <p class="text-5xl md:text-6xl font-extrabold text-[#ffa600]">> $4 MIL M</p>
+                    <h3 class="text-lg font-semibold mt-2">de Deuda del Estado con el IESS (acumulada)</h3>
+                    <p class="text-sm text-slate-500 mt-2">La sostenibilidad del principal seguro social está comprometida, afectando a millones de afiliados.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="flow" class="my-16">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#003f5c] mb-2">Trazando el Dinero: ¿De Dónde Viene y a Dónde Va?</h2>
+                <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">El gasto total en salud se compone de varias fuentes de financiamiento. Sin embargo, su distribución hacia los proveedores de servicios revela por qué el gasto de bolsillo sigue siendo tan alto, especialmente en farmacias.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="financiamientoChart"></canvas>
+                    </div>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="gastoProveedorChart"></canvas>
+                    </div>
+                </div>
+                 <div class="mt-12">
+                     <h3 class="text-2xl font-bold text-center text-[#003f5c] mb-4">El Epicentro del Gasto de Bolsillo: Los Medicamentos</h3>
+                     <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">Una parte desproporcionada del gasto que las familias realizan de su propio bolsillo se destina a la compra de medicamentos, lo que evidencia brechas críticas en la provisión pública.</p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="gastoBolsilloChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="arenas" class="my-16">
+            <h2 class="text-3xl font-bold text-center text-[#003f5c] mb-2">Las Arenas de Decisión: ¿Quién Gobierna el Gasto?</h2>
+            <p class="text-center text-slate-600 mb-12 max-w-3xl mx-auto">El destino del dinero se decide en arenas clave donde las dinámicas de poder, la política y la capacidad técnica chocan, moldeando la implementación de las políticas de financiamiento.</p>
+            <div class="flex flex-col lg:flex-row justify-center items-center gap-10 lg:gap-20 relative">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm text-center relative flow-line lg:flow-line-horizontal">
+                    <span class="text-5xl">🏛️</span>
+                    <h3 class="text-xl font-bold mt-2 text-[#2f4b7c]">Presupuesto del MSP</h3>
+                    <p class="text-slate-500 mt-2 h-24">Asignación de fondos fiscales para la población no asegurada.</p>
+                    <div class="bg-red-100 text-red-800 p-2 rounded-md mt-4">
+                        <p class="font-semibold">Barrera Clave:</p>
+                        <p>El poder del Ministerio de Finanzas para imponer techos y retrasar desembolsos socava la ejecución.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm text-center relative flow-line lg:flow-line-horizontal">
+                    <span class="text-5xl">🛡️</span>
+                    <h3 class="text-xl font-bold mt-2 text-[#665191]">Inversión y Gasto del IESS</h3>
+                    <p class="text-slate-500 mt-2 h-24">Gestión de fondos de la seguridad social para afiliados.</p>
+                    <div class="bg-red-100 text-red-800 p-2 rounded-md mt-4">
+                        <p class="font-semibold">Barrera Clave:</p>
+                        <p>Gobernanza débil y la deuda estatal crónica limitan la capacidad de inversión y la calidad del servicio.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm text-center relative flow-line lg:flow-line-horizontal">
+                    <span class="text-5xl">🤝</span>
+                    <h3 class="text-xl font-bold mt-2 text-[#a05195]">Tarifario Red Privada (RPC)</h3>
+                    <p class="text-slate-500 mt-2 h-24">Compra de servicios a proveedores privados para cubrir brechas.</p>
+                    <div class="bg-red-100 text-red-800 p-2 rounded-md mt-4">
+                        <p class="font-semibold">Barrera Clave:</p>
+                        <p>Procesos de pago lentos y burocráticos minan la confianza y desincentivan la participación de privados.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm text-center relative">
+                    <span class="text-5xl">💊</span>
+                    <h3 class="text-xl font-bold mt-2 text-[#d45087]">Política Farmacéutica</h3>
+                    <p class="text-slate-500 mt-2 h-24">Adquisición y fijación de precios de medicamentos.</p>
+                    <div class="bg-red-100 text-red-800 p-2 rounded-md mt-4">
+                        <p class="font-semibold">Barrera Clave:</p>
+                        <p>Corrupción e influencia de la industria farmacéutica resultan en precios altos y desabastecimiento.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="barriers" class="my-16">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                 <h2 class="text-3xl font-bold text-center text-[#003f5c] mb-2">Fracaso en la Ejecución: Las Barreras Sistémicas</h2>
+                 <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">La brecha entre la política diseñada y el resultado real se explica por un conjunto de barreras transversales que afectan a todo el sistema de financiamiento.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container h-80 md:h-96">
+                         <canvas id="barrerasChart"></canvas>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-4">Resultados de una Implementación Deficiente</h3>
+                        <p class="mb-6">El análisis de la implementación revela un patrón de fracaso que impacta directamente en la protección financiera de la población. Las políticas no se aplican como se planeó, no llegan a quienes más las necesitan y no son sostenibles en el tiempo.</p>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <span class="text-2xl text-red-500 mr-3">❌</span>
+                                <div>
+                                    <h4 class="font-semibold">Baja Fidelidad</h4>
+                                    <p class="text-slate-600">Los recursos se desvían de las prioridades de salud originales debido a presiones fiscales, burocracia o corrupción.</p>
+                                </div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-2xl text-red-500 mr-3">❌</span>
+                                <div>
+                                    <h4 class="font-semibold">Bajo Alcance (Penetración)</h4>
+                                    <p class="text-slate-600">Los servicios financiados públicamente no llegan de manera efectiva a toda la población que los necesita, obligándola a pagar de su bolsillo.</p>
+                                </div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-2xl text-red-500 mr-3">❌</span>
+                                <div>
+                                    <h4 class="font-semibold">Baja Sostenibilidad</h4>
+                                    <p class="text-slate-600">La inestabilidad política y las crisis económicas impiden que las mejoras se consoliden a largo plazo.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="text-center my-12">
+             <h2 class="text-3xl md:text-4xl font-black text-[#003f5c] mb-4">Conclusión: ¿Quién Recibe el Dinero?</h2>
+             <p class="text-lg text-slate-600 max-w-4xl mx-auto">La evidencia sugiere que una porción significativa de los recursos no llega a los ciudadanos en forma de servicios de salud efectivos. En cambio, es absorbida por la ineficiencia, la corrupción y los actores con mayor poder de negociación. La solución a la paradoja no radica solo en gastar más, sino en reformar fundamentalmente <span class="font-bold text-[#665191]">cómo se gobierna y se implementa el gasto en salud.</span></p>
+        </footer>
+
+    </main>
+    
+    <script>
+        const brilliantBluesPalette = ['#003f5c', '#665191', '#d45087', '#ffa600', '#2f4b7c', '#a05195', '#f95d6a', '#ff7c43'];
+        const transparentBrilliantBlues = brilliantBluesPalette.map(color => color + 'B3');
+
+        function wrapText(text, maxLength) {
+            if (typeof text !== 'string' || text.length <= maxLength) {
+                return text;
+            }
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + ' ' + word).length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = currentLine ? currentLine + ' ' + word : word;
+                }
+            });
+            lines.push(currentLine);
+            return lines;
+        }
+        
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return label;
+            }
+        };
+
+        const defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            family: 'Inter',
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    },
+                    bodyFont: {
+                        family: 'Inter',
+                    },
+                    titleFont: {
+                        family: 'Inter',
+                        weight: 'bold'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        font: { family: 'Inter' }
+                    },
+                    grid: {
+                        color: '#e2e8f0'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: { family: 'Inter' }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        };
+
+        const financiamientoData = {
+            labels: ['Gasto de Bolsillo', 'Seguridad Social (IESS)', 'Gobierno (MSP) y Otros'],
+            datasets: [{
+                label: 'Fuentes de Financiamiento de la Salud (%)',
+                data: [31, 38, 31],
+                backgroundColor: [brilliantBluesPalette[2], brilliantBluesPalette[1], brilliantBluesPalette[0]],
+                borderColor: '#ffffff',
+                borderWidth: 2,
+            }]
+        };
+
+        new Chart(document.getElementById('financiamientoChart'), {
+            type: 'doughnut',
+            data: financiamientoData,
+            options: { ...defaultChartOptions, scales: {} }
+        });
+
+        const gastoProveedorData = {
+            labels: ['2017', '2019', '2021'],
+            datasets: [
+                {
+                    label: 'Hospitales',
+                    data: [35, 38, 40],
+                    backgroundColor: brilliantBluesPalette[0],
+                },
+                {
+                    label: 'Proveedores Ambulatorios',
+                    data: [25, 24, 23],
+                    backgroundColor: brilliantBluesPalette[1],
+                },
+                {
+                    label: 'Farmacias y Proveedores de Bienes Médicos',
+                    data: [30, 32, 31],
+                    backgroundColor: brilliantBluesPalette[2],
+                },
+                 {
+                    label: 'Otros',
+                    data: [10, 6, 6],
+                    backgroundColor: brilliantBluesPalette[3],
+                }
+            ]
+        };
+        new Chart(document.getElementById('gastoProveedorChart'), {
+            type: 'bar',
+            data: gastoProveedorData,
+            options: { ...defaultChartOptions,
+                scales: {
+                    x: { stacked: true, ...defaultChartOptions.scales.x },
+                    y: { stacked: true, ...defaultChartOptions.scales.y, title: { display: true, text: 'Porcentaje del Gasto Total' }}
+                }
+             }
+        });
+
+        const gastoBolsilloLabels = [
+            'Medicamentos y otros bienes médicos',
+            'Atención curativa ambulatoria',
+            'Atención curativa hospitalaria',
+            'Servicios de diagnóstico por imagen'
+        ];
+        
+        const gastoBolsilloData = {
+            labels: gastoBolsilloLabels.map(label => wrapText(label, 25)),
+            datasets: [{
+                label: 'Distribución del Gasto de Bolsillo (%)',
+                data: [45, 25, 15, 10, 5],
+                backgroundColor: transparentBrilliantBlues,
+                borderColor: brilliantBluesPalette,
+                borderWidth: 1,
+            }]
+        };
+        new Chart(document.getElementById('gastoBolsilloChart'), {
+            type: 'bar',
+            data: gastoBolsilloData,
+            options: { ...defaultChartOptions, indexAxis: 'y',
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { ...defaultChartOptions.scales.x, title: { display: true, text: 'Porcentaje del Gasto de Bolsillo' } },
+                    y: { ...defaultChartOptions.scales.y, grid: { display: false } }
+                }
+            }
+        });
+
+        const barrerasLabels = [
+            'Gobernanza Débil y Corrupción', 
+            'Fragmentación Institucional', 
+            'Inestabilidad Política', 
+            'Capacidad Técnica Limitada',
+            'Restricciones Fiscales', 
+            'Asimetrías de Poder'
+        ];
+
+        const barrerasData = {
+            labels: barrerasLabels.map(l => wrapText(l, 16)),
+            datasets: [{
+                label: 'Impacto de las Barreras de Implementación',
+                data: [90, 75, 85, 70, 80, 95],
+                fill: true,
+                backgroundColor: 'rgba(212, 80, 135, 0.2)',
+                borderColor: '#d45087',
+                pointBackgroundColor: '#d45087',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#d45087'
+            }]
+        };
+        new Chart(document.getElementById('barrerasChart'), {
+            type: 'radar',
+            data: barrerasData,
+            options: { ...defaultChartOptions,
+                scales: {
+                    r: {
+                        angleLines: { color: '#e2e8f0' },
+                        grid: { color: '#e2e8f0' },
+                        pointLabels: {
+                             font: {
+                                family: 'Inter',
+                                size: 11
+                            }
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            color: '#64748b'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+             }
+        });
+    </script>
+</body>
+</html>
