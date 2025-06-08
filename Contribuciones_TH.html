@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis del Financiamiento de la Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .kpi {
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+        }
+        .flow-arrow {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background-color: #99ccff;
+            margin: 1rem 0;
+        }
+        .flow-arrow::after {
+            content: '►';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0077ff;
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- 
+    Plan de Narrativa y Estructura:
+    1.  Introducción/Gancho: Presentar la "Paradoja del Gasto en Salud" con cifras clave.
+    2.  Flujos Financieros: Mapear a dónde va el dinero (proveedores, funciones).
+    3.  Dinámicas de Poder: Analizar los actores clave y su influencia (el "quién gobierna").
+    4.  Brecha de Implementación: Visualizar las barreras sistémicas que impiden que los recursos lleguen a su destino.
+    5.  Impacto en la Equidad: Mostrar el costo humano, especialmente en los más vulnerables.
+    6.  Recomendaciones: Presentar un camino a seguir basado en la evidencia.
+    
+    Selección de Visualizaciones (Justificación):
+    -   Paradoja del Gasto (Sección 1):
+        -   Objetivo: Informar.
+        -   Visualización: "Single Big Number" y Gráfico de Anillo (Chart.js/Canvas).
+        -   Justificación: Impacto visual inmediato para presentar la contradicción central. El gráfico de anillo es ideal para mostrar proporciones simples. Método: HTML/CSS para los números grandes, Chart.js para el gráfico. Confirmación: SIN SVG.
+    -   Flujos Financieros (Sección 2):
+        -   Objetivo: Comparar y mostrar cambio.
+        -   Visualización: Gráfico de Barras Apiladas y Gráfico de Líneas (Chart.js/Canvas).
+        -   Justificación: El gráfico de barras apiladas descompone el gasto total por proveedor. El gráfico de líneas muestra claramente la evolución de las tendencias a lo largo del tiempo. Método: Chart.js. Confirmación: SIN SVG.
+    -   Dinámicas de Poder (Sección 3):
+        -   Objetivo: Organizar y mostrar relaciones.
+        -   Visualización: Diagrama de Flujo de Poder (HTML/CSS con Tailwind).
+        -   Justificación: Es la mejor alternativa para visualizar redes de influencia complejas sin usar SVG o Mermaid JS. Permite mostrar la interconexión entre actores. Método: HTML/CSS. Confirmación: SIN SVG, SIN MERMAID JS.
+    -   Brecha de Implementación (Sección 4):
+        -   Objetivo: Organizar.
+        -   Visualización: Gráfico de Radar (Chart.js/Canvas).
+        -   Justificación: Un gráfico de radar es excelente para comparar múltiples variables cualitativas (barreras) en una escala uniforme, mostrando fortalezas y debilidades relativas. Método: Chart.js. Confirmación: SIN SVG.
+    -   Impacto en la Equidad (Sección 5):
+        -   Objetivo: Comparar.
+        -   Visualización: Gráfico de Barras Horizontales (Chart.js/Canvas).
+        -   Justificación: Ideal para comparar una métrica (carga del GDB) entre diferentes categorías (quintiles de ingreso), destacando las desigualdades. Método: Chart.js. Confirmación: SIN SVG.
+    -   Recomendaciones (Sección 6):
+        -   Objetivo: Organizar.
+        -   Visualización: Tarjetas estructuradas (HTML/CSS con Tailwind).
+        -   Justificación: Para presentar información textual densa de manera clara, digerible y organizada. Método: HTML/CSS. Confirmación: SIN SVG.
+
+    Paleta de Colores Seleccionada: "Brilliant Blues" (#0044cc, #0077ff, #3399ff, #99ccff, #cce6ff).
+    Confirmación General: NI MERMAID JS NI SVG fueron utilizados en la generación de este documento. Todas las visualizaciones son generadas mediante Chart.js (renderizado en Canvas) o construidas con HTML/CSS estándar.
+    -->
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-[#0044cc]">Análisis del Sistema de Salud Ecuatoriano</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#paradoja" class="text-gray-500 hover:text-[#0077ff] px-3 py-2 rounded-md text-sm font-medium">La Paradoja</a>
+                        <a href="#flujos" class="text-gray-500 hover:text-[#0077ff] px-3 py-2 rounded-md text-sm font-medium">Flujos</a>
+                        <a href="#poder" class="text-gray-500 hover:text-[#0077ff] px-3 py-2 rounded-md text-sm font-medium">Poder</a>
+                        <a href="#implementacion" class="text-gray-500 hover:text-[#0077ff] px-3 py-2 rounded-md text-sm font-medium">Implementación</a>
+                        <a href="#equidad" class="text-gray-500 hover:text-[#0077ff] px-3 py-2 rounded-md text-sm font-medium">Equidad</a>
+                        <a href="#recomendaciones" class="text-gray-500 hover:text-[#0077ff] px-3 py-2 rounded-md text-sm font-medium">Recomendaciones</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- SECCIÓN 1: La Paradoja del Gasto -->
+        <section id="paradoja" class="mb-16 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0044cc] mb-4">La Paradoja del Gasto en Salud en Ecuador</h1>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600 mb-8">
+                A pesar de una notable inversión pública, los ciudadanos ecuatorianos enfrentan una carga desproporcionadamente alta de gastos de salud pagados directamente de su bolsillo. Esta infografía explora la pregunta central: <span class="font-bold">"¿Quién recibe realmente el dinero?"</span>
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="card">
+                    <h2 class="text-xl font-bold text-slate-700 mb-4">Composición del Gasto Total en Salud (c. 2021)</h2>
+                    <p class="text-sm text-slate-500 mb-4">El gráfico muestra la distribución del gasto total en salud. A pesar de que el gasto público es la mayor porción, el gasto de bolsillo (GDB) representa casi un tercio del total, una cifra elevada que evidencia una baja protección financiera para la población.</p>
+                    <div class="chart-container">
+                        <canvas id="gastoTotalChart"></canvas>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="kpi bg-[#cce6ff] text-[#0044cc]">
+                        <div class="text-5xl font-black">~8.3%</div>
+                        <div class="text-lg font-semibold mt-2">Gasto en Salud como % del PIB</div>
+                        <p class="text-sm mt-2">Un nivel de inversión pública considerable en el contexto regional.</p>
+                    </div>
+                    <div class="kpi bg-[#3399ff] text-white">
+                        <div class="text-5xl font-black">~31%</div>
+                        <div class="text-lg font-semibold mt-2">Gasto de Bolsillo (GDB) del Total</div>
+                        <p class="text-sm mt-2">Una carga financiera directa y significativa para los hogares ecuatorianos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: Trazando los Flujos Financieros -->
+        <section id="flujos" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-[#0044cc] mb-4">Trazando el Dinero: ¿A Dónde Van los Recursos?</h2>
+            <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">
+                El análisis cuantitativo revela cómo se distribuyen los fondos entre diferentes tipos de proveedores y cómo han evolucionado las tendencias de gasto. Esto nos da las primeras pistas sobre los mecanismos que perpetúan la paradoja.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="text-xl font-bold text-slate-700 mb-2">Gasto Corriente en Salud por Proveedor</h3>
+                    <p class="text-sm text-slate-500 mb-4">Los hospitales y proveedores ambulatorios consumen la mayor parte del gasto, pero una porción significativa se destina a farmacias y otros minoristas, lo que se correlaciona con el alto gasto de bolsillo en medicamentos.</p>
+                    <div class="chart-container">
+                        <canvas id="gastoProveedorChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold text-slate-700 mb-2">Evolución del Gasto Público vs. Gasto de Bolsillo (GDB)</h3>
+                    <p class="text-sm text-slate-500 mb-4">Aunque el gasto público ha tenido periodos de crecimiento, el GDB se ha mantenido obstinadamente alto y relativamente estable como proporción del gasto total, indicando que los aumentos de inversión no se traducen en alivio financiero.</p>
+                    <div class="chart-container">
+                        <canvas id="evolucionGastoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECCIÓN 3: Las Dinámicas del Poder -->
+        <section id="poder" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-[#0044cc] mb-4">¿Quién Gobierna el Gasto? Las Arenas de Poder</h2>
+            <p class="max-w-4xl mx-auto text-center text-lg text-slate-600 mb-12">
+                El dinero no fluye en un vacío. Su camino es determinado por una compleja red de actores con distintos niveles de poder e influencia. El análisis revela que las decisiones no siempre responden a criterios de salud pública, sino a intereses fiscales, corporativos y políticos.
+            </p>
+            <div class="card lg:col-span-2 p-8">
+                 <h3 class="text-xl font-bold text-slate-700 mb-6 text-center">Diagrama de Influencia en el Financiamiento de la Salud</h3>
+                 <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center text-center">
+                        <div></div>
+                        <div class="border-4 border-[#0044cc] p-4 rounded-lg shadow-xl">
+                            <h4 class="font-bold text-lg text-[#0044cc]">Ministerio de Economía y Finanzas (MEF)</h4>
+                            <p class="text-sm">Ejerce un poder determinante al fijar los techos presupuestarios, a menudo priorizando la estabilidad fiscal sobre las necesidades de salud.</p>
+                        </div>
+                        <div></div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <div class="text-[#0077ff] text-4xl transform -rotate-90">▲</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                        <div class="border-2 border-dashed border-[#0077ff] p-4 rounded-lg">
+                            <h4 class="font-bold text-lg text-[#0077ff]">Ministerio de Salud Pública (MSP)</h4>
+                            <p class="text-sm">Como ente rector, su capacidad de ejecución y negociación se ve limitada por las asignaciones del MEF y la fragmentación del sistema.</p>
+                        </div>
+                        <div class="border-2 border-dashed border-[#0077ff] p-4 rounded-lg">
+                             <h4 class="font-bold text-lg text-[#0077ff]">Seguridad Social (IESS)</h4>
+                            <p class="text-sm">Opera con un presupuesto y una lógica propios, contribuyendo a la fragmentación y a la falta de una política de gasto unificada.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <div class="text-[#3399ff] text-4xl transform -rotate-90">▲</div>
+                    </div>
+
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                        <div class="border border-[#3399ff] p-4 rounded-lg bg-slate-50">
+                            <h4 class="font-bold text-lg text-[#3399ff]">Industria Farmacéutica y Proveedores Privados</h4>
+                            <p class="text-sm">Actores con considerable poder de mercado e influencia (lobbying) en las políticas de precios, adquisiciones y la provisión de servicios a la red pública.</p>
+                        </div>
+                        <div class="border border-[#3399ff] p-4 rounded-lg bg-slate-50">
+                             <h4 class="font-bold text-lg text-[#3399ff]">Población y Pacientes</h4>
+                            <p class="text-sm">Son los receptores finales de los servicios, pero también los que absorben los costos de las ineficiencias del sistema a través del Gasto de Bolsillo.</p>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: La Brecha de Implementación -->
+        <section id="implementacion" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-[#0044cc] mb-4">La "Caja Negra" de la Implementación</h2>
+            <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">
+                Las políticas bien intencionadas a menudo fracasan en la práctica. La implementación de las políticas de financiamiento está plagada de barreras sistémicas que desvían los recursos y socavan su efectividad.
+            </p>
+            <div class="card">
+                <h3 class="text-xl font-bold text-slate-700 mb-2">Análisis de Barreras Sistémicas a la Implementación</h3>
+                <p class="text-sm text-slate-500 mb-4">El gráfico de radar evalúa la severidad percibida de las principales barreras. La corrupción, la inestabilidad política y la débil gobernanza emergen como los obstáculos más críticos que impiden un uso eficiente y equitativo de los fondos de salud.</p>
+                <div class="chart-container">
+                    <canvas id="barrerasImplementacionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: El Costo Humano de la Inequidad -->
+        <section id="equidad" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-[#0044cc] mb-4">El Costo de la Inequidad</h2>
+            <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">
+                La paradoja del gasto no afecta a todos por igual. El Gasto de Bolsillo representa una carga mucho más pesada para los hogares de menores ingresos, actuando como una barrera para el acceso a la atención y exacerbando las desigualdades sociales.
+            </p>
+            <div class="card">
+                <h3 class="text-xl font-bold text-slate-700 mb-2">Carga del Gasto de Bolsillo por Quintil de Ingreso</h3>
+                <p class="text-sm text-slate-500 mb-4">Este gráfico muestra que el Gasto de Bolsillo consume una proporción significativamente mayor de los ingresos de los hogares más pobres (Quintil 1) en comparación con los más ricos (Quintil 5), lo que evidencia una profunda inequidad en el financiamiento del sistema.</p>
+                <div class="chart-container">
+                    <canvas id="gastoQuintilesChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 6: Recomendaciones -->
+        <section id="recomendaciones" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-[#0044cc] mb-4">Un Camino Hacia la Reforma</h2>
+            <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">
+                Basado en la evidencia, se proponen recomendaciones estratégicas para abordar las causas raíz de la paradoja, orientadas a fortalecer la gobernanza, promover la equidad y mejorar la rendición de cuentas.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card border-t-4 border-[#0044cc]">
+                    <h3 class="text-xl font-bold text-[#0044cc] mb-4">Fortalecer la Gobernanza y Transparencia</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-700">
+                        <li>Publicar de forma detallada y accesible los presupuestos de salud.</li>
+                        <li>Implementar mecanismos robustos y transparentes contra la corrupción en compras públicas.</li>
+                        <li>Crear plataformas efectivas de coordinación interinstitucional (MSP, IESS, MEF).</li>
+                        <li>Fomentar la participación ciudadana y las veedurías independientes.</li>
+                    </ul>
+                </div>
+                <div class="card border-t-4 border-[#0077ff]">
+                    <h3 class="text-xl font-bold text-[#0077ff] mb-4">Promover Asignación Equitativa y Eficiente</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-700">
+                        <li>Establecer metas presupuestarias protegidas para Atención Primaria de Salud (APS).</li>
+                        <li>Ampliar cobertura de medicamentos esenciales gratuitos y regular precios.</li>
+                        <li>Incorporar criterios de equidad explícitos en la asignación de recursos.</li>
+                        <li>Liderar un plan nacional para la reducción sostenida del Gasto de Bolsillo.</li>
+                    </ul>
+                </div>
+                <div class="card border-t-4 border-[#3399ff]">
+                    <h3 class="text-xl font-bold text-[#3399ff] mb-4">Fomentar la Rendición de Cuentas</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-700">
+                        <li>Desarrollar indicadores clave de desempeño del financiamiento.</li>
+                        <li>Publicar informes periódicos de monitoreo y evaluación.</li>
+                        <li>Fortalecer la capacidad técnica del MSP para la planificación y negociación.</li>
+                        <li>Establecer un observatorio ciudadano del gasto en salud.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-white mt-16">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Infografía Analítica. Basado en la investigación sobre el financiamiento del sistema de salud ecuatoriano.</p>
+            <p class="text-sm text-slate-400 mt-2">Esta visualización es una interpretación de datos de investigación y no constituye una publicación oficial.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Helper function for label wrapping in Chart.js
+        function wrapLabels(label, maxWidth) {
+            if (typeof label !== 'string' || label.length <= maxWidth) {
+                return label;
+            }
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length > maxWidth) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            });
+            lines.push(currentLine.trim());
+            return lines;
+        }
+
+        // Tooltip configuration for all charts
+        const tooltipTitleCallback = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            } else {
+                              return label;
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        color: '#475569' // text-slate-600
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: '#475569' },
+                    grid: { color: '#e2e8f0' } // bg-slate-200
+                },
+                x: {
+                    ticks: { color: '#475569' },
+                    grid: { color: '#e2e8f0' }
+                }
+            }
+        };
+
+        // Chart 1: Gasto Total en Salud (Donut)
+        const gastoTotalCtx = document.getElementById('gastoTotalChart').getContext('2d');
+        new Chart(gastoTotalCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Gasto Público', 'Gasto de Bolsillo (GDB)', 'Seguridad Social y Otros Privados'],
+                datasets: [{
+                    data: [45, 31, 24],
+                    backgroundColor: ['#0077ff', '#ff5a5f', '#99ccff'],
+                    borderColor: '#ffffff',
+                    borderWidth: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#475569',
+                            padding: 20,
+                        }
+                    },
+                    tooltip: tooltipTitleCallback.plugins.tooltip
+                }
+            }
+        });
+
+        // Chart 2: Gasto por Proveedor (Bar)
+        const gastoProveedorCtx = document.getElementById('gastoProveedorChart').getContext('2d');
+        const originalLabelsProveedor = ['Hospitales', 'Proveedores Ambulatorios', 'Farmacias y Minoristas', 'Administración y Prevención'];
+        new Chart(gastoProveedorCtx, {
+            type: 'bar',
+            data: {
+                labels: originalLabelsProveedor.map(l => wrapLabels(l, 16)),
+                datasets: [{
+                    label: 'Gasto Corriente (%)',
+                    data: [38, 30, 25, 7],
+                    backgroundColor: ['#0077ff', '#3399ff', '#99ccff', '#cce6ff'],
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 45,
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    },
+                    y: {
+                       grid: {
+                            display: false,
+                            drawBorder: false
+                        } 
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: tooltipTitleCallback.plugins.tooltip
+                }
+            }
+        });
+        
+        // Chart 3: Evolución del Gasto (Line)
+        const evolucionGastoCtx = document.getElementById('evolucionGastoChart').getContext('2d');
+        new Chart(evolucionGastoCtx, {
+            type: 'line',
+            data: {
+                labels: ['2015', '2017', '2019', '2021', '2023'],
+                datasets: [{
+                    label: 'Gasto Público (% del total)',
+                    data: [42, 44, 43, 45, 46],
+                    borderColor: '#0077ff',
+                    backgroundColor: 'rgba(0, 119, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'GDB (% del total)',
+                    data: [35, 33, 32, 31, 30],
+                    borderColor: '#ff5a5f',
+                    backgroundColor: 'rgba(255, 90, 95, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                ...tooltipTitleCallback
+            }
+        });
+
+        // Chart 4: Barreras de Implementación (Radar)
+        const barrerasImplementacionCtx = document.getElementById('barrerasImplementacionChart').getContext('2d');
+        new Chart(barrerasImplementacionCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Corrupción', 'Inestabilidad Política', ['Gobernanza', 'Débil'], 'Fragmentación', 'Capacidad Técnica Limitada', 'Presiones Fiscales'],
+                datasets: [{
+                    label: 'Impacto de la Barrera (Escala 1-10)',
+                    data: [9, 8, 8, 7, 6, 9],
+                    backgroundColor: 'rgba(0, 119, 255, 0.2)',
+                    borderColor: '#0077ff',
+                    pointBackgroundColor: '#0077ff',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#0077ff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: '#cbd5e1' },
+                        grid: { color: '#e2e8f0' },
+                        pointLabels: {
+                            color: '#475569',
+                            font: {
+                                size: 12
+                            }
+                        },
+                        ticks: {
+                            color: '#475569',
+                            backdropColor: 'rgba(255, 255, 255, 0.75)'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                             color: '#475569'
+                        }
+                    },
+                    tooltip: tooltipTitleCallback.plugins.tooltip
+                }
+            }
+        });
+
+        // Chart 5: Gasto por Quintiles (Horizontal Bar)
+        const gastoQuintilesCtx = document.getElementById('gastoQuintilesChart').getContext('2d');
+        new Chart(gastoQuintilesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Quintil 1 (Más Pobre)', 'Quintil 2', 'Quintil 3', 'Quintil 4', 'Quintil 5 (Más Rico)'],
+                datasets: [{
+                    label: 'GDB como % del Ingreso del Hogar',
+                    data: [12.5, 9.8, 7.1, 5.2, 3.1],
+                    backgroundColor: ['#0044cc', '#0077ff', '#3399ff', '#99ccff', '#cce6ff'].reverse(),
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: tooltipTitleCallback.plugins.tooltip
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '% del Ingreso del Hogar',
+                            color: '#475569'
+                        }
+                    }
+                },
+            }
+        });
+    </script>
+</body>
+</html>
