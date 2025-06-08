@@ -1,245 +1,30 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Semiotics - Medicina Basada en la Evidencia</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Full Screen Document</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        /* Resets page spacing and hides scrollbars */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
         }
-        .hero-bg {
-            background-image: linear-gradient(rgba(0, 80, 120, 0.7), rgba(0, 20, 40, 0.9)), url('https://placehold.co/1600x900/003366/FFFFFF?text=Investigación+Médica');
-            background-size: cover;
-            background-position: center;
-        }
-        .icon-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .icon-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+        /* Forces the iframe to fill the entire window */
+        iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none; /* Removes the default border */
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-
-    <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-cyan-700 flex items-center">
-                <svg class="h-10 w-10 mr-3" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M25 20C20 25 20 35 25 40L40 50L25 60C20 65 20 75 25 80" stroke="#2c7da0" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M45 25L35 30" stroke="#2c7da0" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M45 75L35 70" stroke="#2c7da0" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M75 20C80 25 80 35 75 40L60 50L75 60C80 65 80 75 75 80" stroke="#2c7da0" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M55 25L65 30" stroke="#2c7da0" stroke-width="8" stroke-linecap="round"/>
-                     <path d="M55 75L65 70" stroke="#2c7da0" stroke-width="8" stroke-linecap="round"/>
-                </svg>
-                Power Semiotics
-            </a>
-            <div class="hidden md:flex space-x-6 items-center">
-                <a href="#" class="text-gray-600 hover:text-cyan-700 transition">Inicio</a>
-                <a href="#" class="text-gray-600 hover:text-cyan-700 transition">Artículos</a>
-                <a href="#" class="text-gray-600 hover:text-cyan-700 transition">Especialidades</a>
-                <a href="#" class="text-gray-600 hover:text-cyan-700 transition">Sobre Nosotros</a>
-                <a href="#" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 px-4 rounded-lg transition">Contacto</a>
-            </div>
-            <button class="md:hidden" id="mobile-menu-button">
-                <i data-lucide="menu"></i>
-            </button>
-        </nav>
-        <!-- Mobile Menu -->
-        <div class="hidden md:hidden" id="mobile-menu">
-            <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Inicio</a>
-            <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Artículos</a>
-            <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Especialidades</a>
-            <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Sobre Nosotros</a>
-            <a href="#" class="block py-2 px-4 text-sm text-white bg-cyan-600 hover:bg-cyan-700">Contacto</a>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section class="hero-bg text-white">
-            <div class="container mx-auto px-6 py-24 md:py-32 text-center">
-                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4">Avanzando la Atención Médica a Través de la Evidencia</h1>
-                <p class="text-lg md:text-xl text-cyan-100 mb-8 max-w-3xl mx-auto">Tu fuente para lo último en medicina basada en evidencia, ciencia de datos y el futuro de la innovación en salud.</p>
-                <a href="#" class="bg-white text-cyan-700 font-bold py-3 px-8 rounded-full hover:bg-gray-200 transition text-lg">
-                    Explorar Artículos
-                </a>
-            </div>
-        </section>
-
-        <!-- Featured Research Section -->
-        <section class="py-16 md:py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-gray-50 p-8 rounded-xl shadow-md">
-                    <!-- Image Column -->
-                    <div class="md:w-1/3">
-                        <img src="https://placehold.co/600x400/004e89/FFFFFF?text=Gasto+en+Salud+Ecuador" alt="Investigación sobre el gasto en salud en Ecuador" class="rounded-lg shadow-xl w-full">
-                    </div>
-                    <!-- Text Column -->
-                    <div class="md:w-2/3 text-center md:text-left">
-                        <h3 class="text-sm font-bold uppercase text-cyan-600">Investigación Destacada</h3>
-                        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 my-2">¿Quién recibe el dinero?</h2>
-                        <p class="text-gray-600 text-lg mb-6">
-                          Un análisis profundo y académico sobre el gasto en salud en Ecuador. Explore los datos y descubra las conclusiones clave de nuestro último informe académico.
-                        </p>
-                        <a href="#" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition text-lg inline-block">
-                          Leer el Reporte
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- What is EBM Section -->
-        <section class="py-16 md:py-20">
-            <div class="container mx-auto px-6 text-center">
-                 <h2 class="text-3xl font-bold text-gray-800 mb-4">¿Qué es la Medicina Basada en Evidencia?</h2>
-                 <div class="flex justify-center">
-                    <span class="w-20 border-b-2 border-cyan-600 mb-8"></span>
-                 </div>
-                 <p class="max-w-3xl mx-auto text-gray-600 text-lg">
-                    La Medicina Basada en la Evidencia (MBE) es el uso consciente, explícito y juicioso de la mejor evidencia actual para tomar decisiones sobre el cuidado de pacientes individuales. Implica la integración de la pericia clínica individual con la mejor evidencia clínica externa disponible de la investigación sistemática.
-                </p>
-            </div>
-        </section>
-
-
-        <!-- Specialties Section -->
-        <section class="py-16 md:py-20 bg-gray-50">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Explore Nuestras Especialidades</h2>
-                <div class="flex justify-center">
-                    <span class="w-20 border-b-2 border-cyan-600 mb-12"></span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <!-- Card 1 -->
-                    <div class="icon-card bg-white p-8 rounded-xl shadow-md text-center">
-                        <div class="bg-cyan-100 rounded-full p-4 inline-block mb-4">
-                            <i data-lucide="brain-circuit" class="text-cyan-700 h-8 w-8"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Neurología</h3>
-                        <p class="text-gray-600">Perspectivas sobre las últimas investigaciones y prácticas clínicas en neurología.</p>
-                    </div>
-                    <!-- Card 2 -->
-                    <div class="icon-card bg-white p-8 rounded-xl shadow-md text-center">
-                         <div class="bg-green-100 rounded-full p-4 inline-block mb-4">
-                            <i data-lucide="test-tube-2" class="text-green-700 h-8 w-8"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Gastroenterología</h3>
-                        <p class="text-gray-600">Cubriendo la salud digestiva, desde problemas comunes hasta enfermedades complejas.</p>
-                    </div>
-                    <!-- Card 3 -->
-                    <div class="icon-card bg-white p-8 rounded-xl shadow-md text-center">
-                         <div class="bg-indigo-100 rounded-full p-4 inline-block mb-4">
-                            <i data-lucide="area-chart" class="text-indigo-700 h-8 w-8"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Ciencia de Datos</h3>
-                        <p class="text-gray-600">Cómo los datos están transformando la investigación médica y los resultados de los pacientes.</p>
-                    </div>
-                    <!-- Card 4 -->
-                    <div class="icon-card bg-white p-8 rounded-xl shadow-md text-center">
-                         <div class="bg-rose-100 rounded-full p-4 inline-block mb-4">
-                            <i data-lucide="lightbulb" class="text-rose-700 h-8 w-8"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Medicina Del Futuro</h3>
-                        <p class="text-gray-600">Explorando la IA, la genómica y la próxima generación de tecnología médica.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Articles Section -->
-        <section class="py-16 md:py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Artículos Destacados</h2>
-                 <div class="flex justify-center">
-                    <span class="w-20 border-b-2 border-cyan-600 mb-12"></span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Article 1 -->
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition duration-300">
-                        <img src="https://placehold.co/600x400/F4A261/FFFFFF?text=Hepatitis+A" alt="Virus de la Hepatitis A" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <span class="text-sm text-cyan-600 font-semibold">Gastroenterología</span>
-                            <h3 class="text-xl font-bold my-2">Entendiendo la Hepatitis A</h3>
-                            <p class="text-gray-600 mb-4">Una mirada a las causas, síntomas y prevención de la Hepatitis A, una infección viral aguda.</p>
-                            <a href="#" class="font-semibold text-cyan-700 hover:underline">Leer Más &rarr;</a>
-                        </div>
-                    </div>
-                     <!-- Article 2 -->
-                     <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition duration-300">
-                        <img src="https://placehold.co/600x400/2A9D8F/FFFFFF?text=POCUS" alt="Sonda de ultrasonido" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                             <span class="text-sm text-cyan-600 font-semibold">Tecnología</span>
-                            <h3 class="text-xl font-bold my-2">El Auge de POCUS</h3>
-                            <p class="text-gray-600 mb-4">Cómo el Ultrasonido en el Punto de Atención está revolucionando el diagnóstico a pie de cama.</p>
-                            <a href="#" class="font-semibold text-cyan-700 hover:underline">Leer Más &rarr;</a>
-                        </div>
-                    </div>
-                     <!-- Article 3 -->
-                     <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition duration-300">
-                        <img src="https://placehold.co/600x400/E76F51/FFFFFF?text=Hepatitis+Crónica" alt="Diagrama del hígado" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <span class="text-sm text-cyan-600 font-semibold">Gastroenterología</span>
-                            <h3 class="text-xl font-bold my-2">Manejo de la Hepatitis Crónica</h3>
-                            <p class="text-gray-600 mb-4">Un resumen de las estrategias y tratamientos a largo plazo para la hepatitis crónica.</p>
-                            <a href="#" class="font-semibold text-cyan-700 hover:underline">Leer Más &rarr;</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white">
-        <div class="container mx-auto px-6 py-10">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Sobre Power Semiotics</h4>
-                    <p class="text-gray-400">Dedicados a promover prácticas basadas en evidencia para mejorar la atención al paciente y avanzar en el conocimiento médico.</p>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Enlaces Rápidos</h4>
-                    <ul>
-                        <li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">Inicio</a></li>
-                        <li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">Artículos</a></li>
-                        <li class="mb-2"><a href="#" class="text-gray-400 hover:text-white">Contacto</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Síguenos</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="twitter"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="linkedin"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="facebook"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500 text-sm">
-                <p>&copy; 2025 Power Semiotics. Todos los derechos reservados.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        lucide.createIcons();
-
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    </script>
+<body>
+    <iframe src="https://docs.google.com/document/d/e/2PACX-1vTx06GIU8rYuv-JZCPX6AVwg_n_DsuWKlOTMG2emEiw8NdL8u40WUz9vxZyuyIiNqth-WxS6-8_IcB9/pub?embedded=true&rm=minimal"></iframe>
 </body>
 </html>
