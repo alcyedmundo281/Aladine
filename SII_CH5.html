@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva: Síndrome de Intestino Irritable (SII)</title>
+    <!-- Chosen Palette: Warm Neutrals & Teal Accent -->
+    <!-- Application Structure Plan: A single-page dashboard with a top navigation bar for quick access to thematic sections: "Visión General", "Diagnóstico Interactivo", "Fisiopatología", "Manejo y Tratamiento", and "Caso Clínico Simulado". This task-oriented structure allows users (students/professors) to jump directly to the information they need, rather than scrolling through a linear document. Key interactions include a criteria checklist for diagnosis, a visual subtype classifier, an interactive diagram for pathophysiology, a searchable FODMAP food database, and a step-by-step clinical case simulation. This design prioritizes user engagement and active learning over passive reading, making complex medical information more accessible and memorable. -->
+    <!-- Visualization & Content Choices: 
+        - Epidemiology: Goal: Inform. Method: Bar chart (Chart.js/Canvas) for prevalence comparison. Interaction: Tooltips. Justification: Quick visual data consumption.
+        - Roma IV Criteria: Goal: Organize. Method: Interactive HTML checklist. Interaction: User clicks to check criteria. Justification: Active learning tool.
+        - Bristol Scale/Subtypes: Goal: Classify. Method: Clickable HTML image grid. Interaction: User selects stool type to see classification. Justification: Visual and interactive learning.
+        - Brain-Gut Axis: Goal: Explain relationships. Method: Interactive HTML/CSS diagram. Interaction: Hover to reveal details. Justification: Simplifies a complex concept.
+        - FODMAP Diet: Goal: Inform/Organize. Method: Searchable/filterable HTML lists. Interaction: User searches for foods. Justification: Highly practical tool for application.
+        - Pharmacology: Goal: Compare. Method: Filterable HTML cards. Interaction: User filters drugs by SII subtype. Justification: Mimics clinical decision-making.
+        - Case Study: Goal: Apply. Method: Step-by-step HTML/JS simulation. Interaction: User makes decisions and gets feedback. Justification: Promotes critical thinking via Problem-Based Learning.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333333;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #2C7A7B;
+            border-bottom-color: #2C7A7B;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .btn {
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .section {
+            scroll-margin-top: 80px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .bristol-item img {
+            border: 4px solid transparent;
+            transition: border-color 0.3s;
+        }
+        .bristol-item.selected img {
+            border-color: #4FD1C5;
+        }
+        .axis-part {
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .axis-part:hover {
+            background-color: #E6FFFA;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 lg:px-6 py-4">
+            <div class="flex flex-wrap justify-between items-center">
+                <h1 class="text-xl lg:text-2xl font-bold text-gray-800">Guía Interactiva del SII</h1>
+                <div class="hidden lg:flex space-x-6">
+                    <a href="#overview" class="nav-link text-gray-600 font-medium pb-1">Visión General</a>
+                    <a href="#diagnosis" class="nav-link text-gray-600 font-medium pb-1">Diagnóstico</a>
+                    <a href="#pathophysiology" class="nav-link text-gray-600 font-medium pb-1">Fisiopatología</a>
+                    <a href="#treatment" class="nav-link text-gray-600 font-medium pb-1">Tratamiento</a>
+                    <a href="#case-study" class="nav-link text-gray-600 font-medium pb-1">Caso Clínico</a>
+                </div>
+                <div class="lg:hidden">
+                    <select id="mobile-nav" class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5">
+                        <option value="#overview">Visión General</option>
+                        <option value="#diagnosis">Diagnóstico</option>
+                        <option value="#pathophysiology">Fisiopatología</option>
+                        <option value="#treatment">Tratamiento</option>
+                        <option value="#case-study">Caso Clínico</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 lg:px-6 py-8 lg:py-12">
+
+        <!-- Visión General -->
+        <section id="overview" class="section mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2 text-teal-800">Síndrome del Intestino Irritable (SII)</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-10">Una introducción a uno de los trastornos gastrointestinales funcionales más comunes, su impacto en la calidad de vida y su prevalencia a nivel global y local. Esta sección resume los conceptos fundamentales del SII.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="card p-6">
+                    <h3 class="text-2xl font-semibold mb-3">¿Qué es el SII?</h3>
+                    <p class="text-gray-700 leading-relaxed">El SII es un trastorno funcional crónico caracterizado por dolor abdominal recurrente asociado a cambios en el hábito intestinal. No es una enfermedad que ponga en riesgo la vida, pero puede afectar significativamente la calidad de vida. Se considera un trastorno de la interacción cerebro-intestino, destacando la compleja comunicación entre el sistema nervioso central y el tracto gastrointestinal.</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-center">Prevalencia del SII</h3>
+                    <p class="text-center text-gray-600 mb-4">La prevalencia del SII varía, pero es una condición frecuente. En Ecuador, un estudio en una población universitaria mostró una prevalencia notable, subrayando su relevancia en nuestro contexto.</p>
+                    <div class="chart-container">
+                        <canvas id="prevalenceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diagnóstico Interactivo -->
+        <section id="diagnosis" class="section mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2 text-teal-800">Diagnóstico Interactivo del SII</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-10">Esta sección proporciona herramientas interactivas para entender el proceso diagnóstico del SII, basadas en los criterios de Roma IV, la clasificación por subtipos mediante la Escala de Bristol y la identificación de signos de alarma.</p>
+            <div class="grid lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-3 card p-6">
+                    <h3 class="text-2xl font-semibold mb-4">Criterios de Roma IV</h3>
+                    <p class="text-gray-600 mb-6">Utilice esta lista de verificación para determinar si un paciente cumple con los criterios diagnósticos para el SII. Deben cumplirse los criterios de los últimos 3 meses, con inicio de los síntomas al menos 6 meses antes del diagnóstico.</p>
+                    <div id="roma-criteria-checklist" class="space-y-4"></div>
+                    <div id="roma-result" class="mt-6 p-4 rounded-lg text-center font-semibold transition-all duration-300"></div>
+                </div>
+                <div class="lg:col-span-2 card p-6 bg-red-50 border border-red-200">
+                    <h3 class="text-2xl font-semibold mb-4 text-red-800">Signos de Alarma (Banderas Rojas)</h3>
+                    <p class="text-red-700 mb-4">La presencia de cualquiera de estos signos obliga a una investigación exhaustiva para descartar patología orgánica grave.</p>
+                    <ul id="red-flags-list" class="space-y-2 text-red-900 list-disc list-inside"></ul>
+                </div>
+            </div>
+            <div class="card p-6 mt-8">
+                <h3 class="text-2xl font-semibold mb-2 text-center">Clasificador de Subtipos (Escala de Bristol)</h3>
+                <p class="text-center text-gray-600 mb-6">Seleccione el tipo o tipos de heces predominantes de su paciente para determinar el subtipo de SII. La clasificación se basa en la forma de las heces en los días con deposiciones anormales.</p>
+                <div id="bristol-scale-container" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4 mb-6"></div>
+                <div id="bristol-result" class="p-4 rounded-lg text-center font-semibold text-xl transition-all duration-300"></div>
+            </div>
+        </section>
+
+        <!-- Fisiopatología -->
+        <section id="pathophysiology" class="section mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2 text-teal-800">Fisiopatología Visualizada</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-10">Explore los complejos mecanismos que subyacen al SII. Esta sección desglosa la interacción cerebro-intestino y otros factores clave de una manera visual e interactiva. Pase el cursor sobre cada componente para más detalles.</p>
+            <div class="card p-6">
+                 <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div id="axis-brain" class="axis-part card p-4 border-2 border-blue-200 cursor-pointer">
+                        <h4 class="text-lg font-bold">🧠 Cerebro (Factores Centrales)</h4>
+                    </div>
+                    <div id="axis-connection" class="flex items-center justify-center text-3xl font-bold text-gray-400">
+                        &#8596;
+                    </div>
+                     <div id="axis-gut" class="axis-part card p-4 border-2 border-green-200 cursor-pointer">
+                        <h4 class="text-lg font-bold">🌿 Intestino (Factores Periféricos)</h4>
+                    </div>
+                </div>
+                <div id="patho-details" class="mt-6 p-4 bg-gray-100 rounded-lg min-h-[100px] flex items-center justify-center">
+                    <p class="text-gray-700">Pase el cursor sobre un componente para ver su descripción.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Tratamiento -->
+        <section id="treatment" class="section mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2 text-teal-800">Manejo y Tratamiento del SII</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-10">El tratamiento del SII es multifacético y debe ser individualizado. Esta sección cubre las principales estrategias, desde cambios en el estilo de vida y la dieta (con un enfoque en FODMAPs) hasta las opciones farmacológicas disponibles.</p>
+            
+            <div class="card p-6">
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                        <button onclick="changeTab('lifestyle')" class="tab-btn active text-teal-600 border-teal-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Estilo de Vida y Dieta</button>
+                        <button onclick="changeTab('fodmap')" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Explorador FODMAP</button>
+                        <button onclick="changeTab('pharma')" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Guía Farmacológica</button>
+                    </nav>
+                </div>
+
+                <div id="lifestyle-tab" class="tab-content">
+                    <h3 class="text-xl font-semibold mb-4">Abordaje Inicial y Estilo de Vida</h3>
+                    <ul class="space-y-3 list-disc list-inside text-gray-700">
+                        <li><strong>Relación Médico-Paciente:</strong> Establecer una relación de confianza, educar al paciente sobre la naturaleza crónica pero benigna del SII y validar sus síntomas es el primer paso terapéutico.</li>
+                        <li><strong>Ejercicio Físico:</strong> La actividad física regular y moderada ha demostrado mejorar los síntomas globales del SII y el bienestar general.</li>
+                        <li><strong>Manejo del Estrés:</strong> Técnicas como mindfulness, yoga o terapia psicológica pueden ser muy beneficiosas debido a la fuerte conexión cerebro-intestino.</li>
+                        <li><strong>Higiene del Sueño:</strong> Un descanso adecuado puede influir positivamente en el control de los síntomas.</li>
+                        <li><strong>Fibra Dietética:</strong> La fibra soluble (ej. Psyllium) puede ser beneficiosa, especialmente en SII-E. Se debe introducir gradualmente. La fibra insoluble (ej. salvado de trigo) puede empeorar los síntomas en algunos pacientes.</li>
+                    </ul>
+                </div>
+
+                <div id="fodmap-tab" class="tab-content hidden">
+                    <h3 class="text-xl font-semibold mb-2">Explorador de Dieta Baja en FODMAPs</h3>
+                    <p class="text-gray-600 mb-4">Busque alimentos para saber si son altos o bajos en FODMAPs. Esta herramienta está adaptada con alimentos comunes en Ecuador.</p>
+                    <input type="text" id="fodmap-search" placeholder="Buscar alimento (ej. fréjol, mango, papa...)" class="w-full p-3 border border-gray-300 rounded-lg mb-6 focus:ring-teal-500 focus:border-teal-500">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-red-600">Alimentos ALTOS en FODMAPs (Restringir)</h4>
+                            <ul id="high-fodmap-list" class="bg-red-50 p-4 rounded-lg h-64 overflow-y-auto text-sm space-y-1"></ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-green-600">Alimentos BAJOS en FODMAPs (Permitidos)</h4>
+                            <ul id="low-fodmap-list" class="bg-green-50 p-4 rounded-lg h-64 overflow-y-auto text-sm space-y-1"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pharma-tab" class="tab-content hidden">
+                    <h3 class="text-xl font-semibold mb-4">Guía Farmacológica por Síntoma Predominante</h3>
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <button onclick="filterDrugs('all')" class="drug-filter-btn btn bg-teal-600 text-white py-2 px-4 rounded-full">Todos</button>
+                        <button onclick="filterDrugs('SII-D')" class="drug-filter-btn btn bg-gray-200 text-gray-800 py-2 px-4 rounded-full">SII-Diarrea</button>
+                        <button onclick="filterDrugs('SII-E')" class="drug-filter-btn btn bg-gray-200 text-gray-800 py-2 px-4 rounded-full">SII-Estreñimiento</button>
+                        <button onclick="filterDrugs('dolor')" class="drug-filter-btn btn bg-gray-200 text-gray-800 py-2 px-4 rounded-full">Dolor / Hinchazón</button>
+                    </div>
+                    <div id="drug-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Caso Clínico -->
+        <section id="case-study" class="section">
+            <h2 class="text-3xl font-bold text-center mb-2 text-teal-800">Simulación de Caso Clínico</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-10">Ponga a prueba sus conocimientos con esta simulación de un caso clínico de Aprendizaje Basado en Problemas (ABP). Lea la información y responda a las preguntas para avanzar en el caso.</p>
+            <div class="card p-6 lg:p-8">
+                <div id="case-content"></div>
+                <div id="case-questions" class="mt-6"></div>
+                <div id="case-feedback" class="mt-4 p-3 rounded-lg text-center font-medium hidden"></div>
+                <div class="mt-6 flex justify-center">
+                    <button id="next-case-btn" onclick="nextCaseStep()" class="btn bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-lg hidden">Siguiente</button>
+                    <button id="restart-case-btn" onclick="startCaseStudy()" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hidden">Reiniciar Caso</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-4 text-center">
+            <p>&copy; 2024. Material Educativo Interactivo para la Facultad de Ciencias Médicas, UCE. Adaptado del sílabo de Gastroenterología.</p>
+        </div>
+    </footer>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DATOS DE LA APLICACIÓN ---
+    const data = {
+        prevalence: {
+            labels: ['Prevalencia Global (Estimada)', 'Prevalencia Ecuador (Estudio U. Cuenca)'],
+            values: [15, 22.4] // Promedio de 5-25% y dato de Ecuador
+        },
+        romaCriteria: [
+            { id: 'dolor', text: 'Dolor abdominal recurrente, al menos 1 día/semana en los últimos 3 meses.' },
+            { id: 'criterio1', text: 'Relacionado con la defecación.' },
+            { id: 'criterio2', text: 'Asociado con un cambio en la frecuencia de las deposiciones.' },
+            { id: 'criterio3', text: 'Asociado con un cambio en la forma (apariencia) de las deposiciones.' }
+        ],
+        redFlags: [
+            'Inicio > 50 años',
+            'Pérdida de peso involuntaria',
+            'Sangrado rectal',
+            'Anemia ferropénica',
+            'Síntomas nocturnos',
+            'Masa abdominal palpable',
+            'Historia familiar de cáncer colorrectal o EII'
+        ],
+        bristolScale: [
+            { type: 1, name: 'Tipo 1: Heces duras en trozos, como nueces', img: 'https://placehold.co/200x150/8B4513/FFFFFF?text=Tipo+1', subtype_e: true },
+            { type: 2, name: 'Tipo 2: En forma de salchicha, pero grumosa', img: 'https://placehold.co/200x150/A0522D/FFFFFF?text=Tipo+2', subtype_e: true },
+            { type: 3, name: 'Tipo 3: Con forma de salchicha con grietas', img: 'https://placehold.co/200x150/CD853F/FFFFFF?text=Tipo+3', subtype_e: false },
+            { type: 4, name: 'Tipo 4: Como una salchicha, lisa y blanda', img: 'https://placehold.co/200x150/D2B48C/FFFFFF?text=Tipo+4', subtype_e: false },
+            { type: 5, name: 'Tipo 5: Trozos de masa pastosa con bordes definidos', img: 'https://placehold.co/200x150/F4A460/FFFFFF?text=Tipo+5', subtype_d: false },
+            { type: 6, name: 'Tipo 6: Fragmentos blandos y esponjosos, bordes irregulares', img: 'https://placehold.co/200x150/DAA520/FFFFFF?text=Tipo+6', subtype_d: true },
+            { type: 7, name: 'Tipo 7: Acuosa, sin pedazos sólidos, totalmente líquida', img: 'https://placehold.co/200x150/B8860B/FFFFFF?text=Tipo+7', subtype_d: true }
+        ],
+        pathoDetails: {
+            'axis-brain': { title: '🧠 Factores Centrales (Cerebro)', text: 'El estrés, la ansiedad, la depresión y eventos traumáticos pueden modular la percepción del dolor y la función intestinal a través del eje cerebro-intestino. No son la causa, pero sí potentes modificadores de los síntomas.' },
+            'axis-gut': { title: '🌿 Factores Periféricos (Intestino)', text: 'Incluyen alteraciones en la motilidad (tránsito rápido o lento), hipersensibilidad visceral (percepción aumentada de dolor), inflamación de bajo grado, y disbiosis (alteraciones en la microbiota intestinal).' },
+            'axis-connection': { title: '↔️ Eje Cerebro-Intestino', text: 'Es una comunicación bidireccional compleja. El cerebro influye en el intestino (motilidad, sensibilidad) y el intestino influye en el cerebro (estado de ánimo, percepción del dolor). La serotonina (5-HT) es un neurotransmisor clave en esta vía.'}
+        },
+        fodmapFoods: [
+            // Altísimo en FODMAPs
+            { name: 'Ajo', type: 'high', group: 'Fructanos' },
+            { name: 'Cebolla', type: 'high', group: 'Fructanos' },
+            { name: 'Trigo (pan, pasta)', type: 'high', group: 'Fructanos' },
+            { name: 'Fréjol', type: 'high', group: 'GOS' },
+            { name: 'Lenteja', type: 'high', group: 'GOS' },
+            { name: 'Miel', type: 'high', group: 'Fructosa' },
+            { name: 'Leche de vaca', type: 'high', group: 'Lactosa' },
+            { name: 'Mango', type: 'high', group: 'Fructosa' },
+            { name: 'Manzana', type: 'high', group: 'Fructosa, Sorbitol' },
+            { name: 'Pera', type: 'high', group: 'Fructosa, Sorbitol' },
+            { name: 'Aguacate (>1/8)', type: 'high', group: 'Sorbitol' },
+            { name: 'Choclo (maíz tierno)', type: 'high', group: 'Sorbitol, Fructanos' },
+            { name: 'Coliflor', type: 'high', group: 'Manitol' },
+            { name: 'Champiñones', type: 'high', group: 'Manitol' },
+            // Bajos en FODMAPs
+            { name: 'Arroz', type: 'low', group: 'N/A' },
+            { name: 'Papa', type: 'low', group: 'N/A' },
+            { name: 'Yuca', type: 'low', group: 'N/A' },
+            { name: 'Plátano verde', type: 'low', group: 'N/A' },
+            { name: 'Quinua', type: 'low', group: 'N/A' },
+            { name: 'Pollo', type: 'low', group: 'N/A' },
+            { name: 'Pescado', type: 'low', group: 'N/A' },
+            { name: 'Carne de res', type: 'low', group: 'N/A' },
+            { name: 'Huevos', type: 'low', group: 'N/A' },
+            { name: 'Zanahoria', type: 'low', group: 'N/A' },
+            { name: 'Pepino', type: 'low', group: 'N/A' },
+            { name: 'Tomate (moderación)', type: 'low', group: 'N/A' },
+            { name: 'Espinaca', type: 'low', group: 'N/A' },
+            { name: 'Pimiento', type: 'low', group: 'N/A' },
+            { name: 'Naranja', type: 'low', group: 'N/A' },
+            { name: 'Mandarina', type: 'low', group: 'N/A' },
+            { name: 'Frutilla', type: 'low', group: 'N/A' },
+            { name: 'Piña', type: 'low', group: 'N/A' },
+            { name: 'Kiwi', type: 'low', group: 'N/A' },
+            { name: 'Plátano (no muy maduro)', type: 'low', group: 'N/A' },
+            { name: 'Leche sin lactosa', type: 'low', group: 'N/A' },
+            { name: 'Queso maduro', type: 'low', group: 'N/A' },
+            { name: 'Aceite de oliva', type: 'low', group: 'N/A' }
+        ],
+        drugs: [
+            { name: 'Loperamida', category: 'SII-D', desc: 'Antidiarreico. Reduce la motilidad intestinal. Útil para control agudo.' },
+            { name: 'Rifaximina', category: 'SII-D', desc: 'Antibiótico no absorbible. Modula la microbiota. Mejora síntomas globales en SII-D.' },
+            { name: 'Polietilenglicol (PEG)', category: 'SII-E', desc: 'Laxante osmótico. Aumenta el agua en heces. Primera línea para SII-E.' },
+            { name: 'Fibra Soluble (Psyllium)', category: 'SII-E', desc: 'Aumenta el bolo fecal y regula el tránsito. Introducir gradualmente.' },
+            { name: 'Linaclotida / Lubiprostona', category: 'SII-E', desc: 'Secretagogos. Aumentan la secreción de fluidos en el intestino. Para casos refractarios.' },
+            { name: 'Antiespasmódicos', category: 'dolor', desc: 'Relajan el músculo liso intestinal. Alivian el dolor tipo cólico. Ej: Bromuro de pinaverio.' },
+            { name: 'Aceite de Menta', category: 'dolor', desc: 'Antiespasmódico natural. Relaja músculo liso. Útil para dolor y distensión.' },
+            { name: 'Antidepresivos Tricíclicos', category: ['dolor', 'SII-D'], desc: 'En dosis bajas, modulan la percepción del dolor. Útiles para dolor crónico y en SII-D.' }
+        ],
+        caseStudy: [
+            {
+                type: 'content',
+                title: 'Identificación del Paciente y Motivo de Consulta',
+                text: `<strong>Paciente:</strong> L.M., 20 años, femenino, estudiante de arquitectura en Quito.<br><strong>Motivo de Consulta:</strong> "Vengo porque desde hace más o menos un año tengo mucho dolor de barriga, a veces me da diarrea y otras veces no puedo ir al baño. También me hincho mucho."`
+            },
+            {
+                type: 'content',
+                title: 'Enfermedad Actual',
+                text: 'Inicio hace 12 meses. Dolor abdominal cólico en hemiabdomen inferior, 3-4 días/semana, alivia parcialmente con la defecación. Alterna periodos de diarrea (Bristol 6-7) con estreñimiento (Bristol 1-2). Marcada distensión y gases por las tardes. Niega signos de alarma (no síntomas nocturnos, no pérdida de peso). Síntomas se exacerban con estrés académico.'
+            },
+            {
+                type: 'question',
+                question: 'Basado en la historia inicial, ¿cuál es su hipótesis diagnóstica principal?',
+                options: [
+                    { text: 'Enfermedad Inflamatoria Intestinal (EII)', correct: false, feedback: 'Incorrecto. La ausencia de signos de alarma como sangrado rectal, pérdida de peso o síntomas nocturnos hace que la EII sea menos probable, aunque debe considerarse en el diferencial.' },
+                    { text: 'Síndrome de Intestino Irritable (SII)', correct: true, feedback: 'Correcto. La paciente presenta dolor abdominal crónico relacionado con la defecación y cambios en el hábito intestinal, en ausencia de signos de alarma, lo que cumple los criterios clínicos de SII.' },
+                    { text: 'Enfermedad Celíaca', correct: false, feedback: 'Incorrecto. Aunque la enfermedad celíaca puede presentarse así, el patrón alternante y la fuerte asociación con el estrés hacen que el SII sea más probable inicialmente. Se debe mantener en el diagnóstico diferencial.' }
+                ]
+            },
+            {
+                type: 'content',
+                title: 'Antecedentes y Examen Físico',
+                text: `<strong>Antecedentes:</strong> Madre con "gastritis nerviosa". Dieta irregular, alta en procesados y baja en fibra. Sedentaria. Estrés académico y pocas horas de sueño.<br><strong>Examen Físico:</strong> IMC 21.5 (Normopeso). Ligera palidez. Abdomen globuloso, timpánico, con dolor difuso a la palpación profunda sin irritación peritoneal. Resto sin particularidades.`
+            },
+            {
+                type: 'question',
+                question: 'Según el patrón de heces descrito (alternancia de Bristol 1-2 y 6-7), ¿qué subtipo de SII sospecharía?',
+                 options: [
+                    { text: 'SII con predominio de Estreñimiento (SII-E)', correct: false, feedback: 'Incorrecto. El SII-E requiere >25% de deposiciones tipo 1-2 y <25% de tipo 6-7.' },
+                    { text: 'SII con predominio de Diarrea (SII-D)', correct: false, feedback: 'Incorrecto. El SII-D requiere >25% de deposiciones tipo 6-7 y <25% de tipo 1-2.' },
+                    { text: 'SII con Hábito Mixto (SII-M)', correct: true, feedback: 'Correcto. El patrón alternante con >25% de deposiciones duras (Bristol 1-2) y >25% de deposiciones sueltas (Bristol 6-7) define al SII-M.' }
+                ]
+            },
+             {
+                type: 'question',
+                question: '¿Qué pruebas iniciales mínimas solicitaría para esta paciente joven sin signos de alarma?',
+                 options: [
+                    { text: 'Colonoscopia y endoscopia digestiva alta', correct: false, feedback: 'Incorrecto. Los procedimientos invasivos no están indicados de entrada en una paciente joven sin signos de alarma y con síntomas clásicos de SII.' },
+                    { text: 'Hemograma, PCR, pruebas tiroideas y coproparasitológico', correct: true, feedback: 'Correcto. Estas pruebas básicas ayudan a descartar anemia, inflamación significativa (PCR baja en SII), patología tiroidea y parasitosis (importante en nuestro medio), que son los principales diagnósticos diferenciales.' },
+                    { text: 'Tomografía computarizada de abdomen', correct: false, feedback: 'Incorrecto. La TC no tiene un rol en el diagnóstico inicial del SII y expone a radiación innecesaria.' }
+                ]
+            },
+            {
+                type: 'content',
+                title: 'Plan de Manejo Inicial',
+                text: `Usted decide iniciar un plan de manejo integral. Le explica a la paciente la naturaleza del SII y la conexión cerebro-intestino. Recomienda cambios en el estilo de vida (aumentar actividad física, mejorar higiene del sueño) e inicia una intervención dietética.`
+            },
+            {
+                type: 'question',
+                question: '¿Cuál sería la estrategia dietética de primera línea más apropiada para esta paciente con marcada distensión y gases?',
+                 options: [
+                    { text: 'Una dieta alta en fibra insoluble (salvado de trigo)', correct: false, feedback: 'Incorrecto. La fibra insoluble a menudo puede empeorar la distensión y el dolor en pacientes con SII.' },
+                    { text: 'Una prueba de dieta baja en FODMAPs supervisada', correct: true, feedback: 'Correcto. La dieta baja en FODMAPs es la estrategia dietética con mayor evidencia para mejorar los síntomas globales del SII, especialmente la hinchazón y los gases.' },
+                    { text: 'Eliminar únicamente el gluten y la lactosa', correct: false, feedback: 'Incorrecto. Aunque puede ser útil para algunos, una dieta baja en FODMAPs es un enfoque más sistemático y amplio para identificar múltiples carbohidratos fermentables que pueden estar causando los síntomas.' }
+                ]
+            },
+            {
+                type: 'end',
+                title: 'Fin del Caso Clínico',
+                text: 'El manejo del SII es un proceso continuo que requiere una fuerte alianza médico-paciente, educación, y un enfoque escalonado y personalizado. El seguimiento es clave para ajustar el tratamiento según la evolución de los síntomas.'
+            }
+        ]
+    };
+    
+    // --- INICIALIZACIÓN ---
+    
+    // Gráfico de Prevalencia
+    const ctx = document.getElementById('prevalenceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.prevalence.labels,
+            datasets: [{
+                label: 'Prevalencia (%)',
+                data: data.prevalence.values,
+                backgroundColor: ['rgba(79, 209, 197, 0.6)', 'rgba(44, 122, 123, 0.6)'],
+                borderColor: ['rgba(79, 209, 197, 1)', 'rgba(44, 122, 123, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 30
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Checklist de Criterios de Roma IV
+    const romaContainer = document.getElementById('roma-criteria-checklist');
+    const romaResultEl = document.getElementById('roma-result');
+    romaContainer.innerHTML = data.romaCriteria.map((criterion, index) => `
+        <label for="${criterion.id}" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <input type="checkbox" id="${criterion.id}" name="roma" class="h-5 w-5 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+            <span class="ml-3 text-gray-800">${criterion.text} ${index > 0 ? '<span class="text-sm text-gray-500">(requiere dolor abdominal)</span>' : ''}</span>
+        </label>
+    `).join('');
+    
+    romaContainer.addEventListener('change', () => {
+        const checkboxes = document.querySelectorAll('input[name="roma"]');
+        const isDolorChecked = checkboxes[0].checked;
+        const otherCriteriaChecked = Array.from(checkboxes).slice(1).filter(cb => cb.checked).length;
+        
+        if (isDolorChecked && otherCriteriaChecked >= 2) {
+            romaResultEl.textContent = 'Cumple criterios diagnósticos de SII.';
+            romaResultEl.className = 'mt-6 p-4 rounded-lg text-center font-semibold bg-green-100 text-green-800';
+        } else {
+            romaResultEl.textContent = 'No cumple criterios diagnósticos de SII.';
+            romaResultEl.className = 'mt-6 p-4 rounded-lg text-center font-semibold bg-yellow-100 text-yellow-800';
+        }
+    });
+
+    // Lista de Banderas Rojas
+    document.getElementById('red-flags-list').innerHTML = data.redFlags.map(flag => `<li>${flag}</li>`).join('');
+
+    // Escala de Bristol
+    const bristolContainer = document.getElementById('bristol-scale-container');
+    const bristolResultEl = document.getElementById('bristol-result');
+    bristolContainer.innerHTML = data.bristolScale.map(item => `
+        <div class="bristol-item text-center cursor-pointer" data-type-e="${item.subtype_e}" data-type-d="${item.subtype_d}">
+            <img src="${item.img}" alt="${item.name}" class="w-full h-auto object-cover rounded-lg mb-2" onerror="this.onerror=null;this.src='https://placehold.co/200x150/cccccc/333333?text=Imagen+no+disponible';">
+            <p class="text-xs font-medium">${item.name}</p>
+        </div>
+    `).join('');
+    
+    const bristolItems = document.querySelectorAll('.bristol-item');
+    bristolItems.forEach(item => {
+        item.addEventListener('click', () => {
+            item.classList.toggle('selected');
+            updateBristolResult();
+        });
+    });
+
+    function updateBristolResult() {
+        const selectedItems = document.querySelectorAll('.bristol-item.selected');
+        const hasE = Array.from(selectedItems).some(i => i.dataset.typeE === 'true');
+        const hasD = Array.from(selectedItems).some(i => i.dataset.typeD === 'true');
+
+        let resultText = 'Seleccione uno o más tipos de heces predominantes.';
+        let resultClass = 'bg-gray-100 text-gray-800';
+
+        if (selectedItems.length > 0) {
+            if (hasE && hasD) {
+                resultText = 'SII con Hábito Mixto (SII-M)';
+                resultClass = 'bg-purple-100 text-purple-800';
+            } else if (hasE) {
+                resultText = 'SII con predominio de Estreñimiento (SII-E)';
+                 resultClass = 'bg-blue-100 text-blue-800';
+            } else if (hasD) {
+                resultText = 'SII con predominio de Diarrea (SII-D)';
+                resultClass = 'bg-yellow-100 text-yellow-800';
+            } else {
+                 resultText = 'SII No Clasificable (SII-U) o Hábito Normal';
+                 resultClass = 'bg-gray-100 text-gray-800';
+            }
+        }
+        bristolResultEl.textContent = resultText;
+        bristolResultEl.className = `p-4 rounded-lg text-center font-semibold text-xl transition-all duration-300 ${resultClass}`;
+    }
+
+    // Fisiopatología
+    const pathoDetailsEl = document.getElementById('patho-details');
+    document.querySelectorAll('.axis-part').forEach(part => {
+        part.addEventListener('mouseenter', (e) => {
+            const detailKey = e.currentTarget.id;
+            const detail = data.pathoDetails[detailKey];
+            pathoDetailsEl.innerHTML = `<div class="p-2">
+                <h5 class="font-bold text-lg mb-2">${detail.title}</h5>
+                <p class="text-gray-700">${detail.text}</p>
+            </div>`;
+        });
+    });
+
+    // FODMAP
+    const fodmapSearch = document.getElementById('fodmap-search');
+    const highFodmapList = document.getElementById('high-fodmap-list');
+    const lowFodmapList = document.getElementById('low-fodmap-list');
+    
+    function renderFodmapLists(filter = '') {
+        const query = filter.toLowerCase().trim();
+        const filteredFoods = data.fodmapFoods.filter(food => food.name.toLowerCase().includes(query));
+
+        highFodmapList.innerHTML = filteredFoods
+            .filter(f => f.type === 'high')
+            .map(f => `<li><strong>${f.name}</strong> <span class="text-xs text-red-500">(${f.group})</span></li>`)
+            .join('');
+        lowFodmapList.innerHTML = filteredFoods
+            .filter(f => f.type === 'low')
+            .map(f => `<li>${f.name}</li>`)
+            .join('');
+    }
+    fodmapSearch.addEventListener('input', (e) => renderFodmapLists(e.target.value));
+    renderFodmapLists();
+
+    // Farmacología
+    window.filterDrugs = (category) => {
+        const drugList = document.getElementById('drug-list');
+        const filteredDrugs = (category === 'all') 
+            ? data.drugs 
+            : data.drugs.filter(d => Array.isArray(d.category) ? d.category.includes(category) : d.category === category);
+
+        drugList.innerHTML = filteredDrugs.map(drug => `
+            <div class="card p-4">
+                <h4 class="font-bold text-lg text-teal-700">${drug.name}</h4>
+                <p class="text-gray-600 text-sm">${drug.desc}</p>
+            </div>
+        `).join('');
+        
+        document.querySelectorAll('.drug-filter-btn').forEach(btn => {
+            btn.classList.remove('bg-teal-600', 'text-white');
+            btn.classList.add('bg-gray-200', 'text-gray-800');
+        });
+        document.querySelector(`.drug-filter-btn[onclick="filterDrugs('${category}')"]`).classList.add('bg-teal-600', 'text-white');
+    };
+    filterDrugs('all');
+
+    // Navegación de Pestañas (Tratamiento)
+    window.changeTab = (tabName) => {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+        document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active', 'text-teal-600', 'border-teal-600');
+            btn.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        });
+        const activeBtn = document.querySelector(`.tab-btn[onclick="changeTab('${tabName}')"]`);
+        activeBtn.classList.add('active', 'text-teal-600', 'border-teal-600');
+        activeBtn.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    };
+
+    // Caso Clínico
+    let currentStep = 0;
+    const caseContentEl = document.getElementById('case-content');
+    const caseQuestionsEl = document.getElementById('case-questions');
+    const caseFeedbackEl = document.getElementById('case-feedback');
+    const nextBtn = document.getElementById('next-case-btn');
+    const restartBtn = document.getElementById('restart-case-btn');
+
+    window.startCaseStudy = () => {
+        currentStep = 0;
+        nextBtn.classList.add('hidden');
+        restartBtn.classList.add('hidden');
+        displayCaseStep();
+    }
+
+    function displayCaseStep() {
+        const stepData = data.caseStudy[currentStep];
+        caseFeedbackEl.classList.add('hidden');
+        caseQuestionsEl.innerHTML = '';
+
+        if (stepData.type === 'content') {
+            caseContentEl.innerHTML += `<div class="mb-4">
+                <h4 class="text-xl font-semibold text-gray-800 mb-2">${stepData.title}</h4>
+                <p class="text-gray-700 leading-relaxed">${stepData.text}</p>
+            </div>`;
+            nextBtn.classList.remove('hidden');
+        } else if (stepData.type === 'question') {
+            caseQuestionsEl.innerHTML = `
+                <h4 class="text-lg font-semibold mb-3">${stepData.question}</h4>
+                <div class="space-y-3">
+                    ${stepData.options.map((opt, index) => `
+                        <button onclick="handleAnswer(${index})" class="w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                            ${opt.text}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        } else if (stepData.type === 'end') {
+            caseContentEl.innerHTML += `<div class="text-center">
+                <h4 class="text-xl font-semibold text-gray-800 mb-2">${stepData.title}</h4>
+                <p class="text-gray-700 leading-relaxed">${stepData.text}</p>
+            </div>`;
+            restartBtn.classList.remove('hidden');
+        }
+    }
+
+    window.handleAnswer = (selectedIndex) => {
+        const stepData = data.caseStudy[currentStep];
+        const selectedOption = stepData.options[selectedIndex];
+        
+        caseFeedbackEl.textContent = selectedOption.feedback;
+        if (selectedOption.correct) {
+            caseFeedbackEl.className = 'mt-4 p-3 rounded-lg text-center font-medium bg-green-100 text-green-800';
+            nextBtn.classList.remove('hidden');
+        } else {
+            caseFeedbackEl.className = 'mt-4 p-3 rounded-lg text-center font-medium bg-red-100 text-red-800';
+             nextBtn.classList.add('hidden');
+        }
+        caseFeedbackEl.classList.remove('hidden');
+        document.querySelectorAll('#case-questions button').forEach(btn => btn.disabled = true);
+    }
+    
+    window.nextCaseStep = () => {
+        currentStep++;
+        nextBtn.classList.add('hidden');
+        if (currentStep < data.caseStudy.length) {
+            displayCaseStep();
+        }
+    }
+    
+    startCaseStudy();
+    
+    // Navegación Móvil y Scrollspy
+    const mobileNav = document.getElementById('mobile-nav');
+    mobileNav.addEventListener('change', (e) => {
+        window.location.hash = e.target.value;
+    });
+
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        link.classList.add('active');
+                    }
+                });
+                mobileNav.value = `#${entry.target.id}`;
+            }
+        });
+    }, { rootMargin: '-100px 0px -50% 0px' });
+    sections.forEach(section => observer.observe(section));
+});
+</script>
+
+</body>
+</html>
