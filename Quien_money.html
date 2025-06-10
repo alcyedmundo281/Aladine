@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quién recibe el dinero? - Power Semiotics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .hero-bg-subpage {
+            background-image: linear-gradient(rgba(1, 42, 74, 0.85), rgba(1, 22, 39, 0.95)), url('https://placehold.co/1920x1080/014f86/ffffff?text=Análisis+Financiero');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 3rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: #0891b2; /* Cyan-600 */
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- Header (Consistent with Homepage) -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="https://sites.google.com/view/club-de-mbe/home" class="flex items-center">
+                <img src="https://alcyedmundo281.github.io/Aladine/logo.jpg" 
+                     alt="Power Semiotics Logo" 
+                     class="h-12"
+                     onerror="this.onerror=null; this.src='https://placehold.co/200x48/012a4a/ffffff?text=Power+Semiotics'; this.style.height='auto';">
+            </a>
+            <button class="md:hidden" id="mobile-menu-button">
+                <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+            <div class="hidden md:flex space-x-8 items-center font-semibold text-slate-600">
+                <a href="https://sites.google.com/view/club-de-mbe/home" class="hover:text-cyan-600 transition">Inicio</a>
+                <a href="https://sites.google.com/view/club-de-mbe/gastroenterología" class="hover:text-cyan-600 transition">Artículos</a>
+                <a href="https://sites.google.com/view/club-de-mbe/ciencia-de-datos" class="hover:text-cyan-600 transition">Especialidades</a>
+                <a href="#" class="hover:text-cyan-600 transition">Sobre Nosotros</a>
+                <a href="#" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 px-5 rounded-full transition shadow-sm hover:shadow-md">Contacto</a>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div class="hidden md:hidden bg-white border-t border-slate-200" id="mobile-menu">
+            <a href="https://sites.google.com/view/club-de-mbe/home" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Inicio</a>
+            <a href="https://sites.google.com/view/club-de-mbe/gastroenterología" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Artículos</a>
+            <a href="https://sites.google.com/view/club-de-mbe/ciencia-de-datos" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Especialidades</a>
+            <a href="#" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Sobre Nosotros</a>
+            <a href="#" class="block py-3 px-6 text-sm text-slate-600 hover:bg-slate-100">Contacto</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section for Subpage -->
+        <section class="hero-bg-subpage text-white">
+            <div class="container mx-auto px-6 py-20 md:py-28 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-3">Investigación: ¿Quién recibe el dinero?</h1>
+                <p class="text-lg md:text-xl text-cyan-200 max-w-3xl mx-auto">Un análisis detallado sobre el financiamiento y gasto en el sistema de salud de Ecuador. Navegue por las secciones a continuación para explorar el estudio completo.</p>
+            </div>
+        </section>
+
+        <!-- Subpage Links Section -->
+        <section class="py-16 md:py-24 bg-slate-50">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center text-slate-800 section-title">Contenido del Estudio</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+
+                    <!-- Link Card 1: Introducción -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/introducción" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-gray-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="book-open" class="text-gray-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Introducción</h3>
+                        <p class="text-slate-500 text-sm">Presentación de los objetivos, alcance y la pregunta central de la investigación.</p>
+                    </a>
+
+                    <!-- Link Card 2: Marco Teórico -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/marco-teórico" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-gray-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="library" class="text-gray-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Marco Teórico</h3>
+                        <p class="text-slate-500 text-sm">Explore los conceptos y modelos teóricos que fundamentan este análisis.</p>
+                    </a>
+
+                    <!-- Link Card 3: Contexto Histórico -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/contexto-histórico" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-gray-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="landmark" class="text-gray-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Contexto Histórico</h3>
+                        <p class="text-slate-500 text-sm">Un repaso de la evolución del sistema de salud y su financiamiento en Ecuador.</p>
+                    </a>
+
+                    <!-- Link Card 4: Subestudio 1 -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/subestudio-1" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-cyan-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="file-text" class="text-cyan-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Subestudio 1</h3>
+                        <p class="text-slate-500 text-sm">Primer análisis detallado de los componentes del gasto en salud.</p>
+                    </a>
+
+                    <!-- Link Card 5: Subestudio 2 -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/subestudio-2" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-cyan-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="file-text" class="text-cyan-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Subestudio 2</h3>
+                        <p class="text-slate-500 text-sm">Segundo análisis enfocado en la distribución y beneficiarios de los fondos.</p>
+                    </a>
+
+                    <!-- Link Card 6: Subestudio 3 -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/subestudio-3" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-cyan-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="file-text" class="text-cyan-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Subestudio 3</h3>
+                        <p class="text-slate-500 text-sm">Tercer análisis, centrado en el impacto y las implicaciones de los hallazgos.</p>
+                    </a>
+                    
+                    <!-- Link Card 7: Síntesis de Financiamiento -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/síntesis-de-financiamiento" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-emerald-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="file-check-2" class="text-emerald-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Síntesis de Financiamiento</h3>
+                        <p class="text-slate-500 text-sm">Conclusiones finales y una síntesis integral de todo el financiamiento analizado.</p>
+                    </a>
+
+                    <!-- Link Card 8: Contribuciones Teóricas -->
+                    <a href="https://sites.google.com/view/club-de-mbe/quién-recibe-el-dinero/contribuciones-teóricas" class="card-hover bg-white p-8 rounded-2xl shadow-lg text-center block">
+                        <div class="bg-indigo-100 rounded-full p-4 inline-block mb-5">
+                            <i data-lucide="lightbulb" class="text-indigo-700 h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-800">Contribuciones Teóricas</h3>
+                        <p class="text-slate-500 text-sm">Nuevos aportes y reflexiones teóricas derivadas de los resultados de la investigación.</p>
+                    </a>
+                    
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer (Consistent with Homepage) -->
+    <footer class="bg-slate-800 text-slate-300">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">Sobre Power Semiotics</h4>
+                    <p class="text-sm">Dedicados a promover prácticas basadas en evidencia para mejorar la atención al paciente y avanzar en el conocimiento médico.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">Enlaces Rápidos</h4>
+                    <ul>
+                        <li class="mb-2"><a href="https://sites.google.com/view/club-de-mbe/home" class="text-sm hover:text-cyan-400 transition">Inicio</a></li>
+                        <li class="mb-2"><a href="https://sites.google.com/view/club-de-mbe/gastroenterología" class="text-sm hover:text-cyan-400 transition">Artículos</a></li>
+                        <li class="mb-2"><a href="#" class="text-sm hover:text-cyan-400 transition">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">Síguenos</h4>
+                    <div class="flex space-x-4 justify-center md:justify-start">
+                        <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="twitter"></i></a>
+                        <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="linkedin"></i></a>
+                        <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-700 mt-10 pt-6 text-center text-slate-400 text-xs">
+                <p>&copy; 2025 Power Semiotics. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
