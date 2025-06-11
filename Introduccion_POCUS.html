@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva de Ultrasonido Cardiopulmonar (POCUS)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Medical Blue -->
+    <!-- Application Structure Plan: The application is structured into three main thematic sections: 'Fundamentos' (Fundamentals), 'Técnicas de Exploración' (Scanning Techniques), and 'Aplicaciones Clínicas' (Clinical Applications). This non-linear, task-oriented design was chosen over a simple chapter-by-chapter layout to improve usability. 'Fundamentos' provides the theoretical base (history, physics, artifacts). 'Técnicas' offers a practical, visual guide on how to perform scans (TTE, LUS). 'Aplicaciones' connects theory to practice by showing how POCUS is used to diagnose specific pathologies, featuring an interactive comparison chart. This structure allows users (students, professors) to access information based on their learning goal (theory, practice, or clinical cases) rather than being forced into a linear progression, thus enhancing the educational experience. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation Method -> Interaction -> Justification. 1. History -> Show evolution -> Vertical Timeline (HTML/CSS) -> Scroll -> More engaging than text. 2. Physics Principles -> Explain complex concepts -> Accordions & Tables -> Click to expand -> Breaks down dense info. 3. Scanning Techniques (TTE/LUS views) -> Teach practical skills -> Interactive Diagrams (HTML/CSS) -> Click on view name -> Provides clear, visual instructions for probe placement and expected results. 4. Clinical Pathologies -> Compare differentials -> Bar Chart (Chart.js) -> Dropdown selection -> Allows dynamic comparison of findings across different diseases, aiding diagnostic reasoning. This approach uses the best interactive method for each type of content, prioritizing clarity and user engagement. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button.active {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            font-weight: 600;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .tech-diagram {
+            border: 2px solid #e5e7eb;
+            background-color: #f9fafb;
+        }
+        .probe {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .heart-diagram {
+            border: 2px solid #ef4444;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -29px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #2563eb;
+            border: 3px solid #bfdbfe;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-5xl font-bold text-gray-900">Guía Interactiva de POCUS Cardiopulmonar</h1>
+            <p class="mt-2 text-lg text-gray-600">Basado en "Cardiopulmonary Point of Care Ultrasound" para la Facultad de Ciencias Médicas, UCE</p>
+        </header>
+
+        <nav class="flex flex-col sm:flex-row justify-center items-center bg-white p-2 rounded-xl shadow-md mb-8 sticky top-4 z-10">
+            <button class="nav-button active w-full sm:w-auto text-center px-6 py-3 rounded-lg font-medium text-gray-700 hover:bg-blue-100" onclick="showSection('fundamentos')">Fundamentos</button>
+            <button class="nav-button w-full sm:w-auto text-center px-6 py-3 rounded-lg font-medium text-gray-700 hover:bg-blue-100" onclick="showSection('tecnicas')">Técnicas de Exploración</button>
+            <button class="nav-button w-full sm:w-auto text-center px-6 py-3 rounded-lg font-medium text-gray-700 hover:bg-blue-100" onclick="showSection('aplicaciones')">Aplicaciones Clínicas</button>
+        </nav>
+
+        <main id="main-content">
+            <!-- Sección de Fundamentos -->
+            <section id="fundamentos" class="content-section active space-y-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                  <h2 class="text-2xl font-bold mb-4 text-blue-700">Introducción a los Fundamentos del POCUS</h2>
+                  <p class="text-gray-700 leading-relaxed">Esta sección establece las bases teóricas indispensables para la práctica competente del Ultrasonido en el Punto de Atención (POCUS). Comprender estos principios es crucial, ya que transforman al operador de un simple usuario de la máquina a un profesional capaz de optimizar imágenes, interpretar hallazgos complejos y reconocer artefactos. Exploraremos la fascinante evolución histórica del POCUS, desde sus humildes comienzos hasta su rol actual como el "quinto pilar" del examen físico. Nos sumergiremos en la física del ultrasonido y los principios Doppler para entender cómo se generan las imágenes y se mide el flujo. Finalmente, abordaremos el tema de los artefactos, aprendiendo a distinguirlos y, en muchos casos, a utilizarlos como valiosas pistas diagnósticas.</p>
+                </div>
+                
+                <!-- Sub-sección: Historia -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-bold mb-6 text-gray-800">Evolución Histórica del POCUS</h3>
+                    <div class="relative border-l-2 border-blue-200 ml-4 pl-8 space-y-12">
+                        <div class="timeline-item">
+                            <h4 class="font-semibold text-lg text-blue-600">1978 - El "Estetoscopio de Ultrasonido"</h4>
+                            <p class="text-gray-600 mt-1">El Dr. Jos Roelandt describe una de las primeras máquinas portátiles y anticipa proféticamente el impacto del POCUS, acuñando el concepto de un "estetoscopio de ultrasonido" para el diagnóstico diferencial a la cabecera del paciente.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4 class="font-semibold text-lg text-blue-600">1989 - Nace el Protocolo FATE</h4>
+                            <p class="text-gray-600 mt-1">El Dr. Erik Sloth y su equipo en Dinamarca desarrollan el primer curso estructurado de POCUS, dando origen al protocolo FATE (Focused Assessment with Transthoracic Echocardiography), estandarizando la formación para no cardiólogos.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4 class="font-semibold text-lg text-blue-600">Década de 1990 - La Revolución del Ultrasonido Pulmonar</h4>
+                            <p class="text-gray-600 mt-1">El Dr. Daniel Lichtenstein desafía el dogma médico al describir signos como el "deslizamiento pulmonar" y las "líneas B", sentando las bases de la ecografía pulmonar moderna y demostrando que el pulmón sí es accesible al ultrasonido.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4 class="font-semibold text-lg text-blue-600">1998 - La Era de la Portabilidad</h4>
+                            <p class="text-gray-600 mt-1">Impulsado por una subvención de DARPA, Sonosite Inc. lanza la Sonosite 180, la primera unidad de ultrasonido móvil alimentada por batería, un catalizador clave para la expansión global del POCUS.</p>
+                        </div>
+                         <div class="timeline-item">
+                            <h4 class="font-semibold text-lg text-blue-600">2001 - Estandarización de Protocolos</h4>
+                            <p class="text-gray-600 mt-1">Se publican las primeras guías de ultrasonido por ACEP y se desarrolla el protocolo RUSH (Rapid Ultrasound for Shock and Hypotension), consolidando abordajes sistemáticos para la evaluación de pacientes en shock y trauma (FAST).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-sección: Física y Artefactos -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Principios de Física y Doppler</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold">Penetración vs. Resolución</h4>
+                                <p class="text-sm text-gray-600">El compromiso fundamental en ultrasonido: <strong>Alta frecuencia</strong> = Mejor resolución, Menor penetración (ideal para estructuras superficiales). <strong>Baja frecuencia</strong> = Peor resolución, Mayor penetración (ideal para estructuras profundas como el corazón).</p>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold">Interacciones Tejido-Ultrasonido</h4>
+                                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1 mt-2">
+                                    <li><strong>Reflexión:</strong> Ecos generados en interfaces con diferente impedancia acústica. Base de la imagen.</li>
+                                    <li><strong>Atenuación:</strong> Pérdida de energía del haz a medida que penetra. Limita la profundidad.</li>
+                                    <li><strong>Dispersión (Scattering):</strong> Interacción con estructuras pequeñas (glóbulos rojos). Base del Doppler.</li>
+                                    <li><strong>Refracción:</strong> Desviación del haz. Causa de artefactos posicionales.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Modalidades Doppler</h4>
+                                <p class="text-sm text-gray-600">El Doppler mide la velocidad del flujo sanguíneo. <strong>Doppler Pulsado (PW)</strong> mide velocidad en un punto exacto pero tiene un límite (aliasing). <strong>Doppler Continuo (CW)</strong> mide velocidades muy altas sin límite, pero no localiza el punto exacto. <strong>Doppler Color</strong> mapea el flujo en un área. <strong>Doppler Tisular (TDI)</strong> mide el movimiento del músculo cardíaco.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Artefactos Comunes: ¿Error o Signo?</h3>
+                        <div class="space-y-4">
+                             <div>
+                                <h4 class="font-semibold">Sombra Acústica Posterior</h4>
+                                <p class="text-sm text-gray-600"><strong>Apariencia:</strong> Sombra oscura detrás de una estructura muy reflectante. <strong>Causa:</strong> Alta atenuación (hueso, cálculo). <strong>Clínica:</strong> Útil para confirmar cálculos.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Realce Acústico Posterior</h4>
+                                <p class="text-sm text-gray-600"><strong>Apariencia:</strong> Área brillante detrás de una estructura llena de líquido. <strong>Causa:</strong> Baja atenuación (quiste, vejiga). <strong>Clínica:</strong> Útil para identificar quistes.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Reverberación (Líneas A y B)</h4>
+                                <p class="text-sm text-gray-600"><strong>Apariencia:</strong> Ecos múltiples y repetidos. <strong>Causa:</strong> El haz rebota entre dos reflectores. <strong>Clínica:</strong> Fundamental en ultrasonido pulmonar. Las <strong>Líneas A</strong> (horizontales) indican aire. Las <strong>Líneas B</strong> (verticales) indican síndrome intersticial.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Imagen en Espejo</h4>
+                                <p class="text-sm text-gray-600"><strong>Apariencia:</strong> Duplicación de una estructura a través de un reflector curvo (diafragma). <strong>Clínica:</strong> Puede simular una masa o consolidación.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Técnicas de Exploración -->
+            <section id="tecnicas" class="content-section space-y-8">
+                 <div class="bg-white p-6 rounded-lg shadow">
+                  <h2 class="text-2xl font-bold mb-4 text-blue-700">Guía Visual de Técnicas de Exploración</h2>
+                  <p class="text-gray-700 leading-relaxed">Esta sección es una guía práctica y visual diseñada para enseñar cómo adquirir las vistas ecográficas fundamentales en POCUS cardiopulmonar. El dominio de estas técnicas es la habilidad práctica más importante para el ecografista. Aquí no solo describimos las vistas, sino que las ilustramos mediante diagramas interactivos que muestran la colocación correcta del transductor en el paciente y la anatomía correspondiente que se espera visualizar en la pantalla. Hemos desglosado las técnicas de Ecocardiografía Transtorácica (ETT) y Ultrasonido Pulmonar (LUS), enfocándonos en las vistas de mayor rendimiento diagnóstico. Para cada vista, se destacan las estructuras clave, su aplicación clínica y los errores comunes (pitfalls) a evitar para garantizar un estudio de alta calidad.</p>
+                </div>
+
+                <!-- Sub-sección: ETT -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-bold mb-6 text-gray-800">Ecocardiografía Transtorácica (ETT)</h3>
+                    <div class="grid md:grid-cols-2 gap-8 items-start">
+                        <div>
+                            <p class="mb-4 text-gray-600">Seleccione una vista para ver la colocación de la sonda y la sonoanatomía clave.</p>
+                            <div class="space-y-2">
+                                <button class="w-full text-left p-3 bg-gray-100 hover:bg-blue-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="showTteView('plax')">▸ Eje Largo Paraesternal (PLAX)</button>
+                                <button class="w-full text-left p-3 bg-gray-100 hover:bg-blue-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="showTteView('psax')">▸ Eje Corto Paraesternal (PSAX)</button>
+                                <button class="w-full text-left p-3 bg-gray-100 hover:bg-blue-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="showTteView('a4c')">▸ Apical 4 Cámaras (A4C)</button>
+                                <button class="w-full text-left p-3 bg-gray-100 hover:bg-blue-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="showTteView('subcostal')">▸ Subcostal 4 Cámaras (S4C)</button>
+                            </div>
+                        </div>
+                        <div id="tte-diagram-container" class="mt-8 md:mt-0">
+                            <!-- El contenido se inyectará aquí -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-sección: LUS -->
+                 <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-bold mb-6 text-gray-800">Ultrasonido Pulmonar (LUS)</h3>
+                     <div class="grid md:grid-cols-2 gap-8 items-start">
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-lg text-blue-600">Técnica de Exploración</h4>
+                                <p class="text-gray-600 mt-1">Se explora sistemáticamente el tórax, dividiéndolo en zonas (ej. 2-3 puntos por hemitórax anterior, lateral y posterior). Se utiliza un transductor lineal para la pleura y uno curvilíneo/sectorial para profundidad. La clave es identificar el "Signo del Murciélago": las sombras de dos costillas (alas) y la línea pleural brillante en medio (cuerpo).</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg text-blue-600">Signos Fundamentales</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2 mt-2">
+                                    <li><strong>Deslizamiento Pulmonar (Lung Sliding):</strong> Movimiento brillante y horizontal de la línea pleural con la respiración. Su presencia <span class="font-semibold">excluye neumotórax</span> en ese punto.</li>
+                                    <li><strong>Líneas A:</strong> Artefactos horizontales que indican <span class="font-semibold">aireación normal</span>.</li>
+                                    <li><strong>Líneas B:</strong> Artefactos verticales ("colas de cometa") que indican <span class="font-semibold">síndrome intersticial</span> (edema, inflamación).</li>
+                                    <li><strong>Punto Pulmonar (Lung Point):</strong> Transición entre un patrón con sliding y uno sin sliding. Es <span class="font-semibold">patognomónico de neumotórax</span>.</li>
+                                    <li><strong>Consolidación:</strong> Pulmón con apariencia de tejido ("hepatización"), a menudo con <span class="font-semibold">broncograma aéreo dinámico</span> en neumonía.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center p-4 tech-diagram rounded-lg min-h-[250px]">
+                            <div class="text-center">
+                                <div class="font-mono text-gray-700">
+                                    <p>Costilla (Sombra)</p>
+                                    <div class="flex justify-center items-center gap-2">
+                                        <div class="w-8 h-16 bg-gray-300 opacity-50 -skew-x-12"></div>
+                                        <div class="text-center">
+                                            <p class="text-sm font-semibold">Línea Pleural</p>
+                                            <div class="w-24 h-1 bg-white border-2 border-blue-400 animate-pulse"></div>
+                                            <p class="text-sm font-semibold mt-2">Líneas A</p>
+                                            <div class="w-20 h-0.5 bg-gray-400 mt-4 mx-auto opacity-70"></div>
+                                            <div class="w-20 h-0.5 bg-gray-400 mt-4 mx-auto opacity-50"></div>
+                                        </div>
+                                        <div class="w-8 h-16 bg-gray-300 opacity-50 skew-x-12"></div>
+                                    </div>
+                                    <p>Costilla (Sombra)</p>
+                                </div>
+                                <p class="mt-4 font-semibold text-blue-700">"Signo del Murciélago" con un Patrón A Normal</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Sección de Aplicaciones Clínicas -->
+            <section id="aplicaciones" class="content-section space-y-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                  <h2 class="text-2xl font-bold mb-4 text-blue-700">Aplicaciones Clínicas del POCUS</h2>
+                  <p class="text-gray-700 leading-relaxed">Esta sección demuestra el poder del POCUS cardiopulmonar integrado en el diagnóstico diferencial de patologías agudas. El verdadero valor de esta herramienta reside en su capacidad para combinar hallazgos cardíacos y pulmonares, permitiendo al clínico llegar a un diagnóstico preciso y rápido directamente a la cabecera del paciente. Aquí, exploraremos los patrones ecográficos característicos de condiciones críticas como la insuficiencia cardíaca, la embolia pulmonar y el neumotórax. Utilice el gráfico interactivo para comparar los hallazgos clave entre estas patologías y agudizar su habilidad para el razonamiento clínico basado en imágenes.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Comparativa de Hallazgos en Patologías Agudas</h3>
+                    <div class="mb-6">
+                        <label for="pathology-selector" class="block text-sm font-medium text-gray-700">Seleccione una o más patologías para comparar:</label>
+                        <select id="pathology-selector" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <option value="ica" selected>Insuficiencia Cardíaca Aguda</option>
+                            <option value="epa" selected>Embolia Pulmonar Aguda</option>
+                            <option value="neumonia">Neumonía</option>
+                            <option value="neumotorax">Neumotórax</option>
+                            <option value="taponamiento">Taponamiento Cardíaco</option>
+                        </select>
+                         <p class="text-xs text-gray-500 mt-2">Use Ctrl/Cmd + Click para seleccionar múltiples opciones.</p>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="pathologyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const sections = {
+            fundamentos: document.getElementById('fundamentos'),
+            tecnicas: document.getElementById('tecnicas'),
+            aplicaciones: document.getElementById('aplicaciones')
+        };
+        const navButtons = document.querySelectorAll('.nav-button');
+        const tteDiagramContainer = document.getElementById('tte-diagram-container');
+        let pathologyChart;
+
+        function showSection(sectionId) {
+            Object.values(sections).forEach(section => {
+                section.classList.remove('active');
+            });
+            navButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            sections[sectionId].classList.add('active');
+            document.querySelector(`.nav-button[onclick="showSection('${sectionId}')"]`).classList.add('active');
+        }
+
+        const tteViews = {
+            plax: {
+                title: 'Eje Largo Paraesternal (PLAX)',
+                probe: '2°- 4° EIC izq., marcador al hombro derecho.',
+                anatomy: ['Ventrículo Izquierdo (VI)', 'Aurícula Izquierda (AI)', 'Válvula Mitral (VM)', 'Válvula Aórtica (VAo)', 'Tracto Salida VD (RVOT)'],
+                use: 'Función y dimensiones VI, derrame.',
+                pitfall: 'Vista baja (falsa hipercontractilidad) o no alinear el eje largo correctamente.'
+            },
+            psax: {
+                title: 'Eje Corto Paraesternal (PSAX)',
+                probe: 'Rotar 90° horario desde PLAX, marcador al hombro izquierdo.',
+                anatomy: ['VI (circular)', 'VD (semilunar)', 'Válvulas (a distintos niveles)'],
+                use: 'Función regional VI, interdependencia ventricular (signo de la "D").',
+                pitfall: 'Corte oblicuo (falso signo de la "D", VI ovalado).'
+            },
+            a4c: {
+                title: 'Apical 4 Cámaras (A4C)',
+                probe: 'Punta del corazón (ápex), marcador a la izquierda del paciente.',
+                anatomy: ['Las 4 cámaras cardíacas', 'Válvulas Mitral y Tricúspide', 'Septos'],
+                use: 'Comparar tamaño y función VI/VD, función VD (TAPSE).',
+                pitfall: '¡Acortamiento apical (Foreshortening)! El error más común. El ápex se ve redondo y grueso.'
+            },
+            subcostal: {
+                title: 'Subcostal 4 Cámaras (S4C)',
+                probe: 'Bajo apéndice xifoides, marcador a la izquierda del paciente.',
+                anatomy: ['Las 4 cámaras', 'Pericardio', 'Hígado (ventana)'],
+                use: 'Ideal para derrame pericárdico, guía de pericardiocentesis, y en RCP o malas ventanas.',
+                pitfall: 'Compresión excesiva puede distorsionar las cavidades derechas.'
+            }
+        };
+
+        function showTteView(viewId) {
+            const view = tteViews[viewId];
+            tteDiagramContainer.innerHTML = `
+                <div class="tech-diagram p-4 rounded-lg">
+                    <h4 class="font-bold text-lg text-blue-700">${view.title}</h4>
+                    <div class="mt-4">
+                        <p class="font-semibold text-sm">Colocación Sonda:</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="probe w-8 h-8 rounded-full flex items-center justify-center text-xs">➔</div>
+                            <p class="text-gray-600 text-sm">${view.probe}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="font-semibold text-sm">Anatomía Clave:</p>
+                        <ul class="list-disc list-inside text-gray-600 text-sm space-y-1 mt-1">
+                            ${view.anatomy.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                     <div class="mt-4">
+                        <p class="font-semibold text-sm">Uso Clínico Principal:</p>
+                        <p class="text-gray-600 text-sm mt-1">${view.use}</p>
+                    </div>
+                    <div class="mt-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3 rounded-r-lg">
+                        <p class="font-bold text-sm">Pitfall Crítico:</p>
+                        <p class="text-sm mt-1">${view.pitfall}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        const pathologyData = {
+            labels: ['Líneas B (Pulmón)', 'Derrame Pleural', 'Consolidación', 'Deslizamiento Pulmonar', 'Disfunción VI', 'Dilatación/Disfunción VD', 'Derrame Pericárdico', 'Colapso VCI'],
+            datasets: {
+                ica: {
+                    label: 'Insuficiencia Cardíaca Aguda',
+                    data: [3, 2, 0, 2, 3, 1, 1, 0], // 3: Común/Severo, 2: Presente, 1: Posible, 0: Ausente
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                },
+                epa: {
+                    label: 'Embolia Pulmonar Aguda',
+                    data: [0, 1, 1, 2, 0, 3, 1, 0],
+                    backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                },
+                neumonia: {
+                    label: 'Neumonía',
+                    data: [1, 2, 3, 2, 0, 0, 0, 2],
+                    backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                },
+                neumotorax: {
+                    label: 'Neumotórax',
+                    data: [0, 0, 0, 0, 0, 0, 0, 2],
+                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                },
+                taponamiento: {
+                    label: 'Taponamiento Cardíaco',
+                    data: [0, 1, 0, 2, 0, 1, 3, 0],
+                    backgroundColor: 'rgba(139, 92, 246, 0.7)',
+                }
+            }
+        };
+
+        function setupChart() {
+            const ctx = document.getElementById('pathologyChart').getContext('2d');
+            pathologyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: pathologyData.labels,
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 3,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    const labels = ['Ausente', 'Posible', 'Presente', 'Común/Severo'];
+                                    return labels[value];
+                                }
+                            }
+                        },
+                         y: {
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    let label = this.getLabelForValue(value);
+                                    if (label.length > 16) {
+                                        return label.match(/.{1,16}/g);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Patrones Ecográficos Característicos'
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const labels = ['Ausente o Raro', 'Posible o Leve', 'Frecuentemente Presente', 'Hallazgo Clave o Severo'];
+                                    return `${context.dataset.label}: ${labels[value]}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            const selector = document.getElementById('pathology-selector');
+            const selectedOptions = Array.from(selector.selectedOptions).map(option => option.value);
+            
+            const newDatasets = selectedOptions.map(optionKey => pathologyData.datasets[optionKey]);
+            
+            pathologyChart.data.datasets = newDatasets;
+            pathologyChart.update();
+        }
+
+        window.onload = function() {
+            showSection('fundamentos');
+            showTteView('plax');
+            setupChart();
+            document.getElementById('pathology-selector').addEventListener('change', updateChart);
+            updateChart(); 
+        };
+
+    </script>
+</body>
+</html>
