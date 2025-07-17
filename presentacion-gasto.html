@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación: Análisis del Gasto en Salud en Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e2e8f0;
+            overflow: hidden;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8fafc;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            opacity: 0;
+            transform: translateX(100%);
+            visibility: hidden;
+            padding: 2rem 4rem;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            visibility: visible;
+            z-index: 10;
+        }
+        .slide.previous {
+            transform: translateX(-100%);
+            opacity: 0;
+            visibility: hidden;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Lora', serif;
+        }
+        .title-slide {
+            background: linear-gradient(45deg, #1e3a8a, #2563eb);
+        }
+        .nav-button {
+            position: fixed;
+            bottom: 2rem;
+            z-index: 20;
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            border-radius: 50%;
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .nav-button:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        #prev-btn {
+            left: 2rem;
+        }
+        #next-btn {
+            right: 2rem;
+        }
+        .slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 75%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor de Diapositivas -->
+    <div id="presentation-container">
+
+        <!-- Diapositiva 1: Título -->
+        <section class="slide active title-slide text-white text-center">
+            <div class="max-w-4xl mx-auto">
+                <p class="text-xl md:text-2xl text-blue-200">Latin American Virtual Fellowship in Medical Oncology</p>
+                <h1 class="text-4xl md:text-6xl font-black my-6">Análisis sobre el Gasto en el Sistema de Salud en Ecuador</h1>
+                <p class="text-2xl md:text-3xl font-bold">Dr. Alcy Torres</p>
+                <p class="text-lg md:text-xl mt-4 text-blue-300">Jueves, 17 de Julio, 2025</p>
+            </div>
+        </section>
+
+        <!-- Diapositiva 2: Conflicto de Intereses -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Declaración de Conflicto de Intereses</h2>
+                <div class="prose prose-xl max-w-none">
+                    <p>El autor de esta presentación, Dr. Alcy Torres, declara no tener ningún conflicto de interés financiero o personal que pudiera haber influido de manera inapropiada en el contenido de esta investigación.</p>
+                    <p>La investigación fue realizada de manera independiente y no recibió financiamiento de ninguna entidad farmacéutica, proveedora de servicios de salud o grupo de interés con fines de lucro.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 3: Agenda -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Agenda de la Presentación</h2>
+                <ol class="list-decimal list-inside prose prose-2xl max-w-none space-y-4">
+                    <li>La Paradoja del Gasto en Salud en Ecuador</li>
+                    <li>Contexto Histórico: Las Raíces del Problema</li>
+                    <li>Análisis de Flujos Financieros: ¿A dónde va el dinero?</li>
+                    <li>Dinámicas de Poder: ¿Quién gobierna el gasto?</li>
+                    <li>La Brecha de Implementación: ¿Por qué fallan las políticas?</li>
+                    <li>Conclusiones y Recomendaciones</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Diapositiva 4: La Paradoja -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <h2 class="text-4xl font-bold text-blue-900 mb-8">La Paradoja del Gasto en Salud</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-blue-100 p-8 rounded-lg">
+                        <p class="text-6xl font-black text-blue-800">5.3%</p>
+                        <p class="text-xl font-semibold mt-2">del PIB es Gasto Público en Salud</p>
+                        <p class="mt-2 text-gray-600">(Un nivel de inversión notable en la región)</p>
+                    </div>
+                    <div class="bg-red-100 p-8 rounded-lg">
+                        <p class="text-6xl font-black text-red-800">31%</p>
+                        <p class="text-xl font-semibold mt-2">del Gasto Total es de Bolsillo</p>
+                        <p class="mt-2 text-gray-600">(Una de las cargas más altas de la región)</p>
+                    </div>
+                </div>
+                <p class="mt-8 text-2xl font-semibold text-gray-700">Alto gasto público <span class="text-red-600">NO</span> se traduce en protección financiera.</p>
+            </div>
+        </section>
+        
+        <!-- Diapositiva 5: Evolución de la Paradoja -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">La Paradoja en el Tiempo</h2>
+                 <p class="text-center text-gray-600 mb-4">A pesar de picos de inversión pública, el Gasto de Bolsillo (GDB) se ha mantenido obstinadamente alto.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="evolucionGastoChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 6: Pregunta de Investigación -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">Pregunta Central de la Investigación</h2>
+                <div class="bg-gray-100 p-12 rounded-lg shadow-inner">
+                    <p class="text-5xl font-black text-blue-900">¿Quién recibe realmente el dinero?</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 7: Marco Teórico -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-8">Nuestro Enfoque: Un Marco Teórico Híbrido</h2>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                    <div class="bg-blue-100 p-8 rounded-lg text-center flex-1">
+                        <h3 class="text-2xl font-bold text-blue-800">Análisis de Economía Política</h3>
+                        <p class="text-5xl font-black my-4 text-blue-600">EL PORQUÉ</p>
+                        <p>Analiza el poder, los intereses y las instituciones que configuran el sistema.</p>
+                    </div>
+                    <p class="text-6xl font-bold text-gray-400">+</p>
+                    <div class="bg-purple-100 p-8 rounded-lg text-center flex-1">
+                        <h3 class="text-2xl font-bold text-purple-800">Ciencia de la Implementación</h3>
+                        <p class="text-5xl font-black my-4 text-purple-600">EL CÓMO</p>
+                        <p>Diagnostica las barreras y facilitadores en la ejecución de las políticas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 8: Dependencia de Trayectoria -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Raíces Históricas: Dependencia de la Trayectoria</h2>
+                <div class="space-y-4 text-lg">
+                    <div class="bg-gray-100 p-4 rounded-lg"><strong>Decisión Histórica Clave:</strong> Creación de un sistema segmentado (MSP vs. IESS).</div>
+                    <p class="text-4xl text-gray-400">⬇</p>
+                    <div class="bg-gray-100 p-4 rounded-lg"><strong>Genera Inercia y Poderes:</strong> Consolidación de burocracias e intereses separados.</div>
+                    <p class="text-4xl text-gray-400">⬇</p>
+                    <div class="bg-red-100 p-4 rounded-lg text-red-800 font-bold"><strong>Resultado Actual:</strong> Fragmentación, duplicidades y alto Gasto de Bolsillo.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 9: Timeline 1 -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Evolución del Sistema de Salud (Parte 1)</h2>
+                <div class="space-y-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-500">
+                        <h3 class="text-xl font-bold text-orange-600">Era Fundacional (Inicios S.XX - 1960s)</h3>
+                        <p class="text-gray-700 mt-2">Nace un sistema segmentado: MSP para la población general, IESS para trabajadores formales. Se institucionaliza la dualidad.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-500">
+                        <h3 class="text-xl font-bold text-orange-600">Reformas y Crisis (1970s - 1990s)</h3>
+                        <p class="text-gray-700 mt-2">La "Década Perdida" y el ajuste estructural debilitan al sector público, fomentan al privado y originan la deuda estatal con el IESS.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 10: Timeline 2 -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Evolución del Sistema de Salud (Parte 2)</h2>
+                <div class="space-y-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-500">
+                        <h3 class="text-xl font-bold text-orange-600">El Siglo XXI (2000 - Presente)</h3>
+                        <p class="text-gray-700 mt-2">La Constitución de 2008 consagra la salud como derecho e impulsa un aumento en la inversión pública, pero la paradoja del GDB persiste.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-500">
+                        <h3 class="text-xl font-bold text-orange-600">Crisis Recientes (2017 - Presente)</h3>
+                        <p class="text-gray-700 mt-2">La austeridad fiscal y la pandemia de COVID-19 exacerban las vulnerabilidades estructurales del sistema.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 11: Hallazgo 1 Título -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <p class="text-xl text-gray-500">Hallazgo 1</p>
+                <h2 class="text-5xl font-bold text-blue-900 mt-2">El Flujo del Dinero es Ineficiente y Regresivo</h2>
+            </div>
+        </section>
+
+        <!-- Diapositiva 12: Fuentes de Financiamiento -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">¿De Dónde Viene el Dinero?</h2>
+                <p class="text-center text-gray-600 mb-4">Fuentes de Financiamiento del Gasto en Salud.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="financiamientoChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 13: Gasto por Proveedor -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">¿A Dónde Va el Dinero?</h2>
+                 <p class="text-center text-gray-600 mb-4">Gasto Corriente en Salud por Proveedor.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="gastoProveedorChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 14: Gasto de Bolsillo -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">El Epicentro del Gasto de Bolsillo</h2>
+                 <p class="text-center text-gray-600 mb-4">Los medicamentos representan casi la mitad del gasto que las familias pagan directamente.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="gastoBolsilloChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Diapositiva 15: Gasto por Función -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">¿En Qué se Gasta? Un Sistema Curativo</h2>
+                <p class="text-center text-gray-600 mb-4">El gasto público se concentra en tratar la enfermedad, no en prevenirla.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="gastoFuncionChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Diapositiva 16: Gasto por Nivel -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Gasto por Nivel de Atención</h2>
+                 <p class="text-center text-gray-600 mb-4">Fuerte concentración del gasto público y privado en los niveles secundario y terciario.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="gastoNivelAtencionChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Diapositiva 17: Hallazgo 2 Título -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <p class="text-xl text-gray-500">Hallazgo 2</p>
+                <h2 class="text-5xl font-bold text-blue-900 mt-2">Un Pluralismo Segmentado Gobierna el Gasto</h2>
+            </div>
+        </section>
+
+        <!-- Diapositiva 18: Iceberg del Poder -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">El Iceberg del Poder</h2>
+                 <p class="text-center text-gray-600 mb-4">El poder visible (decisiones) es solo la punta. El poder de agenda y el poder ideológico son las fuerzas ocultas más determinantes.</p>
+                <div class="w-full max-w-lg mx-auto">
+                    <svg viewBox="0 0 500 500" class="w-full h-auto">
+                        <line x1="0" y1="200" x2="500" y2="200" stroke="#60a5fa" stroke-width="3" stroke-dasharray="10 5"/>
+                        <text x="450" y="190" font-family="Inter, sans-serif" font-size="16" fill="#60a5fa">Visible</text>
+                        <text x="450" y="225" font-family="Inter, sans-serif" font-size="16" fill="#3b82f6">Oculto</text>
+                        <g><path d="M 250,50 L 150,200 L 350,200 Z" fill="#bfdbfe"/><text x="250" y="140" text-anchor="middle" font-weight="bold" font-size="20" fill="#1e3a8a">1. Poder Decisional</text></g>
+                        <g><path d="M 150,200 L 350,200 L 400,350 L 100,350 Z" fill="#93c5fd"/><text x="250" y="280" text-anchor="middle" font-weight="bold" font-size="20" fill="#1e3a8a">2. Poder de Agenda</text></g>
+                        <g><path d="M 100,350 L 400,350 L 300,480 L 200,480 Z" fill="#60a5fa"/><text x="250" y="420" text-anchor="middle" font-weight="bold" font-size="20" fill="#1e3a8a">3. Poder Ideológico</text></g>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 19: Poder de Actores -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Recursos de Poder por Actor Clave</h2>
+                <p class="text-center text-gray-600 mb-4">El poder fiscal, la información y el lobby definen la influencia de cada actor.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="poderActoresChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 20: Arena Presupuesto -->
+        <section class="slide">
+             <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Arena de Poder 1: El Presupuesto Nacional</h2>
+                <p class="text-center text-gray-600 mb-4">La brecha entre lo solicitado por el MSP y lo aprobado por el MEF limita la capacidad del sistema.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="presupuestoChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 21: Arena Farmacéutica -->
+        <section class="slide">
+             <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Arena de Poder 2: El Mercado Farmacéutico</h2>
+                <p class="text-center text-gray-600 mb-4">La industria farmacéutica ejerce una influencia significativa a través de diversas tácticas.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="tacticasIndustriaChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 22: Hallazgo 3 Título -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <p class="text-xl text-gray-500">Hallazgo 3</p>
+                <h2 class="text-5xl font-bold text-blue-900 mt-2">La Brecha Crítica de Implementación</h2>
+            </div>
+        </section>
+
+        <!-- Diapositiva 23: Barreras -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Barreras Sistémicas a la Implementación</h2>
+                 <p class="text-center text-gray-600 mb-4">Las políticas fracasan en la práctica debido a barreras sistémicas.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="barrerasChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Diapositiva 24: Inequidad -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">El Costo Humano: Inequidad en el Gasto</h2>
+                <p class="text-center text-gray-600 mb-4">El Gasto de Bolsillo es regresivo: consume una proporción mucho mayor del ingreso de los hogares más pobres.</p>
+                <div class="chart-container h-[70vh]">
+                    <canvas id="gastoQuintilesChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 25: Síntesis -->
+        <section class="slide">
+            <div class="max-w-4xl w-full text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-8">Síntesis: El Círculo Vicioso de la Paradoja</h2>
+                <div class="space-y-4 text-lg">
+                    <div class="bg-gray-100 p-4 rounded-lg"><strong>1. Dinámicas de Poder</strong> (intereses fiscales y privados) configuran las políticas.</div>
+                    <p class="text-4xl text-gray-400">⬇</p>
+                    <div class="bg-gray-100 p-4 rounded-lg"><strong>2. Brechas de Implementación</strong> (logística, sistemas) impiden que los recursos lleguen.</div>
+                    <p class="text-4xl text-gray-400">⬇</p>
+                    <div class="bg-gray-100 p-4 rounded-lg"><strong>3. Resultados Deficientes</strong> (desabastecimiento, mala calidad) fuerzan el gasto de bolsillo.</div>
+                     <p class="text-4xl text-gray-400">⬇</p>
+                    <div class="bg-red-100 p-4 rounded-lg text-red-800 font-bold">4. Se perpetúa la paradoja y se refuerza el statu quo.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 26: Conclusión -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Conclusión: ¿Quién Recibe el Dinero?</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-blue-100">
+                            <tr>
+                                <th class="p-4 font-bold text-blue-800">Receptor Principal</th>
+                                <th class="p-4 font-bold text-blue-800">Cómo se Beneficia</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-4 font-semibold">Proveedores Privados (Farmacias, Clínicas)</td>
+                                <td class="p-4">Capturan el Gasto de Bolsillo y los pagos por derivaciones de la red pública.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold">Actores Corruptos e Ineficientes</td>
+                                <td class="p-4">Desvían recursos a través de sobreprecios, mala gestión y contratos fraudulentos.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold">Élites Políticas y Fiscales</td>
+                                <td class="p-4">Dirigen el gasto según prioridades no sanitarias, manteniendo el control.</td>
+                            </tr>
+                            <tr class="bg-red-50">
+                                <td class="p-4 font-bold text-red-700">La Población General</td>
+                                <td class="p-4 text-red-700">Recibe servicios insuficientes y paga los costos de la ineficiencia.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 27: Recomendaciones -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-4xl font-bold text-gray-800 mb-8 text-center">Recomendaciones: Pilares para una Reforma Sistémica</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-blue-100 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-blue-800">1. Gobernanza para el Interés Público</h3>
+                        <p class="mt-2">Crear una agencia de evaluación de tecnologías (ETESA) y regular precios.</p>
+                    </div>
+                    <div class="bg-blue-100 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-blue-800">2. Reorientar el Financiamiento</h3>
+                        <p class="mt-2">Priorizar la Atención Primaria (APS) con presupuestos protegidos y nuevos modelos de pago.</p>
+                    </div>
+                    <div class="bg-blue-100 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-blue-800">3. Implementación Inteligente</h3>
+                        <p class="mt-2">Sistemas de información interoperables y gerencia profesionalizada.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 28: Lecciones -->
+        <section class="slide">
+            <div class="max-w-4xl w-full">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Lecciones Universalizables</h2>
+                <div class="prose prose-xl max-w-none space-y-4">
+                    <ul>
+                        <li>Las reformas de salud fracasan cuando ignoran la <strong>economía política</strong> subyacente.</li>
+                        <li>El análisis de la implementación por sí solo no es suficiente; debe ser informado por un análisis del <strong>poder</strong>.</li>
+                        <li>Resolver problemas complejos requiere <strong>soluciones sistémicas</strong>, no parches técnicos.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Diapositiva 29: Cierre -->
+        <section class="slide title-slide text-white text-center">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-6xl font-black">Gracias</h2>
+            </div>
+        </section>
+
+        <!-- Diapositiva 30: Preguntas -->
+        <section class="slide title-slide text-white text-center">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-6xl font-black">Preguntas y Discusión</h2>
+                <p class="text-2xl mt-8">Dr. Alcy Torres</p>
+                <p class="text-xl mt-2">PowerSemiotics</p>
+                 <a href="https://powersemiotics.github.io/medicina_e_implementacion/implementacion_no_reforma/" class="text-lg mt-4 text-blue-300 hover:underline">powersemiotics.github.io/medicina_e_implementacion/implementacion_no_reforma/</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Controles de Navegación -->
+    <div id="prev-btn" class="nav-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </div>
+    <div id="next-btn" class="nav-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+    <div id="slide-counter" class="slide-counter">1 / 30</div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideCounter = document.getElementById('slide-counter');
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'previous');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index < currentSlide) {
+                    slide.classList.add('previous');
+                }
+            });
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextBtn.click();
+            } else if (e.key === 'ArrowLeft') {
+                prevBtn.click();
+            }
+        });
+        
+        // --- Gráficos ---
+        const defaultChartOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }}};
+        
+        const evolucionGastoCtx = document.getElementById('evolucionGastoChart')?.getContext('2d');
+        if(evolucionGastoCtx) new Chart(evolucionGastoCtx, { type: 'line', data: { labels: ['2015', '2017', '2019', '2021', '2023'], datasets: [{ label: 'Gasto Público (% del total)', data: [42, 44, 43, 45, 46], borderColor: '#0077ff', backgroundColor: 'rgba(0, 119, 255, 0.1)', fill: true, tension: 0.4 }, { label: 'GDB (% del total)', data: [35, 33, 32, 31, 30], borderColor: '#ff5a5f', backgroundColor: 'rgba(255, 90, 95, 0.1)', fill: true, tension: 0.4 }] }, options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: 'Gasto Público vs. Gasto de Bolsillo (% del Gasto Total en Salud)' }}}});
+
+        const financiamientoCtx = document.getElementById('financiamientoChart')?.getContext('2d');
+        if(financiamientoCtx) new Chart(financiamientoCtx, { type: 'doughnut', data: { labels: ['Gasto Público (MSP, IESS)', 'Gasto de Bolsillo (Hogares)', 'Otros Privados (Seguros, ONGs)'], datasets: [{ data: [62.7, 30.6, 6.7], backgroundColor: ['#0A9396', '#EE9B00', '#94D2BD'], borderColor: '#FFFFFF', borderWidth: 3 }] }, options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: 'Fuentes de Financiamiento del Gasto en Salud (%)' }}}});
+
+        const gastoProveedorCtx = document.getElementById('gastoProveedorChart')?.getContext('2d');
+        if(gastoProveedorCtx) new Chart(gastoProveedorCtx, { type: 'bar', data: { labels: ['Hospitales', 'Proveedores Ambulatorios', 'Farmacias y Minoristas', 'Otros'], datasets: [{ label: 'Gasto Corriente (%)', data: [38, 30, 25, 17], backgroundColor: ['#0077ff', '#3399ff', '#99ccff', '#cce6ff'], borderRadius: 4 }] }, options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: {display: false}, title: { display: true, text: 'Gasto Corriente por Tipo de Proveedor (%)' }}}});
+
+        const gastoBolsilloCtx = document.getElementById('gastoBolsilloChart')?.getContext('2d');
+        if(gastoBolsilloCtx) new Chart(gastoBolsilloCtx, { type: 'pie', data: { labels: ['Medicamentos', 'Servicios Ambulatorios', 'Servicios Hospitalarios', 'Otros'], datasets: [{ data: [45, 35, 15, 5], backgroundColor: ['#ff5a5f', '#0077ff', '#3399ff', '#99ccff'] }] }, options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: 'Composición del Gasto de Bolsillo (%)' }}}});
+        
+        const gastoFuncionCtx = document.getElementById('gastoFuncionChart')?.getContext('2d');
+        if(gastoFuncionCtx) new Chart(gastoFuncionCtx, { type: 'bar', data: { labels: ['Curativa', 'Preventiva', 'Administración'], datasets: [{ label: 'Gasto Público (%)', data: [85, 5, 10], backgroundColor: 'rgba(37, 99, 235, 0.7)' }, { label: 'Gasto Privado (%)', data: [90, 3, 7], backgroundColor: 'rgba(220, 38, 38, 0.7)' }] }, options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: 'Gasto por Función: Un Sistema Curativo' }}}});
+
+        const gastoNivelAtencionCtx = document.getElementById('gastoNivelAtencionChart')?.getContext('2d');
+        if(gastoNivelAtencionCtx) new Chart(gastoNivelAtencionCtx, { type: 'bar', data: { labels: ['Primer Nivel', 'Segundo Nivel', 'Tercer Nivel'], datasets: [{ label: 'Público (Millones USD)', data: [1478, 2134, 1165], backgroundColor: 'rgba(30, 64, 175, 0.7)' }, { label: 'Privado (Millones USD)', data: [296, 736, 1156], backgroundColor: 'rgba(220, 38, 38, 0.7)' }] }, options: { ...defaultChartOptions, scales: { x: { stacked: true }, y: { stacked: true }}, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: 'Gasto por Nivel de Atención (Público vs. Privado)' }}}});
+
+        const poderActoresCtx = document.getElementById('poderActoresChart')?.getContext('2d');
+        if(poderActoresCtx) new Chart(poderActoresCtx, { type: 'radar', data: { labels: ['Control Fiscal', 'Info. Técnica', 'Lobbying', 'Poder de Compra', 'Regulación', 'Movilización Social'], datasets: [{ label: 'Min. Finanzas', data: [9, 3, 7, 2, 6, 2], backgroundColor: 'rgba(220, 53, 69, 0.2)', borderColor: '#DC3545', pointBackgroundColor: '#DC3545' }, { label: 'Min. Salud', data: [2, 9, 5, 7, 8, 6], backgroundColor: 'rgba(13, 110, 253, 0.2)', borderColor: '#0D6EFD', pointBackgroundColor: '#0D6EFD' }, { label: 'Industria Farmacéutica', data: [4, 8, 9, 3, 5, 4], backgroundColor: 'rgba(108, 117, 125, 0.2)', borderColor: '#6C757D', pointBackgroundColor: '#6C757D' }] }, options: { ...defaultChartOptions, scales: { r: { suggestedMin: 0, suggestedMax: 10 }}}});
+
+        const presupuestoCtx = document.getElementById('presupuestoChart')?.getContext('2d');
+        if(presupuestoCtx) new Chart(presupuestoCtx, { type: 'line', data: { labels: ['2020', '2021', '2022', '2023', '2024'], datasets: [{ label: 'Solicitado por MSP', data: [4.2, 4.5, 4.8, 5.1, 5.3], borderColor: '#0D6EFD', tension: 0.1 }, { label: 'Aprobado por MEF', data: [3.5, 3.7, 3.9, 4.1, 4.2], borderColor: '#DC3545', tension: 0.1 }] }, options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: 'Presupuesto Solicitado vs. Aprobado (Miles de Millones USD)' }}}});
+        
+        const tacticasIndustriaCtx = document.getElementById('tacticasIndustriaChart')?.getContext('2d');
+        if(tacticasIndustriaCtx) new Chart(tacticasIndustriaCtx, { type: 'bar', data: { labels: ['Lobbying', 'Marketing a Médicos', 'Control de Patentes', 'Influencia en Evidencia', 'Campañas a Pacientes'], datasets: [{ label: 'Nivel de Influencia (1-10)', data: [9.2, 8.8, 8.5, 7.5, 6.8], backgroundColor: ['#1e3a8a', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd'] }] }, options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: {display: false}, title: { display: true, text: 'Tácticas de Influencia de la Industria Farmacéutica' }}}});
+
+        const barrerasCtx = document.getElementById('barrerasChart')?.getContext('2d');
+        if(barrerasCtx) new Chart(barrerasCtx, { type: 'radar', data: { labels: ['Corrupción', 'Inestabilidad Política', 'Gobernanza Débil', 'Fragmentación', 'Capacidad Técnica', 'Presiones Fiscales'], datasets: [{ label: 'Impacto de la Barrera (1-10)', data: [9, 8, 8, 7, 6, 9], backgroundColor: 'rgba(220, 53, 69, 0.2)', borderColor: '#DC3545', pointBackgroundColor: '#DC3545' }] }, options: { ...defaultChartOptions, scales: { r: { suggestedMin: 0, suggestedMax: 10 }}, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: 'Barreras Sistémicas a la Implementación' }}}});
+
+        const gastoQuintilesCtx = document.getElementById('gastoQuintilesChart')?.getContext('2d');
+        if(gastoQuintilesCtx) new Chart(gastoQuintilesCtx, { type: 'bar', data: { labels: ['Quintil 1 (Más Pobre)', 'Quintil 2', 'Quintil 3', 'Quintil 4', 'Quintil 5 (Más Rico)'], datasets: [{ label: 'GDB como % del Ingreso del Hogar', data: [12.5, 9.8, 7.1, 5.2, 3.1], backgroundColor: ['#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fecaca'] }] }, options: { ...defaultChartOptions, indexAxis: 'y', plugins: { ...defaultChartOptions.plugins, legend: { display: false }, title: { display: true, text: 'Carga del Gasto de Bolsillo por Quintil de Ingreso' }}, scales: { x: { title: { display: true, text: '% del Ingreso del Hogar' }}} }});
+
+        updateSlides();
+    </script>
+
+</body>
+</html>
