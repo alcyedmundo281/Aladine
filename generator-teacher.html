@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Prompts Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .drop-zone.drag-over {
+            background-color: #e0f2fe;
+            border-color: #0ea5e9;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 8px;
+            background-color: #22c55e;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 9999;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, -10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900">Generador de Prompts Automatizado</h1>
+            <p class="text-slate-600 mt-2">Sube tus archivos de paquete y contenido para generar los prompts de IA y crear tus recursos educativos.</p>
+        </header>
+
+        <main>
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md">
+                
+                <!-- Step 1: File Uploads -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2">Paso 1: Cargar Archivos</h2>
+                    <div class="grid md:grid-cols-2 gap-6 mt-4">
+                        <!-- Package File Drop Zone -->
+                        <div id="package-drop-zone" class="drop-zone rounded-lg p-6 text-center cursor-pointer">
+                            <input type="file" id="package-file-input" class="hidden" accept=".json">
+                            <img src="https://placehold.co/64x64/0ea5e9/ffffff?text=JSON" alt="Icono de JSON" class="mx-auto mb-2 opacity-70">
+                            <p class="font-semibold text-slate-700">Arrastra o haz clic para subir el archivo de paquete</p>
+                            <p class="text-sm text-slate-500 mt-1">(.json)</p>
+                            <p id="package-file-name" class="text-sm text-green-600 font-medium mt-2"></p>
+                        </div>
+                        <!-- Content File Drop Zone -->
+                        <div id="content-drop-zone" class="drop-zone rounded-lg p-6 text-center cursor-pointer">
+                            <input type="file" id="content-file-input" class="hidden" accept=".md, .txt">
+                            <img src="https://placehold.co/64x64/38bdf8/ffffff?text=MD" alt="Icono de Markdown" class="mx-auto mb-2 opacity-70">
+                            <p class="font-semibold text-slate-700">Arrastra o haz clic para subir el archivo de contenido</p>
+                            <p class="text-sm text-slate-500 mt-1">(.md, .txt)</p>
+                            <p id="content-file-name" class="text-sm text-green-600 font-medium mt-2"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Generate -->
+                <div class="text-center mb-8">
+                     <h2 class="text-2xl font-bold mb-4 border-b pb-2">Paso 2: Procesar</h2>
+                    <button id="generate-button" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105 disabled:bg-slate-300 disabled:cursor-not-allowed disabled:transform-none">
+                        Generar Prompts
+                    </button>
+                </div>
+                
+                <!-- Step 3: Results -->
+                <div id="results-container" class="space-y-6">
+                    <!-- Prompts will be dynamically inserted here -->
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast">Prompt copiado al portapapeles</div>
+
+    <script>
+        // State variables to hold file content
+        let packageJsonContent = null;
+        let markdownContent = null;
+
+        // DOM Elements
+        const packageDropZone = document.getElementById('package-drop-zone');
+        const packageFileInput = document.getElementById('package-file-input');
+        const packageFileName = document.getElementById('package-file-name');
+
+        const contentDropZone = document.getElementById('content-drop-zone');
+        const contentFileInput = document.getElementById('content-file-input');
+        const contentFileName = document.getElementById('content-file-name');
+
+        const generateButton = document.getElementById('generate-button');
+        const resultsContainer = document.getElementById('results-container');
+        const toast = document.getElementById('toast');
+
+        // --- File Handling Logic ---
+        function setupDropZone(dropZone, fileInput, fileNameElement, fileHandler) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    handleFile(files[0], fileNameElement, fileHandler);
+                }
+            }, false);
+            
+            fileInput.addEventListener('change', (e) => {
+                if(e.target.files.length > 0) {
+                   handleFile(e.target.files[0], fileNameElement, fileHandler);
+                }
+            });
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function handleFile(file, fileNameElement, fileHandler) {
+             if (!file) return;
+             fileNameElement.textContent = file.name;
+             const reader = new FileReader();
+             reader.onload = (e) => {
+                 fileHandler(e.target.result);
+             };
+             reader.readAsText(file);
+        }
+
+        function checkFilesReady() {
+            generateButton.disabled = !(packageJsonContent && markdownContent);
+        }
+
+        // Setup for Package File
+        setupDropZone(packageDropZone, packageFileInput, packageFileName, (content) => {
+            try {
+                packageJsonContent = JSON.parse(content);
+                packageFileName.textContent = `Cargado: ${packageFileInput.files[0].name}`;
+                packageFileName.classList.remove('text-red-600');
+                packageFileName.classList.add('text-green-600');
+            } catch (e) {
+                packageJsonContent = null;
+                packageFileName.textContent = 'Error: Archivo JSON inválido.';
+                packageFileName.classList.add('text-red-600');
+                packageFileName.classList.remove('text-green-600');
+            }
+            checkFilesReady();
+        });
+
+        // Setup for Content File
+        setupDropZone(contentDropZone, contentFileInput, contentFileName, (content) => {
+            markdownContent = content;
+            contentFileName.textContent = `Cargado: ${contentFileInput.files[0].name}`;
+            checkFilesReady();
+        });
+
+
+        // --- Generation Logic ---
+        generateButton.addEventListener('click', () => {
+            resultsContainer.innerHTML = '<h2 class="text-2xl font-bold border-b pb-2">Paso 3: Resultados</h2>'; // Clear previous results and add header
+
+            const artifacts = packageJsonContent.artefactos || [];
+            if (artifacts.length === 0) {
+                resultsContainer.innerHTML += '<p class="text-slate-500">No se encontraron artefactos en el archivo de paquete.</p>';
+                return;
+            }
+
+            artifacts.forEach((artifact, index) => {
+                const artifactId = artifact.id || `artefacto-${index + 1}`;
+                const promptTemplate = artifact.prompt_template || '';
+                const finalPrompt = promptTemplate.replace('{CONTENIDO_MARKDOWN}', markdownContent);
+
+                const promptElement = document.createElement('div');
+                promptElement.className = 'bg-slate-100 p-4 rounded-lg';
+                promptElement.innerHTML = `
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Prompt para: ${artifactId}</h3>
+                    <textarea readonly class="w-full h-48 p-2 border border-slate-300 rounded-md bg-white font-mono text-sm">${finalPrompt}</textarea>
+                    <button class="copy-button mt-2 bg-slate-600 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-md transition">
+                        Copiar Prompt
+                    </button>
+                `;
+                resultsContainer.appendChild(promptElement);
+            });
+        });
+        
+        // --- Copy to Clipboard Logic (Event Delegation) ---
+        resultsContainer.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('copy-button')) {
+                const button = e.target;
+                const textarea = button.previousElementSibling;
+                
+                // Use a temporary textarea to copy, preserving original content
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textarea.value;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast();
+                } catch (err) {
+                    console.error('Error al copiar el texto: ', err);
+                }
+                document.body.removeChild(tempTextArea);
+            }
+        });
+
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+    </script>
+</body>
+</html>
