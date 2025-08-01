@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Prompts para Escenas Románticas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .file-input-label {
+            transition: all 0.3s ease;
+        }
+        .file-input-label:hover {
+            background-color: #4a044e; /* dark purple */
+        }
+        #generateBtn {
+            transition: all 0.3s ease;
+        }
+        #generateBtn:hover {
+            transform: scale(1.05);
+        }
+        /* Estilos para el modal de notificación */
+        .notification-modal {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+
+    <!-- Contenedor principal de la aplicación -->
+    <div class="w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 relative">
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-pink-400">Generador de Prompts Románticos</h1>
+            <p class="text-gray-400 mt-2">Crea prompts detallados para tu generador de video AI a partir de tus historias.</p>
+        </div>
+
+        <!-- Instrucciones -->
+        <div class="mb-8 p-4 bg-gray-700 rounded-lg">
+            <h2 class="text-xl font-semibold text-pink-300 mb-2">Instrucciones</h2>
+            <ol class="list-decimal list-inside text-gray-300 space-y-1">
+                <li>Sube tu historia o guion en formato Markdown (`.md`).</li>
+                <li>Sube una plantilla de prompt en formato JSON (`.json`). Puedes usar el ejemplo de abajo.</li>
+                <li>Haz clic en "Generar Prompts".</li>
+                <li>Copia el resultado generado y úsalo en tu herramienta de video AI.</li>
+            </ol>
+        </div>
+
+        <!-- Entradas de archivo y botón -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="flex flex-col">
+                <label for="mdFile" class="mb-2 font-semibold text-gray-300">1. Sube tu Archivo de Historia (.md)</label>
+                <input type="file" id="mdFile" accept=".md" class="hidden">
+                <label for="mdFile" class="file-input-label cursor-pointer bg-purple-800 text-white text-center p-3 rounded-lg shadow-md">
+                    Seleccionar Archivo Markdown
+                </label>
+                <span id="mdFileName" class="text-sm text-gray-500 mt-2 truncate">Ningún archivo seleccionado</span>
+            </div>
+            <div class="flex flex-col">
+                <label for="jsonFile" class="mb-2 font-semibold text-gray-300">2. Sube tu Plantilla de Prompt (.json)</label>
+                <input type="file" id="jsonFile" accept=".json" class="hidden">
+                <label for="jsonFile" class="file-input-label cursor-pointer bg-purple-800 text-white text-center p-3 rounded-lg shadow-md">
+                    Seleccionar Archivo JSON
+                </label>
+                <span id="jsonFileName" class="text-sm text-gray-500 mt-2 truncate">Ningún archivo seleccionado</span>
+            </div>
+        </div>
+        
+        <div class="text-center mb-8">
+            <button id="generateBtn" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50">
+                Generar Prompts
+            </button>
+        </div>
+        
+        <!-- Sección de salida -->
+        <div id="outputSection" class="hidden">
+            <h2 class="text-2xl font-semibold text-pink-300 mb-4">Prompt Generado</h2>
+            <div class="bg-gray-900 rounded-lg p-4 relative">
+                <button id="copyBtn" class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-sm py-1 px-3 rounded">Copiar</button>
+                <pre><code id="outputCode" class="text-sm text-white whitespace-pre-wrap break-all"></code></pre>
+            </div>
+        </div>
+
+        <!-- Plantilla JSON de ejemplo -->
+        <div class="mt-10">
+            <h2 class="text-xl font-semibold text-pink-300 mb-2">Plantilla JSON de Ejemplo</h2>
+            <p class="text-gray-400 mb-4">Puedes guardar este código como un archivo `.json` y subirlo, o modificarlo según tus necesidades.</p>
+            <div class="bg-gray-900 rounded-lg p-4 relative">
+                 <button id="copyJsonTemplateBtn" class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-sm py-1 px-3 rounded">Copiar Plantilla</button>
+                <pre><code id="jsonTemplate" class="text-sm text-white whitespace-pre-wrap break-all">{
+  "prompt_id": "ROMANTIC_SCENE_01",
+  "context": {
+    "story_summary": "[STORY_SUMMARY_HERE]",
+    "theme": "Romantic, jealousy, urban nightlife",
+    "characters": [
+      {
+        "name": "Edmundo Torres",
+        "description": "20s, the central character. Fair-skinned with dark, curly hair. Wearing a black t-shirt."
+      },
+      {
+        "name": "Matt",
+        "description": "20s, a cute, blond white guy. Topless. Earnest and infatuated."
+      },
+      {
+        "name": "Jeff",
+        "description": "20s, a gorgeous, handsome black guy. Topless. Witty and jealous."
+      }
+    ]
+  },
+  "scene_prompt": {
+    "description": "Generate a cinematic 30-second clip based on the provided story summary. The scene should capture the romantic tension and rivalry between the characters in a vibrant nightclub.",
+    "setting": "INT. A crowded gay club in Boston - NIGHT. Neon lights, a disco ball, people dancing.",
+    "mood": "Energetic, tense, romantic, with a touch of humor.",
+    "audio_cues": {
+      "music": "A modern disco-pop remix with a heavy bassline.",
+      "dialogue": "Extract key dialogues from the story summary that showcase the competition between the characters.",
+      "sound_effects": "Crowd murmur, clinking glasses, the thumping bass of the music."
+    }
+  }
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Notificación (Corregido: Reemplaza los 'alert') -->
+    <div id="notificationModal" class="notification-modal fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transform scale-95">
+        <div class="bg-red-800 border border-red-600 text-white p-6 rounded-lg shadow-2xl max-w-sm text-center">
+            <p id="notificationMessage" class="mb-4"></p>
+            <button id="closeNotificationBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-full">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Obtener elementos del DOM ---
+        const mdFileInput = document.getElementById('mdFile');
+        const jsonFileInput = document.getElementById('jsonFile');
+        const mdFileNameSpan = document.getElementById('mdFileName');
+        const jsonFileNameSpan = document.getElementById('jsonFileName');
+        const generateBtn = document.getElementById('generateBtn');
+        const outputSection = document.getElementById('outputSection');
+        const outputCode = document.getElementById('outputCode');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyJsonTemplateBtn = document.getElementById('copyJsonTemplateBtn');
+        const jsonTemplateCode = document.getElementById('jsonTemplate');
+        
+        // --- Elementos del modal de notificación (NUEVO) ---
+        const notificationModal = document.getElementById('notificationModal');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const closeNotificationBtn = document.getElementById('closeNotificationBtn');
+
+        let mdContent = '';
+        let jsonContent = '';
+
+        // --- Función para mostrar notificaciones (NUEVO) ---
+        function showNotification(message) {
+            notificationMessage.textContent = message;
+            notificationModal.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        }
+
+        // --- Función para cerrar notificaciones (NUEVO) ---
+        function closeNotification() {
+            notificationModal.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+        }
+
+        closeNotificationBtn.addEventListener('click', closeNotification);
+
+        // --- Manejadores de eventos para la carga de archivos ---
+        mdFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                mdFileNameSpan.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    mdContent = event.target.result;
+                };
+                reader.readAsText(file);
+            } else {
+                mdFileNameSpan.textContent = 'Ningún archivo seleccionado';
+                mdContent = '';
+            }
+        });
+
+        jsonFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                jsonFileNameSpan.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    jsonContent = event.target.result;
+                };
+                reader.readAsText(file);
+            } else {
+                jsonFileNameSpan.textContent = 'Ningún archivo seleccionado';
+                jsonContent = '';
+            }
+        });
+
+        // --- Lógica del botón de generación (CORREGIDO) ---
+        generateBtn.addEventListener('click', () => {
+            if (!mdContent || !jsonContent) {
+                // Reemplaza alert() con la nueva función de notificación
+                showNotification('Por favor, sube ambos archivos (.md y .json) para continuar.');
+                return;
+            }
+
+            try {
+                const template = JSON.parse(jsonContent);
+                
+                // Inyecta el contenido del Markdown en la plantilla JSON
+                if (template.context && template.context.hasOwnProperty('story_summary')) {
+                    template.context.story_summary = mdContent;
+                } else {
+                    // Si no encuentra el placeholder, lo añade como una nueva propiedad
+                    template.story_content = mdContent;
+                }
+
+                const finalJson = JSON.stringify(template, null, 2);
+                outputCode.textContent = finalJson;
+                outputSection.classList.remove('hidden');
+
+            } catch (error) {
+                // Reemplaza alert() con la nueva función de notificación
+                showNotification('Error al procesar el archivo JSON. Por favor, asegúrate de que tiene un formato válido.');
+                console.error(error);
+            }
+        });
+
+        // --- Lógica de los botones para copiar ---
+        function copyToClipboard(text, buttonElement, originalText) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                buttonElement.textContent = '¡Copiado!';
+                setTimeout(() => { buttonElement.textContent = originalText; }, 2000);
+            } catch (err) {
+                console.error('Error al copiar el texto: ', err);
+                showNotification('No se pudo copiar el texto.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        copyBtn.addEventListener('click', () => {
+            copyToClipboard(outputCode.textContent, copyBtn, 'Copiar');
+        });
+        
+        copyJsonTemplateBtn.addEventListener('click', () => {
+            copyToClipboard(jsonTemplateCode.textContent, copyJsonTemplateBtn, 'Copiar Plantilla');
+        });
+
+    </script>
+
+</body>
+</html>
