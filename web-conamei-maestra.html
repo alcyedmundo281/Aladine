@@ -316,21 +316,27 @@
         }
 
         function buildFinalPrompt(dci, indication, evidence) {
+            // 1. Deep copy the template to avoid modifying the original
             let template = JSON.parse(JSON.stringify(finalPromptTemplate));
             const today = new Date();
             const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-            const comparator = evidence.section4_data.comparator;
+            const comparator = evidence.section4_data.comparator || "Comparador";
 
-            // --- Relleno global de placeholders ---
-            let templateString = JSON.stringify(template);
-            templateString = templateString.replace(/\[DCI\]/g, dci)
-                                       .replace(/\[INDICATION\]/g, indication)
-                                       .replace(/\[COMPARATOR\]/g, comparator)
-                                       .replace(/\[Fecha Actual\]/g, formattedDate);
-            template = JSON.parse(templateString);
+            // 2. Modify the template object directly - this is safer than string replacement
+            
+            // --- Metadata & General ---
+            template.report_content.report_metadata.city_date = `Quito, D.M., ${formattedDate}`;
+            
+            // Replace placeholders in conclusion templates
+            const passTemplate = template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.pass_template;
+            template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.pass_template = passTemplate.replace(/\[DCI\]/g, dci).replace(/\[Comparador\]/g, comparator);
+            
+            const failTemplate = template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.fail_template;
+            template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.fail_template = failTemplate.replace(/\[DCI\]/g, dci).replace(/\[Comparador\]/g, comparator);
 
-            // --- Relleno específico por sección ---
+            // --- Section 1: Medicamento ---
             let sec1 = template.report_content.sections.find(s => s.section_number === "1").data;
+            sec1.find(d => d.key.includes("DCI")).value = dci;
             sec1.find(d => d.key.includes("Código ATC")).value = evidence.section1_data.atc_code;
             sec1.find(d => d.key.includes("Forma farmacéutica (CNMB)")).value = evidence.section1_data.pharma_form_cnmb;
             sec1.find(d => d.key.includes("Formas farmacéuticas (ARCSA)")).value = evidence.section1_data.pharma_form_arcsa;
@@ -339,16 +345,26 @@
             sec1.find(d => d.key.includes("Presentación comercial")).value = evidence.section1_data.commercial_presentation;
             sec1.find(d => d.key.includes("Información sanitaria")).value = evidence.section1_data.sanitary_info;
 
+            // --- Section 2: Indicación ---
             let sec2 = template.report_content.sections.find(s => s.section_number === "2").data;
+            sec2.find(d => d.key.includes("Indicación terapéutica")).value = indication;
             sec2.find(d => d.key.includes("Mecanismo de acción")).value = evidence.section2_data.mechanism_of_action;
             sec2.find(d => d.key.includes("Pauta de dosificación")).value = evidence.section2_data.dosage_guideline;
             sec2.find(d => d.key.includes("Alternativas terapéuticas disponibles")).value = evidence.section2_data.alternatives_cnmb;
             sec2.find(d => d.key.includes("Alternativas terapéuticas no presentes")).value = evidence.section2_data.alternatives_not_cnmb;
 
+            // --- Section 3: Cobertura ---
             let sec3 = template.report_content.sections.find(s => s.section_number === "3");
             sec3.policies.rows = evidence.section3_data.policies.map(p => [p.country_agency, p.indication, p.date]);
             sec3.approvals.rows = evidence.section3_data.approvals.map(a => [a.agency, a.indication, a.type]);
             
+            // --- Section 4: Búsqueda ---
+            let sec4 = template.report_content.sections.find(s => s.section_number === "4");
+            sec4.pico.P = `Pacientes adultos con ${indication}`;
+            sec4.pico.I = dci;
+            sec4.pico.C = comparator;
+            
+            // --- Section 5: Eficacia y Seguridad ---
             let sec5 = template.report_content.sections.find(s => s.section_number === "5");
             sec5.evidence_summary.find(e => e.key.includes("Eficacia")).value = evidence.section5_data.efficacy_nma_ref;
             sec5.evidence_summary.find(e => e.key.includes("Hallazgos de Eficacia")).value = evidence.section5_data.efficacy_nma_findings;
@@ -360,17 +376,23 @@
             safetyTable.find(d => d.key.includes("Alertas")).value = evidence.section5_data.safety_alerts;
             safetyTable.find(d => d.key.includes("Más seguro")).value = evidence.section5_data.is_safer_justification;
 
+            // --- Section 6: Economía ---
             let sec6 = template.report_content.sections.find(s => s.section_number === "6");
             sec6.cost_table.rows = evidence.section6_data.cost_table_rows.map(r => [r.parameter, r.intervention_value, r.comparator_value]);
             sec6.cost_analysis.value = evidence.section6_data.cost_analysis_justification;
             sec6.pharmacoeconomic_summary.value = evidence.section6_data.pharmacoeconomic_summary;
 
+            // --- Section 7: Conveniencia ---
             let sec7 = template.report_content.sections.find(s => s.section_number === "7");
             sec7.convenience_table.rows = evidence.section7_data.convenience_rows.map(r => [r.parameter, r.response, r.justification]);
 
+            // --- Section 10: Referencias ---
             template.report_content.sections.find(s => s.section_number === "10").items = evidence.section10_data.references;
             
+            // --- Matriz de Evaluación ---
             let matrix = template.report_content.sections.find(s => s.section_number === "MATRIZ");
+            matrix.drug_info.dci = dci;
+            matrix.drug_info.comparator = comparator;
             const matrizData = evidence.matriz_data;
             matrix.parameters.forEach(param => {
                 if (param.question.includes("calidad de la evidencia")) param.result = matrizData.evidence_quality;
