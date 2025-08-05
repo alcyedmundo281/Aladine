@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Generación de Informes CONAMEI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-6 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-gray-800 p-6">
+            <h1 class="text-2xl font-bold text-white">Asistente de Generación de Informes CONAMEI</h1>
+            <p class="text-gray-300 mt-1">Automatiza la búsqueda de evidencia y la creación de prompts para Google AI Studio.</p>
+        </div>
+
+        <div class="p-6 md:p-8 space-y-6">
+            <!-- PASO 0: API KEY -->
+            <div>
+                <label for="apiKey" class="block text-sm font-medium text-gray-700">Tu API Key de Google AI Studio</label>
+                <div class="mt-1">
+                    <input type="password" id="apiKey" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pega tu clave de API aquí">
+                    <p class="mt-1 text-xs text-gray-500">Tu clave se usa solo en tu navegador y no se guarda en ningún lado.</p>
+                </div>
+            </div>
+
+            <!-- PASO 1: INPUTS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="dci" class="block text-sm font-medium text-gray-700">Nombre del Medicamento (DCI)</label>
+                    <input type="text" id="dci" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Ej: Empagliflozina">
+                </div>
+                <div>
+                    <label for="indication" class="block text-sm font-medium text-gray-700">Indicación Principal</label>
+                    <input type="text" id="indication" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Ej: Enfermedad Renal Crónica">
+                </div>
+            </div>
+
+            <!-- BOTÓN DE ACCIÓN -->
+            <div class="flex items-center space-x-4">
+                <button id="generateBtn" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    1. Buscar Evidencia y Generar Prompt
+                </button>
+                <div id="loader" class="loader hidden"></div>
+                <p id="status" class="text-sm text-gray-600"></p>
+            </div>
+
+            <!-- PASO 2: RESULTADO -->
+            <div id="result-container" class="hidden">
+                <label for="result" class="block text-sm font-bold text-green-700">Prompt Generado (Listo para AI Studio)</label>
+                <textarea id="result" rows="15" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                <div class="mt-4 flex space-x-3">
+                    <button id="copyBtn" class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700">
+                        2. Copiar Prompt para AI Studio
+                    </button>
+                    <button id="downloadBtn" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                        Descargar como .txt
+                    </button>
+                </div>
+                 <p class="mt-2 text-xs text-gray-500">Ahora, ve a Google AI Studio, pega este prompt y ejecuta para obtener el informe HTML final.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generateBtn');
+        const apiKeyInput = document.getElementById('apiKey');
+        const dciInput = document.getElementById('dci');
+        const indicationInput = document.getElementById('indication');
+        const loader = document.getElementById('loader');
+        const statusEl = document.getElementById('status');
+        const resultContainer = document.getElementById('result-container');
+        const resultTextarea = document.getElementById('result');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // --- PLANTILLA MAESTRA DEL PROMPT FINAL ---
+        // Esta es la estructura que llenaremos con la evidencia encontrada.
+        const finalPromptTemplate = {
+            prompt_instructions: {
+                role: "Actúa como un motor de evaluación de HTA y desarrollador web experto, con la tarea de replicar y automatizar el informe oficial del comité técnico de CONAMEI para la inclusión de medicamentos en el Cuadro Nacional de Medicamentos Básicos (CNMB) de Ecuador.",
+                task: "Tu tarea es generar un único archivo HTML completo y válido que sea una réplica visual y estructuralmente idéntica del formulario CONAMEI. Utiliza la información en `report_content` para rellenar las secciones informativas. Para la Matriz de Evaluación (sección 13) y la Conclusión del Revisor (sección 9), debes aplicar la lógica computacional definida en `automated_evaluation_logic` para analizar la evidencia proporcionada, calcular los puntajes, justificar cada uno, y generar dinámicamente una conclusión argumentativa y contextualizada para el sistema de salud ecuatoriano.",
+                styling_requirements: {
+                    framework: "No uses un framework. Replica el estilo del ejemplo usando un único bloque `<style>` en el `<head>`. Utiliza fuentes como Calibri y Arial, un diseño de página A4 fijo, y tablas con bordes negros (`1px solid black`).",
+                    visual_identity: {
+                        instruction: "Usa las URLs de las imágenes en `document_layout` para el encabezado, pie de página y casillas de verificación. Una casilla 'marcada' muestra la imagen; una 'no marcada' usa `style='visibility: hidden;'`."
+                    }
+                },
+                automated_evaluation_logic: {
+                    overall_goal: "Tu tarea más crítica es completar de forma autónoma la 'MATRIZ 1: EVALUACIÓN INICIAL' (sección 13) y generar la 'CONCLUSIÓN DEL REVISOR' (sección 9). No debes copiar los puntajes; debes calcularlos y justificarlos. Tu razonamiento debe reflejar una decisión de salud pública para Ecuador.",
+                    step_by_step_process: [
+                        "1. Para cada criterio en el array `evaluation_matrix_v2.parameters`, analiza la evidencia presentada en las secciones 5, 6, 7 y 8 del informe para determinar el 'RESULTADO' correcto. La comparación debe ser siempre contra la alternativa del CNMB.",
+                        "2. Una vez determinado el 'RESULTADO', busca en el objeto `scoring_rules` la calificación numérica (`score`) correspondiente y asígnala.",
+                        "3. **Genera una justificación concisa y específica para CADA calificación**, explicando por qué se asignó ese puntaje en base a la evidencia del informe. Ej: 'Eficacia superior al comparador del CNMB (Teriflunomida) según estudios ASCLEPIOS (+1)'.",
+                        "4. Después de calificar y justificar todos los criterios, suma todas las calificaciones para obtener el 'PUNTAJE TOTAL'.",
+                        "5. Aplica la `decision_rule` al 'PUNTAJE TOTAL' para determinar la 'DECISIÓN' final.",
+                        "6. **Genera el texto para la 'CONCLUSIÓN DEL REVISOR' (sección 9)** usando las plantillas de `argumentative_conclusion_logic`. Elige la plantilla 'pass' o 'fail' según la decisión. Sintetiza los argumentos más fuertes de tu evaluación para rellenar los placeholders.",
+                        "7. Renderiza el informe completo, incluyendo la matriz y la conclusión que has generado."
+                    ],
+                    scoring_rules: {
+                        "¿Cuál es la calidad de la evidencia científica?": { "Alta": 2, "Moderada": 1, "Baja o muy baja": 0 },
+                        "¿Cuál es la fase de investigación clínica?": { "Fase IV+": 2, "Fase III+": 1, "Fase IV-": 0, "Fase III-": -1 },
+                        "¿Es un medicamento considerado como esencial por la OMS?": { "Si": 1, "No": 0 },
+                        "¿Mejora el desenlace final de la enfermedad?": { "Si": 1, "No y/o se desconoce": 0 },
+                        "¿La eficacia es superior, igual o inferior al comparador?": { "Superior": 1, "No Inferior": 0, "Inferior": -1 },
+                        "¿Mejora la calidad de vida del paciente?": { "Si": 1, "No y/o se desconoce": 0 },
+                        "¿Puede provocar reacciones adversas letales o graves?": { "Poco frecuente": 0, "Frecuente": -1, "Muy frecuente": -2 },
+                        "¿Es más seguro que las alternativas del CNMB?": { "Si": 1, "No y/o se desconoce": 0 },
+                        "¿Existen alertas sanitarias graves emitidas?": { "Si": -1, "No": 1 },
+                        "¿La indicación tiene una prevalencia >5%?": { "Si": 1, "No": 0 },
+                        "¿Existe una alternativa terapéutica dentro del CNMB?": { "No": 1, "Si": 0 },
+                        "¿Mejora la adherencia y/o reduce la estancia hospitalaria?": { "Si": 1, "No": 0 },
+                        "¿El costo del tratamiento frente al comparador es menor, igual o mayor?": { "Menor": 1, "Igual": 0, "Mayor": -1 }
+                    },
+                    decision_rule: { "threshold": 7, "pass_text": "PASA A SEGUNDA ETAPA", "fail_text": "NO PASA ETAPA" },
+                    argumentative_conclusion_logic: {
+                        "pass_template": "Considerando la carga de la enfermedad en Ecuador, la evidencia presentada para el medicamento demuestra un perfil robusto. Los puntos fuertes clave que sustentan esta evaluación son: [sintetiza los argumentos de eficacia y conveniencia con puntajes positivos]. Aunque se reconocen consideraciones importantes como [sintetiza los argumentos de seguridad y costo con puntajes negativos o cero], el balance beneficio/riesgo general es favorable. Con un puntaje total de [puntaje], que cumple o supera el umbral requerido, se concluye que la tecnología sanitaria presenta méritos suficientes para una evaluación más profunda. **Recomendación:** Se recomienda que el medicamento **PASE A LA SEGUNDA ETAPA** de evaluación para su posible inclusión en el CNMB.",
+                        "fail_template": "Si bien el medicamento ha demostrado beneficios en eficacia, como [sintetiza los argumentos de eficacia con puntajes positivos], existen debilidades significativas que impiden una recomendación favorable en esta etapa. Los puntos críticos en contra que fundamentan esta decisión son: [sintetiza los argumentos de seguridad y costo con puntajes negativos]. Con un puntaje total de [puntaje], que no alcanza el umbral requerido de 7, la propuesta de valor para su inclusión en el Cuadro Nacional de Medicamentos Básicos no es clara en este momento. **Recomendación:** Se recomienda que el medicamento **NO PASE A LA SEGUNDA ETAPA** de evaluación hasta que se presente evidencia más sólida que aborde las incertidumbres identificadas."
+                    }
+                },
+                final_output: "El resultado debe ser un único bloque de código HTML que comience con `<!DOCTYPE html>` y termine con `</html>`, sin ningún texto o explicación adicional fuera del código.",
+                report_content: {
+                    document_layout: {
+                        header_image_url: "https://i.imgur.com/uT2F8QG.png",
+                        footer_image_url: "https://i.imgur.com/5b8tB3B.png",
+                        checkbox_image_url: "https://i.imgur.com/8Q9k2oG.png",
+                        sns_logo_url: "https://i.imgur.com/L4g2G0F.png"
+                    },
+                    report_metadata: {},
+                    sections: [
+                        { section_number: "1", title: "IDENTIFICACIÓN DEL SOLICITANTE", content_type: "applicant_table", data: {} },
+                        { section_number: "2", title: "IDENTIFICACIÓN DEL MEDICAMENTO", content_type: "key_value_table", data: [] },
+                        { section_number: "3", title: "INDICACIÓN TERAPÉUTICA", content_type: "key_value_table", data: [] },
+                        { section_number: "4", title: "POLÍTICAS DE COBERTURA", content_type: "coverage_policy_tables", policies: {}, approvals: {} },
+                        { section_number: "5", title: "BÚSQUEDA DE EVIDENCIA CIENTÍFICA", content_type: "conamei_evidence_synthesis", pico: {}, study_selection: { studies: [] } },
+                        { section_number: "6", title: "DATOS DE EFICACIA Y SEGURIDAD", content_type: "conamei_grade_and_safety_section", grade_outcomes: [], safety_details: {} },
+                        { section_number: "7", title: "DATOS ECONÓMICOS", content_type: "conamei_economic_analysis", cost_table: { rows: [] }, cost_analysis: {}, pharmacoeconomic_summary: "" },
+                        { section_number: "8", title: "DATOS DE CONVENIENCIA", content_type: "conamei_convenience_analysis", parameters: [], final_summary: "" },
+                        { section_number: "9", title: "CONCLUSIÓN DEL REVISOR", content_type: "text", text: null },
+                        { section_number: "10", title: "BIBLIOGRAFÍA", content_type: "list", items: [] },
+                        { section_number: "11", title: "FIRMA DE RESPONSABILIDAD", content_type: "signature_block", data: {} },
+                        { section_number: "13", title: "MATRIZ 1: EVALUACIÓN INICIAL", content_type: "automated_evaluation_matrix", drug_info: {}, scoring: { total_score: null, decision: null }, parameters: [
+                            {"category": "EFICACIA", "question": "¿Cuál es la calidad de la evidencia científica?", "scale": ["Alta", "Moderada", "Baja o muy baja"], "result": null, "score": null, "justification": null},
+                            {"category": "EFICACIA", "question": "¿Cuál es la fase de investigación clínica?", "scale": ["Fase IV+", "Fase III+", "Fase IV-", "Fase III-"], "result": null, "score": null, "justification": null},
+                            {"category": "EFICACIA", "question": "¿Es un medicamento considerado como esencial por la OMS?", "scale": ["Si", "No"], "result": null, "score": null, "justification": null},
+                            {"category": "EFICACIA", "question": "¿Mejora el desenlace final de la enfermedad?", "scale": ["Si", "No y/o se desconoce"], "result": null, "score": null, "justification": null},
+                            {"category": "EFICACIA", "question": "¿La eficacia es superior, igual o inferior al comparador?", "scale": ["Superior", "No Inferior", "Inferior"], "result": null, "score": null, "justification": null},
+                            {"category": "EFICACIA", "question": "¿Mejora la calidad de vida del paciente?", "scale": ["Si", "No y/o se desconoce"], "result": null, "score": null, "justification": null},
+                            {"category": "SEGURIDAD", "question": "¿Puede provocar reacciones adversas letales o graves?", "scale": ["Poco frecuente", "Frecuente", "Muy frecuente"], "result": null, "score": null, "justification": null},
+                            {"category": "SEGURIDAD", "question": "¿Es más seguro que las alternativas del CNMB?", "scale": ["Si", "No y/o se desconoce"], "result": null, "score": null, "justification": null},
+                            {"category": "SEGURIDAD", "question": "¿Existen alertas sanitarias graves emitidas?", "scale": ["Si", "No"], "result": null, "score": null, "justification": null},
+                            {"category": "PREVALENCIA / FRECUENCIA", "question": "¿La indicación tiene una prevalencia >5%?", "scale": ["Si", "No"], "result": null, "score": null, "justification": null},
+                            {"category": "CONVENIENCIA", "question": "¿Existe una alternativa terapéutica dentro del CNMB?", "scale": ["Si", "No"], "result": null, "score": null, "justification": null},
+                            {"category": "CONVENIENCIA", "question": "¿Mejora la adherencia y/o reduce la estancia hospitalaria?", "scale": ["Si", "No"], "result": null, "score": null, "justification": null},
+                            {"category": "COSTO", "question": "¿El costo del tratamiento frente al comparador es menor, igual o mayor?", "scale": ["Menor", "Igual", "Mayor"], "result": null, "score": null, "justification": null}
+                          ]
+                        }
+                    ]
+                }
+            }
+        };
+
+        async function handleGenerateClick() {
+            const apiKey = apiKeyInput.value.trim();
+            const dci = dciInput.value.trim();
+            const indication = indicationInput.value.trim();
+
+            if (!apiKey || !dci || !indication) {
+                alert("Por favor, completa todos los campos: API Key, Nombre del Medicamento e Indicación.");
+                return;
+            }
+
+            // --- UI UPDATE: START LOADING ---
+            generateBtn.disabled = true;
+            loader.classList.remove('hidden');
+            statusEl.textContent = 'Buscando evidencia...';
+            resultContainer.classList.add('hidden');
+
+            try {
+                // --- STEP 1: PROMPT DE BÚSQUEDA DE EVIDENCIA ---
+                const searcherPrompt = `
+                    Actúa como un investigador médico experto. Para el medicamento "${dci}" con la indicación principal de "${indication}", busca en la literatura científica y bases de datos de agencias reguladoras para extraer la siguiente información. Tu respuesta DEBE ser un único objeto JSON, sin texto adicional ni markdown.
+
+                    {
+                        "atc_code": "Busca el código ATC",
+                        "mechanism_of_action": "Describe el mecanismo de acción en 1-2 frases.",
+                        "dosage_guideline": "Describe la pauta de dosificación estándar.",
+                        "alternatives_cnmb": "Menciona las alternativas terapéuticas clave que estarían en un cuadro básico como el de Ecuador.",
+                        "pico_c": "Identifica el comparador más común y relevante que estaría en un cuadro básico.",
+                        "pivotal_trial": {
+                            "reference": "Cita el estudio pivotal principal en formato Vancouver (Autor, et al. Revista. Año).",
+                            "synthesis": "Resume el estudio pivotal en un párrafo conciso, incluyendo población, diseño, intervención, comparador, y los resultados de eficacia y seguridad más importantes."
+                        },
+                        "safety_summary": {
+                            "details": "Resume los eventos adversos más comunes, separados por frecuencia si es posible.",
+                            "has_alerts": "true si existen alertas de seguridad de clase o 'black box warnings', de lo contrario false.",
+                            "alert_details": "Si has_alerts es true, describe brevemente la alerta."
+                        },
+                        "economic_summary": {
+                            "is_cheaper": "false si es más caro que las alternativas comunes, de lo contrario true.",
+                            "justification": "Breve justificación del costo comparativo."
+                        },
+                        "convenience_summary": {
+                            "less_frequency": "true si la pauta es menos frecuente que las alternativas comunes (ej. mensual vs diario), de lo contrario false.",
+                            "improves_adherence": "true si la pauta o vía de administración podría mejorar la adherencia."
+                        }
+                    }
+                `;
+
+                // --- STEP 2: LLAMADA A LA API PARA BUSCAR EVIDENCIA ---
+                const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: searcherPrompt }] }] })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error en la API: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                let evidenceText = data.candidates[0].content.parts[0].text;
+                evidenceText = evidenceText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const evidence = JSON.parse(evidenceText);
+
+                statusEl.textContent = 'Evidencia encontrada. Poblando plantilla...';
+
+                // --- STEP 3: POBLAR LA PLANTILLA MAESTRA CON LA EVIDENCIA ---
+                let finalPrompt = JSON.parse(JSON.stringify(finalPromptTemplate)); // Deep copy
+
+                // Poblar metadatos y secciones
+                finalPrompt.report_content.report_metadata.report_id = `CONAMEI-${new Date().getFullYear()}-XX`;
+                finalPrompt.report_content.report_metadata.city_date = `Quito, D.M., ${new Date().toLocaleDateString('es-EC')}`;
+                
+                // Sec 2
+                finalPrompt.report_content.sections.find(s => s.section_number === "2").data = [
+                    {"key": "Código ATC", "value": evidence.atc_code},
+                    {"key": "DCI", "value": dci},
+                    {"key": "Forma farmacéutica (CNMB)", "value": "[Completar manualmente o buscar]"},
+                    {"key": "Concentración", "value": "[Completar manualmente o buscar]"},
+                    {"key": "Vía de administración", "value": "[Completar manualmente o buscar]"}
+                ];
+                
+                // Sec 3
+                finalPrompt.report_content.sections.find(s => s.section_number === "3").data = [
+                    {"key": "3.1. Indicación terapéutica para la cual se solicita", "value": indication},
+                    {"key": "3.2. Mecanismo de acción", "value": evidence.mechanism_of_action},
+                    {"key": "3.3. Pauta de dosificación", "value": evidence.dosage_guideline},
+                    {"key": "3.4. Alternativas terapéuticas disponibles en el CNMB vigente", "value": evidence.alternatives_cnmb}
+                ];
+
+                // Sec 5
+                const sec5 = finalPrompt.report_content.sections.find(s => s.section_number === "5");
+                sec5.pico.P = `Pacientes con ${indication}`;
+                sec5.pico.I = dci;
+                sec5.pico.C = evidence.pico_c;
+                sec5.pico.O = "Eficacia, seguridad, conveniencia y costo.";
+                sec5.study_selection.studies[0] = {
+                    reference: evidence.pivotal_trial.reference,
+                    study_type_selected: "Estudio clínico aleatorizado",
+                    evidence_level: "1a",
+                    recommendation_grade: "A",
+                    synthesis: {
+                        inclusion_justification: `<strong>Criterios para inclusión en el análisis:</strong> Estudio pivotal que fundamenta la aprobación regulatoria para ${indication}.`,
+                        study_summary: {
+                            title: "<strong>Resumen del Estudio:</strong>",
+                            summary_points: [{"label": "Detalles", "description": evidence.pivotal_trial.synthesis}]
+                        }
+                    }
+                };
+
+                // Sec 6
+                const sec6 = finalPrompt.report_content.sections.find(s => s.section_number === "6");
+                sec6.safety_details.details = evidence.safety_summary.details;
+                sec6.safety_details.has_alerts = evidence.safety_summary.has_alerts;
+                sec6.safety_details.alert_details = evidence.safety_summary.alert_details;
+
+                // Sec 7
+                const sec7 = finalPrompt.report_content.sections.find(s => s.section_number === "7");
+                sec7.cost_analysis.is_cheaper = evidence.economic_summary.is_cheaper;
+                sec7.cost_analysis.justification = evidence.economic_summary.justification;
+
+                // Sec 8
+                const sec8 = finalPrompt.report_content.sections.find(s => s.section_number === "8");
+                sec8.parameters[0].response = evidence.convenience_summary.less_frequency;
+                sec8.parameters[1].response = evidence.convenience_summary.improves_adherence;
+
+                // Matriz info
+                const matrix = finalPrompt.report_content.sections.find(s => s.section_number === "13");
+                matrix.drug_info.dci = dci;
+                matrix.drug_info.indication = indication;
+                matrix.drug_info.comparator = evidence.pico_c;
+
+                // --- STEP 4: MOSTRAR RESULTADO ---
+                resultTextarea.value = JSON.stringify(finalPrompt, null, 2);
+                resultContainer.classList.remove('hidden');
+                statusEl.textContent = '¡Listo! El prompt está preparado.';
+
+            } catch (error) {
+                console.error(error);
+                statusEl.textContent = `Error: ${error.message}. Revisa la consola (F12) para más detalles.`;
+                alert(`Ocurrió un error: ${error.message}`);
+            } finally {
+                // --- UI UPDATE: STOP LOADING ---
+                generateBtn.disabled = false;
+                loader.classList.add('hidden');
+            }
+        }
+
+        generateBtn.addEventListener('click', handleGenerateClick);
+
+        copyBtn.addEventListener('click', () => {
+            resultTextarea.select();
+            document.execCommand('copy');
+            alert('¡Prompt copiado al portapapeles!');
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const dciForFile = dciInput.value.trim().toLowerCase().replace(/\s+/g, '_') || 'prompt';
+            const blob = new Blob([resultTextarea.value], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `prompt_${dciForFile}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+    </script>
+</body>
+</html>
