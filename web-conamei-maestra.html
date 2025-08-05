@@ -291,17 +291,17 @@
             template.report_content.report_metadata.city_date = `Quito, D.M., ${formattedDate}`;
 
             let sec2 = template.report_content.sections.find(s => s.section_number === "2").data;
-            sec2[0].value = evidence.atc_code;
-            sec2[1].value = dci;
-            sec2[2].value = evidence.pharma_form;
-            sec2[4].value = evidence.concentration;
-            sec2[5].value = evidence.admin_route;
+            sec2.find(d => d.key === "Código ATC").value = evidence.atc_code;
+            sec2.find(d => d.key === "DCI").value = dci;
+            sec2.find(d => d.key === "Forma farmacéutica (CNMB)").value = evidence.pharma_form;
+            sec2.find(d => d.key === "Concentración").value = evidence.concentration;
+            sec2.find(d => d.key === "Vía de administración").value = evidence.admin_route;
 
             let sec3 = template.report_content.sections.find(s => s.section_number === "3").data;
-            sec3[0].value = indication;
-            sec3[1].value = evidence.mechanism_of_action;
-            sec3[2].value = evidence.dosage_guideline;
-            sec3[3].value = evidence.alternatives_cnmb;
+            sec3.find(d => d.key === "3.1. Indicación terapéutica para la cual se solicita").value = indication;
+            sec3.find(d => d.key === "3.2. Mecanismo de acción").value = evidence.mechanism_of_action;
+            sec3.find(d => d.key === "3.3. Pauta de dosificación").value = evidence.dosage_guideline;
+            sec3.find(d => d.key === "3.4. Alternativas terapéuticas disponibles en el CNMB vigente").value = evidence.alternatives_cnmb;
 
             let sec5 = template.report_content.sections.find(s => s.section_number === "5");
             sec5.pico.I = dci;
