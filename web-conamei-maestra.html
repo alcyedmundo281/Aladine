@@ -322,17 +322,23 @@
             const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
             const comparator = evidence.section4_data.comparator || "Comparador";
 
-            // 2. Modify the template object directly - this is safer than string replacement
-            
             // --- Metadata & General ---
-            template.report_content.report_metadata.city_date = `Quito, D.M., ${formattedDate}`;
+            if (template.report_content && template.report_content.report_metadata) {
+                template.report_content.report_metadata.city_date = `Quito, D.M., ${formattedDate}`;
+            }
+            if (template.report_content && template.report_content.sections) {
+                const signatureSection = template.report_content.sections.find(s => s.section_number === "9");
+                if (signatureSection && signatureSection.signature) {
+                    signatureSection.signature.date = formattedDate;
+                }
+            }
             
-            // Replace placeholders in conclusion templates
-            const passTemplate = template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.pass_template;
-            template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.pass_template = passTemplate.replace(/\[DCI\]/g, dci).replace(/\[Comparador\]/g, comparator);
-            
-            const failTemplate = template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.fail_template;
-            template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic.fail_template = failTemplate.replace(/\[DCI\]/g, dci).replace(/\[Comparador\]/g, comparator);
+            // --- Replace placeholders in conclusion templates ---
+            const logic = template.prompt_instructions.automated_evaluation_logic.argumentative_conclusion_logic;
+            if (logic) {
+                logic.pass_template = logic.pass_template.replace(/\[DCI\]/g, dci).replace(/\[Comparador\]/g, comparator);
+                logic.fail_template = logic.fail_template.replace(/\[DCI\]/g, dci).replace(/\[Comparador\]/g, comparator);
+            }
 
             // --- Section 1: Medicamento ---
             let sec1 = template.report_content.sections.find(s => s.section_number === "1").data;
