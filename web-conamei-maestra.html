@@ -304,9 +304,9 @@
             sec3[3].value = evidence.alternatives_cnmb;
 
             let sec5 = template.report_content.sections.find(s => s.section_number === "5");
-            sec5.pico.P = `Pacientes con ${indication}`;
             sec5.pico.I = dci;
             sec5.pico.C = evidence.pico_c;
+            sec5.pico.P = `Pacientes con ${indication}`;
             sec5.pico.O = "Eficacia, seguridad, conveniencia y costo.";
             sec5.study_selection.studies[0] = {
                 reference: evidence.pivotal_trial.reference,
