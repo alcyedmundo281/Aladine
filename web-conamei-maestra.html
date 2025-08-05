@@ -222,7 +222,7 @@
     </head>
     <body>
         <div class="page">
-            <img src="https://i.imgur.com/uT2F8QG.png" alt="Encabezado CONAMEI" class="header-img">
+            <img src="https://alcyedmundo281.github.io/Aladine/assets/image5.png" alt="Encabezado CONAMEI" class="header-img">
             <p style="text-align: right; font-size: 10pt;">{{city_date}}</p>
             <p class="main-title">INFORME T&Eacute;CNICO Nro. {{report_id}}</p>
             
@@ -315,7 +315,7 @@
                     <tr><td colspan="3" style="text-align:right; font-weight:bold;">DECISI&Oacute;N</td><td colspan="2"><strong>{{decision}}</strong></td></tr>
                 </tfoot>
             </table>
-            <img src="https://i.imgur.com/5b8tB3B.png" alt="Pie de página CONAMEI" class="footer-img" style="margin-top: 50px;">
+            <img src="https://alcyedmundo281.github.io/Aladine/assets/image6.png" alt="Pie de página CONAMEI" class="footer-img" style="margin-top: 50px;">
         </div>
     </body>
     </html>
@@ -386,6 +386,7 @@
                 `Considerando la carga de la ${indication.toLowerCase()} en Ecuador, la evidencia presentada para ${dci} demuestra un perfil favorable. El balance beneficio/riesgo es positivo. Con un puntaje total de ${totalScore}, que cumple o supera el umbral requerido, se concluye que la tecnología sanitaria presenta méritos suficientes para una evaluación más profunda. **Recomendación:** Se recomienda que ${dci} **PASE A LA SEGUNDA ETAPA** de evaluación.` :
                 `Si bien ${dci} ha demostrado beneficios en los estudios pivotales, el análisis global de la matriz no respalda su avance. Con un puntaje total de ${totalScore}, que no alcanza el umbral requerido de ${decisionThreshold}, la propuesta de valor para su inclusión en el CNMB no es clara frente a las alternativas existentes. **Recomendación:** Se recomienda que ${dci} **NO PASE A LA SEGUNDA ETAPA** de evaluación.`;
             
+            // Función para renderizar filas de tablas
             const renderTableRows = (data, keys) => (data || []).map(row => `<tr>${keys.map(key => `<td>${row[key] || 'No encontrado'}</td>`).join('')}</tr>`).join('');
             
             const policiesRows = renderTableRows(evidence.coverage.policies, ['agency', 'indication', 'date']);
