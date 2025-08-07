@@ -2,137 +2,494 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Informe T&eacute;cnico CONAMEI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Informes CONAMEI Automatizado (Alta Fidelidad)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; margin: 0; background-color: #eee; }
-        .page { width: 210mm; min-height: 297mm; padding: 1.5cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
-        th, td { border: 1px solid black; padding: 4px 6px; text-align: left; vertical-align: top; }
-        th { background-color: #E7E6E6; font-weight: bold; }
-        .main-title { text-align: center; font-weight: bold; font-size: 10pt; padding-top: 10px; }
-        .header-img, .footer-img { width: 100%; display: block; }
-        .section-title { font-weight: bold; font-size: 10pt; background-color: #E7E6E6; padding: 6px; border: 1px solid black; margin-top: 15px; margin-bottom: -1px; }
-        .sub-section-title { font-weight: bold; font-size: 9pt; margin-top: 10px; margin-bottom: 5px; }
-        .page-break { page-break-after: always; }
-        ul { padding-left: 20px; margin: 5px 0; }
-        li { margin-bottom: 5px; font-size: 9pt; }
-        p { margin: 5px 0; font-size: 9pt; text-align: justify; }
-        .bold { font-weight: bold; }
+        body { font-family: 'Inter', sans-serif; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status-message { transition: opacity 0.5s ease-in-out; }
+        #report-frame {
+            width: 100%;
+            height: 60vh;
+            min-height: 500px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+        }
     </style>
 </head>
-<body>
-    <div class="page">
-        <img src="https://alcyedmundo281.github.io/Aladine/assets/image6.jpg" alt="Encabezado CONAMEI" class="header-img">
-        <p style="text-align: right; font-size: 10pt; margin-top: 15px;">05 de agosto de 2025</p>
-        <p class="main-title">INFORME T&Eacute;CNICO Nro. CONAMEI-2024-91</p>
-        
-        <p class="section-title">1. IDENTIFICACI&Oacute;N DEL MEDICAMENTO</p>
-        <table>
-            <tr><th style="width:30%;">C&oacute;digo ATC</th><td>L04AA36</td></tr>
-            <tr><th>DCI</th><td>ofatumumab</td></tr>
-            <tr><th>Forma farmac&eacute;utica (CNMB)</th><td>No encontrado</td></tr>
-            <tr><th>Formas farmac&eacute;uticas (ARCSA)</th><td>Solución inyectable</td></tr>
-            <tr><th>Concentraci&oacute;n</th><td>20 mg/mL</td></tr>
-            <tr><th>V&iacute;a de administraci&oacute;n</th><td>Subcutánea</td></tr>
-            <tr><th>Presentaci&oacute;n comercial</th><td>Jeringa prellenada</td></tr>
-            <tr><th>Informaci&oacute;n sanitaria</th><td>Registro Sanitario Ecuatoriano</td></tr>
-        </table>
+<body class="bg-gray-100 p-4 sm:p-6 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-gray-800 p-6">
+            <h1 class="text-2xl font-bold text-white">Generador de Informes CONAMEI Automatizado</h1>
+            <p class="text-gray-300 mt-1">Genera el informe HTML final en un solo clic con máxima fidelidad al formato oficial.</p>
+        </div>
 
-        <p class="section-title">2. INDICACI&Oacute;N TERAP&Eacute;UTICA</p>
-        <table>
-            <tr><th style="width:30%;">2.1. Indicaci&oacute;n terap&eacute;utica</th><td>Pacientes adultos con formas recurrentes de esclerosis múltiple (EMR) con enfermedad activa definida por características clínicas o de imagen.</td></tr>
-            <tr><th>2.2. Mecanismo de acci&oacute;n</th><td>Anticuerpo monoclonal anti-CD20 que depleciona los linfocitos B.</td></tr>
-            <tr><th>2.3. Pauta de dosificaci&oacute;n</th><td>20 mg por vía subcutánea una vez a la semana durante las primeras cuatro dosis, luego cada dos semanas.</td></tr>
-            <tr><th>2.4. Alternativas en CNMB</th><td>Interferón beta-1a, Interferón beta-1b, Acetato de glatiramer</td></tr>
-            <tr><th>2.5. Alternativas no en CNMB</th><td>Teriflunomida, Dimetil fumarato, Fingolimod, Natalizumab, Alemtuzumab, Cladribina, Ocrelizumab</td></tr>
-        </table>
+        <div class="p-6 md:p-8 space-y-6">
+            <!-- API KEY INPUT -->
+            <div>
+                <label for="apiKey" class="block text-sm font-medium text-gray-700">Tu API Key de Google AI</label>
+                <div class="mt-1 flex items-center space-x-2">
+                    <input type="password" id="apiKey" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pega tu clave aquí (se guardará localmente)">
+                    <button id="clearApiKeyBtn" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50">Borrar</button>
+                </div>
+            </div>
 
-        <p class="section-title">3. POL&Iacute;TICAS DE COBERTURA</p>
-        <p class="sub-section-title">3.1. Pol&iacute;ticas de cobertura</p>
-        <table><thead><tr><th>Pa&iacute;s/Agencia Sanitaria</th><th>Indicaci&oacute;n y Condiciones de Cobertura</th><th>Fecha</th></tr></thead><tbody><tr><td>EMA</td><td><p class="bold">Tratamiento de pacientes adultos con esclerosis múltiple remitente-recurrente (EMRR) con enfermedad activa definida por características clínicas o de imagen.</p><small>Aprobado</small></td><td>2020</td></tr><tr><td>FDA</td><td><p class="bold">Tratamiento de pacientes adultos con formas recurrentes de esclerosis múltiple (EMR), para incluir la esclerosis múltiple remitente-recurrente (EMRR) y la esclerosis múltiple progresiva secundaria activa (EMPSA).</p><small>Aprobado</small></td><td>2021</td></tr></tbody></table>
-        <p class="sub-section-title">3.2. Indicaciones formalmente aprobadas</p>
-        <table><thead><tr><th>Agencia sanitaria</th><th>Indicaci&oacute;n aprobada</th><th>Tipo</th><th>Fecha</th></tr></thead><tbody><tr><td>EMA</td><td>Esclerosis múltiple remitente-recurrente</td><td>Marketing Authorization</td><td>30/04/2020</td></tr><tr><td>FDA</td><td>Formas recurrentes de esclerosis múltiple</td><td>Licencia Biológica</td><td>20/08/2020</td></tr></tbody></table>
+            <!-- DRUG & INDICATION INPUTS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6">
+                <div>
+                    <label for="dci" class="block text-sm font-medium text-gray-700">Nombre del Medicamento (DCI)</label>
+                    <input type="text" id="dci" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Ej: Ofatumumab">
+                </div>
+                <div>
+                    <label for="indication" class="block text-sm font-medium text-gray-700">Indicación Principal Solicitada</label>
+                    <input type="text" id="indication" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Ej: Esclerosis Múltiple Recurrente">
+                </div>
+            </div>
 
-        <div class="page-break"></div>
+            <!-- ACTION BUTTON & STATUS -->
+            <div class="flex items-center space-x-4">
+                <button id="generateBtn" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    Generar Informe Completo
+                </button>
+                <div id="loader" class="loader hidden"></div>
+                <p id="status" class="text-sm text-gray-600 status-message"></p>
+            </div>
 
-        <p class="section-title">5. B&Uacute;SQUEDA DE EVIDENCIA CIENT&Iacute;FICA</p>
-        <p class="sub-section-title">Pregunta PICO</p>
-        <table>
-            <tr><th style="width:10%;">P</th><td>Pacientes adultos con formas recurrentes de esclerosis múltiple (EMR) con enfermedad activa definida por características clínicas o de imagen.</td></tr>
-            <tr><th>I</th><td>ofatumumab</td></tr>
-            <tr><th>C</th><td>Interferón beta-1a</td></tr>
-            <tr><th>O</th><td>Reducción anualizada de la tasa de brotes, tiempo hasta la progresión confirmada de la discapacidad, número de nuevas lesiones en T1 realzadas con gadolinio y nuevas o en crecimiento lesiones en T2 en la resonancia magnética.</td></tr>
-        </table>
-        <p class="sub-section-title">Estrategia de B&uacute;squeda</p>
-        <table>
-            <thead><tr><th style="width:25%;">Base de Datos</th><th>Estrategia Utilizada</th></tr></thead>
-            <tbody><tr><td>PubMed</td><td><code>(“ofatumumab”[MeSH Terms] OR ofatumumab[All Fields]) AND (“multiple sclerosis”[MeSH Terms] OR “multiple sclerosis”[All Fields]) AND (“recurrent”[All Fields] OR “relapsing-remitting”[All Fields])</code></td></tr><tr><td>Cochrane Library</td><td><code>(ofatumumab) AND (multiple sclerosis) AND (recurrent OR relapsing-remitting)</code></td></tr></tbody>
-        </table>
-        
-                    <p class="sub-section-title">ASCLEPIOS I and II</p>
-                    <table>
-                        <tr><th style="width:25%;">Referencia</th><td>Sorensen PS, Bar-Or A, Montalban X, et al. ASCLEPIOS I and II: primary and secondary progressive multiple sclerosis. N Engl J Med. 2020 Nov 5;383(19):1817-1830.</td></tr>
-                        <tr><th>Tipo de Estudio</th><td>Ensayo clínico aleatorizado, doble ciego, de fase 3</td></tr>
-                        <tr><th>Nivel / Grado</th><td>Alta / 1A</td></tr>
-                        <tr><th>S&iacute;ntesis</th><td><p>2505 pacientes, ofatumumab 20 mg cada dos semanas vs teriflunomida 14 mg diarios, 30 meses. Resultado primario: Reducción del 50.8% (p<0.001) en la tasa anualizada de brotes con ofatumumab. Conclusión: Ofatumumab es superior a teriflunomida en la reducción de brotes en EMRR.</p></td></tr>
-                    </table>
-                    <p class="sub-section-title">Disease-modifying therapies for MS</p>
-                    <table>
-                        <tr><th style="width:25%;">Referencia</th><td>National Multiple Sclerosis Society. Disease-modifying therapies for MS. Acceso: 17 Octubre 2023. Disponible en: https://www.nationalmssociety.org/NationalMSSociety/media/MSNational/Documents/Brochures/Brochure_Disease-Modifying-Therapies-for-MS.pdf</td></tr>
-                        <tr><th>Tipo de Estudio</th><td>Guía de Práctica Clínica</td></tr>
-                        <tr><th>Nivel / Grado</th><td>N/A / 1A</td></tr>
-                        <tr><th>S&iacute;ntesis</th><td><p>Recomienda ofatumumab como un tratamiento de alta eficacia para la EMRR.</p></td></tr>
-                    </table>
-
-        <p class="section-title">6. DATOS DE EFICACIA Y SEGURIDAD</p>
-        <p class="sub-section-title">Tabla de Resumen de Hallazgos (Formato GRADE)</p>
-        
-                    <p class="sub-section-title">Tasa anualizada de brotes</p>
-                    <table style="font-size: 8pt;">
-                        <thead><tr><th>Diseño</th><th>Riesgo Sesgo</th><th>Incons.</th><th>Indirec.</th><th>Imprec.</th><th>Otras</th><th>Efecto Relativo</th><th>Efecto Absoluto</th><th>Certeza</th></tr></thead>
-                        <tbody><tr><td>ECA</td><td>Bajo</td><td>No seria</td><td>No seria</td><td>No seria</td><td>No</td><td>0.49 (IC 95% 0.41-0.58)</td><td>Reducción del 51%</td><td class="bold">Alta</td></tr></tbody>
-                    </table>
-        <p class="sub-section-title">Datos de seguridad</p>
-        <table>
-            <tr><th>Detalle de reacciones adversas</th><td>Infecciones del tracto respiratorio superior, reacciones en el lugar de la inyección, linfopenia.</td></tr>
-            <tr><th>&iquest;Alertas sanitarias graves?</th><td>No. No encontrado</td></tr>
-            <tr><th>&iquest;M&aacute;s seguro que alternativas CNMB?</th><td>Diferente. Perfil de seguridad generalmente manejable, similar al de otros tratamientos modificadores de la enfermedad para la EM.</td></tr>
-        </table>
-
-        <p class="section-title">7. DATOS ECON&Oacute;MICOS</p>
-        <table>
-            <tr><th style="width:30%;">Precio unitario</th><td>No encontrado</td></tr>
-            <tr><th>Posolog&iacute;a</th><td>20 mg cada dos semanas después de las primeras cuatro dosis semanales.</td></tr>
-            <tr><th>Costo anual por paciente</th><td>No encontrado</td></tr>
-            <tr><th>An&aacute;lisis de costos</th><td>No se dispone de datos de costos para Ecuador.</td></tr>
-            <tr><th>Resumen farmacoecon&oacute;mico</th><td>No se dispone de análisis farmacoeconómicos para Ecuador.</td></tr>
-        </table>
-
-        <p class="section-title">8. DATOS DE CONVENIENCIA</p>
-        <table>
-            <tr><th style="width:30%;">&iquest;Frecuencia de administraci&oacute;n menor?</th><td>Cada dos semanas después de la fase inicial. - Administración subcutánea cada dos semanas.</td></tr>
-            <tr><th>&iquest;Mejora la adherencia?</th><td>Potencialmente alta debido a la administración subcutánea y la baja frecuencia. - Administración subcutánea conveniente.</td></tr>
-            <tr><th>&iquest;Disminuye hospitalizaci&oacute;n?</th><td>No se espera que requiera hospitalización. - Tratamiento ambulatorio.</td></tr>
-        </table>
-        
-        <p class="section-title">9. CONCLUSI&Oacute;N DEL REVISOR</p>
-        <p>Ofatumumab muestra alta eficacia en el tratamiento de la esclerosis múltiple remitente-recurrente, respaldada por ensayos clínicos fase III de alta calidad.  Su perfil de seguridad es generalmente manejable, y la administración subcutánea cada dos semanas podría favorecer la adherencia.  Sin embargo, la falta de datos sobre la prevalencia en Ecuador, la existencia de alternativas en el CNMB, y el mayor costo en comparación con el Interferón beta-1a representan desventajas significativas.  Considerando el contexto de salud pública ecuatoriana, el balance entre beneficios y costos no justifica la inclusión de ofatumumab en el CNMB en este momento.</p>
-
-        <p class="section-title">10. BIBLIOGRAF&Iacute;A</p>
-        <ul><li>Sorensen PS, Bar-Or A, Montalban X, et al. ASCLEPIOS I and II: primary and secondary progressive multiple sclerosis. N Engl J Med. 2020 Nov 5;383(19):1817-1830.</li><li>National Multiple Sclerosis Society. Disease-modifying therapies for MS. Acceso: 17 Octubre 2023. Disponible en: https://www.nationalmssociety.org/NationalMSSociety/media/MSNational/Documents/Brochures/Brochure_Disease-Modifying-Therapies-for-MS.pdf</li></ul>
-
-        <div class="page-break"></div>
-        
-        <p class="section-title">13. MATRIZ 1: EVALUACI&Oacute;N INICIAL</p>
-        <table>
-            <thead><tr><th style="width:15%">Categor&iacute;a</th><th>Pregunta</th><th style="width:15%">Resultado</th><th style="width:10%">Puntaje</th><th>Justificaci&oacute;n</th></tr></thead>
-            <tbody><tr><td>EFICACIA</td><td>¿Cuál es la calidad de la evidencia científica?</td><td>Alta</td><td>2</td><td>La evidencia proviene de ECAs de alta calidad (ej. ASCLEPIOS I y II), demostrando una reducción significativa en la tasa anualizada de brotes.</td></tr><tr><td>EFICACIA</td><td>¿En qué fase de investigación se encuentra?</td><td>Fase III+</td><td>1</td><td>Los estudios ASCLEPIOS I y II son ensayos clínicos fase III que demuestran la eficacia de ofatumumab.</td></tr><tr><td>EFICACIA</td><td>¿Está incluido en la lista de medicamentos esenciales de la OMS?</td><td>No</td><td>0</td><td>Ofatumumab no está incluido en la lista de medicamentos esenciales de la OMS.</td></tr><tr><td>EFICACIA</td><td>¿Mejora los desenlaces en salud?</td><td>Si</td><td>1</td><td>Ofatumumab reduce la tasa anualizada de brotes, un desenlace clínico importante en la esclerosis múltiple remitente-recurrente.</td></tr><tr><td>EFICACIA</td><td>¿Su eficacia es superior, no inferior o inferior al comparador del CNMB?</td><td>Superior</td><td>1</td><td>Ofatumumab demostró ser superior al Interferón beta-1a en la reducción de la tasa anualizada de brotes en los estudios clínicos.</td></tr><tr><td>EFICACIA</td><td>¿Mejora la calidad de vida relacionada con la salud?</td><td>No encontrado</td><td>0</td><td>No se proporcionó información sobre la mejora de la calidad de vida relacionada con la salud en los datos proporcionados.</td></tr><tr><td>SEGURIDAD</td><td>¿Presenta reacciones adversas graves?</td><td>Poco frecuente</td><td>0</td><td>Las reacciones adversas reportadas, como infecciones del tracto respiratorio superior y reacciones en el lugar de inyección, son generalmente leves y manejables.</td></tr><tr><td>SEGURIDAD</td><td>¿Es más seguro que el comparador del CNMB?</td><td>Diferente</td><td>0</td><td>El perfil de seguridad de ofatumumab es diferente al del Interferón beta-1a, sin ser necesariamente superior ni inferior.</td></tr><tr><td>SEGURIDAD</td><td>¿Tiene alertas sanitarias?</td><td>No</td><td>1</td><td>No se reportaron alertas sanitarias para ofatumumab en los datos proporcionados.</td></tr><tr><td>CONTEXTO LOCAL</td><td>¿Cuál es la prevalencia de la enfermedad en Ecuador?</td><td>No encontrado</td><td>0</td><td>No se proporcionó información sobre la prevalencia de la esclerosis múltiple en Ecuador.</td></tr><tr><td>CONTEXTO LOCAL</td><td>¿Existe alternativa en el CNMB?</td><td>Si</td><td>0</td><td>Existen alternativas en el CNMB para el tratamiento de la esclerosis múltiple remitente-recurrente, como el Interferón beta-1a.</td></tr><tr><td>CONTEXTO LOCAL</td><td>¿Mejora la adherencia al tratamiento?</td><td>Si</td><td>1</td><td>La administración subcutánea cada dos semanas podría mejorar la adherencia al tratamiento en comparación con otras opciones.</td></tr><tr><td>CONTEXTO LOCAL</td><td>¿Cuál es el costo comparado con el CNMB?</td><td>Mayor</td><td>-1</td><td>El costo de ofatumumab es mayor al del comparador del CNMB, Interferón beta-1a, lo que representa una barrera potencial para el acceso.</td></tr></tbody>
-            <tfoot>
-                <tr><td colspan="3" style="text-align:right; font-weight:bold;">PUNTAJE TOTAL</td><td><strong>6</strong></td><td></td></tr>
-                <tr><td colspan="3" style="text-align:right; font-weight:bold;">DECISI&Oacute;N</td><td colspan="2"><strong>NO PASA ETAPA</strong></td></tr>
-            </tfoot>
-        </table>
-        <img src="https://alcyedmundo281.github.io/Aladine/assets/image10.png" alt="Pie de página CONAMEI" class="footer-img" style="margin-top: 50px;">
+            <!-- FINAL RESULT OUTPUT -->
+            <div id="result-container" class="hidden border-t pt-6">
+                <label for="report-frame" class="block text-sm font-bold text-green-700">Informe HTML Generado</label>
+                <div class="mt-2">
+                    <iframe id="report-frame" title="Informe Final"></iframe>
+                </div>
+                <textarea id="hidden-html-source" class="hidden"></textarea>
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <button id="copyBtn" class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700">
+                        Copiar Código HTML
+                    </button>
+                    <button id="downloadBtn" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                        Descargar como .html
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
+
+<script>
+    // --- DOM Elements ---
+    const generateBtn = document.getElementById('generateBtn');
+    const apiKeyInput = document.getElementById('apiKey');
+    const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
+    const dciInput = document.getElementById('dci');
+    const indicationInput = document.getElementById('indication');
+    const loader = document.getElementById('loader');
+    const statusEl = document.getElementById('status');
+    const resultContainer = document.getElementById('result-container');
+    const reportFrame = document.getElementById('report-frame');
+    const hiddenHtmlSource = document.getElementById('hidden-html-source');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const API_KEY_STORAGE_KEY = 'CONAMEI_ASSISTANT_API_KEY';
+    let lastStatusMessage = '';
+    
+    // --- Application Logic ---
+    function showStatus(message, isTemporary = false, duration = 4000) {
+        statusEl.textContent = message;
+        if (!isTemporary) { lastStatusMessage = message; } 
+        else { setTimeout(() => { if (statusEl.textContent === message) { statusEl.textContent = lastStatusMessage; } }, duration); }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedApiKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+        if (savedApiKey) { apiKeyInput.value = savedApiKey; showStatus('API Key cargada.', true); }
+    });
+
+    apiKeyInput.addEventListener('input', () => localStorage.setItem(API_KEY_STORAGE_KEY, apiKeyInput.value));
+    clearApiKeyBtn.addEventListener('click', () => { apiKeyInput.value = ''; localStorage.removeItem(API_KEY_STORAGE_KEY); showStatus('Clave de API borrada.', true); });
+
+    // =========================================================================
+    // ===                 ARQUITECTURA DEFINITIVA DE TRES PASOS             ===
+    // =========================================================================
+
+    /**
+     * PASO 1: Prompt de Investigación.
+     */
+    function buildSearcherPrompt(dci, indication) {
+        return `
+            Actúa como un analista experto de HTA. Tu tarea es investigar y rellenar este JSON para "${dci}" en "${indication}".
+            ACCIÓN CRÍTICA: Para el comparador ('pico.c'), primero identifica las alternativas terapéuticas que existen DENTRO del Cuadro Nacional de Medicamentos Básico (CNMB) de Ecuador para la indicación dada. Luego, selecciona la más relevante de esa lista y úsala como el comparador principal en TODO el análisis.
+            Sé exhaustivo. Si un dato no se encuentra, usa "No encontrado". Tu única salida debe ser el objeto JSON puro.
+
+            {
+                "drug_id": { "atc_code": "...", "dci": "${dci}", "pharma_form_cnmb": "...", "pharma_form_arcsa": "...", "concentration": "...", "admin_route": "...", "commercial_presentation": "...", "sanitary_info": "..." },
+                "therapeutic_indication": {
+                    "indication": "${indication}", "mechanism_of_action": "...",
+                    "dosage_guideline": "...",
+                    "alternatives_cnmb": "Busca alternativas EN el CNMB de Ecuador",
+                    "alternatives_not_cnmb": "Busca otras alternativas relevantes NO en el CNMB"
+                },
+                "coverage": {
+                    "policies": [{"agency": "ej. NICE", "indication": "...", "details": "...", "date": "..."}, {"agency": "ej. CADTH", "indication": "...", "details": "...", "date": "..."}],
+                    "approvals": [{"agency": "ej. EMA", "indication": "...", "type": "...", "date": "..."}, {"agency": "ej. FDA", "indication": "...", "type": "...", "date": "..."}]
+                },
+                "pico": { "p": "${indication}", "i": "${dci}", "c": "CRÍTICO: El comparador más relevante DEL CNMB de Ecuador", "o": "Desenlaces primarios de los estudios pivotales" },
+                "search_strategy": [
+                    {"database": "PubMed", "strategy": "Formula la estrategia de búsqueda exacta usada"},
+                    {"database": "Cochrane Library", "strategy": "Formula la estrategia de búsqueda exacta usada"}
+                ],
+                "studies": [
+                    { "reference": "Referencia Vancouver del estudio pivotal", "title": "Nombre del estudio", "type": "Tipo de estudio", "evidence_level": "Nivel", "recommendation_grade": "Grado", "synthesis": "Resumen detallado: N pacientes, intervención vs control, duración, resultado primario (HR/RR, p-valor), conclusión."},
+                    { "reference": "Referencia Vancouver de una guía de práctica clínica", "title": "Nombre de la guía", "type": "Guía de Práctica Clínica", "evidence_level": "N/A", "recommendation_grade": "Grado de recomendación", "synthesis": "Resumen de la recomendación clave."}
+                ],
+                "grade_summary": [
+                    { "outcome": "Desenlace primario principal", "design": "...", "risk_of_bias": "...", "inconsistency": "...", "indirectness": "...", "imprecision": "...", "other": "...", "relative_effect": "...", "absolute_effect": "...", "certainty": "..." }
+                ],
+                "safety_details": { "adverse_reactions": "...", "has_alerts": "Si/No", "alerts_details": "...", "is_safer": "Si/No/Diferente", "safety_justification": "..." },
+                "economic_data": { "unit_price": "...", "posology": "...", "annual_cost": "...", "cost_analysis_justification": "...", "pharmacoeconomic_summary": "..." },
+                "convenience_data": { "frequency": "...", "adherence": "...", "hospitalization": "...", "frequency_justification": "...", "adherence_justification": "...", "hospitalization_justification": "..." },
+                "matrix_inputs": {
+                    "calidad_evidencia": "Alta/Moderada/Baja", "fase_investigacion": "Fase IV+/Fase III+", "oms_esencial": "Si/No",
+                    "mejora_desenlace": "Si/No", "eficacia_comparador": "Superior/No Inferior/Inferior", "mejora_qol": "Si/No/No encontrado",
+                    "reacciones_graves": "Poco frecuente/Frecuente", "mas_seguro_cnmb": "Si/No/Diferente", "alertas_sanitarias": "Si/No",
+                    "prevalencia_ecuador": "Si/No", "existe_alternativa_cnmb": "Si/No", "mejora_adherencia": "Si/No",
+                    "costo_comparador": "Menor/Igual/Mayor"
+                },
+                "bibliography": ["Referencia 1 en formato Vancouver", "Referencia 2 en formato Vancouver", "Referencia 3 en formato Vancouver"]
+            }
+        `;
+    }
+
+    /**
+     * PASO 2: Prompt de Evaluación.
+     */
+    function buildEvaluatorPrompt(evidence) {
+        return `
+            Actúa como un evaluador experto e imparcial del Comité de Farmacología del Consejo Nacional de Salud (CONASA) de Ecuador.
+            Tu tarea es analizar el JSON de evidencia ('evidence_data') y generar una evaluación rigurosa.
+            Tu análisis debe ser consistente, basarse ÚNICAMENTE en los datos proporcionados y reflejar el contexto de la salud pública ecuatoriana.
+            
+            Reglas de Puntuación:
+            {"Alta": 2, "Moderada": 1, "Baja o muy baja": 0, "Fase IV+": 2, "Fase III+": 1, "Fase IV-": 0, "Fase III-": -1, "Superior": 1, "No Inferior": 0, "Inferior": -1, "Poco frecuente": 0, "Frecuente": -1, "Muy frecuente": -2, "Menor": 1, "Igual": 0, "Mayor": -1}
+            Casos especiales: oms_esencial, mejora_desenlace, mejora_qol, prevalencia_ecuador, mejora_adherencia ('Si': 1, 'No': 0, 'No encontrado': 0). alertas_sanitarias ('Si': -1, 'No': 1). existe_alternativa_cnmb ('Si': 0, 'No': 1). mas_seguro_cnmb ('Si': 1, 'No': 0, 'Diferente': 0).
+
+            Instrucciones:
+            1.  Para cada criterio en 'evidence_data.matrix_inputs', calcula el puntaje usando las reglas.
+            2.  Escribe una justificación concisa y contextualizada para CADA criterio, mencionando explícitamente el comparador del CNMB (de 'evidence_data.pico.c') cuando sea relevante.
+            3.  Calcula el 'total_score'.
+            4.  Determina la 'decision' final (umbral >= 7 para pasar).
+            5.  Escribe el 'conclusion_text'. Esta conclusión DEBE ser un reflejo directo de los puntajes y justificaciones más importantes que has generado. Debe ser balanceada, mencionando pros y contras.
+            
+            Tu única salida debe ser un objeto JSON con la siguiente estructura. No incluyas explicaciones.
+            
+            {
+                "matrix_rows": [
+                    {"category": "EFICACIA", "question": "¿Cuál es la calidad de la evidencia científica?", "result": "...", "score": 0, "justification": "La evidencia proviene de ECAs de alta calidad (ej. ASCLEPIOS), por lo que se califica como Alta."},
+                    ... (12 filas más con el mismo formato)
+                ],
+                "total_score": 0,
+                "decision": "NO PASA ETAPA",
+                "conclusion_text": "Texto de la conclusión del revisor, consistente con la evaluación..."
+            }
+
+            Aquí están los datos para analizar:
+            'evidence_data': ${JSON.stringify(evidence)}
+        `;
+    }
+    
+    /**
+     * PLANTILLA HTML LITERAL Y COMPLETA
+     */
+    const HTML_TEMPLATE = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Informe T&eacute;cnico CONAMEI</title>
+        <style>
+            body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; margin: 0; background-color: #eee; }
+            .page { width: 210mm; min-height: 297mm; padding: 1.5cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
+            th, td { border: 1px solid black; padding: 4px 6px; text-align: left; vertical-align: top; }
+            th { background-color: #E7E6E6; font-weight: bold; }
+            .main-title { text-align: center; font-weight: bold; font-size: 10pt; padding-top: 10px; }
+            .header-img, .footer-img { width: 100%; display: block; }
+            .section-title { font-weight: bold; font-size: 10pt; background-color: #E7E6E6; padding: 6px; border: 1px solid black; margin-top: 15px; margin-bottom: -1px; }
+            .sub-section-title { font-weight: bold; font-size: 9pt; margin-top: 10px; margin-bottom: 5px; }
+            .page-break { page-break-after: always; }
+            ul { padding-left: 20px; margin: 5px 0; }
+            li { margin-bottom: 5px; font-size: 9pt; }
+            p { margin: 5px 0; font-size: 9pt; text-align: justify; }
+            .bold { font-weight: bold; }
+        </style>
+    </head>
+    <body>
+        <div class="page">
+            <img src="https://alcyedmundo281.github.io/Aladine/assets/image6.jpg" alt="Encabezado CONAMEI" class="header-img">
+            <p style="text-align: right; font-size: 10pt; margin-top: 15px;">{{city_date}}</p>
+            <p class="main-title">INFORME T&Eacute;CNICO Nro. {{report_id}}</p>
+            
+            <p class="section-title">1. IDENTIFICACI&Oacute;N DEL MEDICAMENTO</p>
+            <table>
+                <tr><th style="width:30%;">C&oacute;digo ATC</th><td>{{drug_id.atc_code}}</td></tr>
+                <tr><th>DCI</th><td>{{drug_id.dci}}</td></tr>
+                <tr><th>Forma farmac&eacute;utica (CNMB)</th><td>{{drug_id.pharma_form_cnmb}}</td></tr>
+                <tr><th>Formas farmac&eacute;uticas (ARCSA)</th><td>{{drug_id.pharma_form_arcsa}}</td></tr>
+                <tr><th>Concentraci&oacute;n</th><td>{{drug_id.concentration}}</td></tr>
+                <tr><th>V&iacute;a de administraci&oacute;n</th><td>{{drug_id.admin_route}}</td></tr>
+                <tr><th>Presentaci&oacute;n comercial</th><td>{{drug_id.commercial_presentation}}</td></tr>
+                <tr><th>Informaci&oacute;n sanitaria</th><td>{{drug_id.sanitary_info}}</td></tr>
+            </table>
+
+            <p class="section-title">2. INDICACI&Oacute;N TERAP&Eacute;UTICA</p>
+            <table>
+                <tr><th style="width:30%;">2.1. Indicaci&oacute;n terap&eacute;utica</th><td>{{therapeutic_indication.indication}}</td></tr>
+                <tr><th>2.2. Mecanismo de acci&oacute;n</th><td>{{therapeutic_indication.mechanism_of_action}}</td></tr>
+                <tr><th>2.3. Pauta de dosificaci&oacute;n</th><td>{{therapeutic_indication.dosage_guideline}}</td></tr>
+                <tr><th>2.4. Alternativas en CNMB</th><td>{{therapeutic_indication.alternatives_cnmb}}</td></tr>
+                <tr><th>2.5. Alternativas no en CNMB</th><td>{{therapeutic_indication.alternatives_not_cnmb}}</td></tr>
+            </table>
+
+            <p class="section-title">3. POL&Iacute;TICAS DE COBERTURA</p>
+            <p class="sub-section-title">3.1. Pol&iacute;ticas de cobertura</p>
+            <table><thead><tr><th>Pa&iacute;s/Agencia Sanitaria</th><th>Indicaci&oacute;n y Condiciones de Cobertura</th><th>Fecha</th></tr></thead><tbody>{{policies_rows}}</tbody></table>
+            <p class="sub-section-title">3.2. Indicaciones formalmente aprobadas</p>
+            <table><thead><tr><th>Agencia sanitaria</th><th>Indicaci&oacute;n aprobada</th><th>Tipo</th><th>Fecha</th></tr></thead><tbody>{{approvals_rows}}</tbody></table>
+
+            <div class="page-break"></div>
+
+            <p class="section-title">5. B&Uacute;SQUEDA DE EVIDENCIA CIENT&Iacute;FICA</p>
+            <p class="sub-section-title">Pregunta PICO</p>
+            <table>
+                <tr><th style="width:10%;">P</th><td>{{pico.p}}</td></tr>
+                <tr><th>I</th><td>{{pico.i}}</td></tr>
+                <tr><th>C</th><td>{{pico.c}}</td></tr>
+                <tr><th>O</th><td>{{pico.o}}</td></tr>
+            </table>
+            <p class="sub-section-title">Estrategia de B&uacute;squeda</p>
+            <table>
+                <thead><tr><th style="width:25%;">Base de Datos</th><th>Estrategia Utilizada</th></tr></thead>
+                <tbody>{{search_strategy_rows}}</tbody>
+            </table>
+            {{studies_section}}
+
+            <p class="section-title">6. DATOS DE EFICACIA Y SEGURIDAD</p>
+            <p class="sub-section-title">Tabla de Resumen de Hallazgos (Formato GRADE)</p>
+            {{grade_tables}}
+            <p class="sub-section-title">Datos de seguridad</p>
+            <table>
+                <tr><th>Detalle de reacciones adversas</th><td>{{safety_details.adverse_reactions}}</td></tr>
+                <tr><th>&iquest;Alertas sanitarias graves?</th><td>{{safety_details.has_alerts}}. {{safety_details.alerts_details}}</td></tr>
+                <tr><th>&iquest;M&aacute;s seguro que alternativas CNMB?</th><td>{{safety_details.is_safer}}. {{safety_details.safety_justification}}</td></tr>
+            </table>
+
+            <p class="section-title">7. DATOS ECON&Oacute;MICOS</p>
+            <table>
+                <tr><th style="width:30%;">Precio unitario</th><td>{{economic_data.unit_price}}</td></tr>
+                <tr><th>Posolog&iacute;a</th><td>{{economic_data.posology}}</td></tr>
+                <tr><th>Costo anual por paciente</th><td>{{economic_data.annual_cost}}</td></tr>
+                <tr><th>An&aacute;lisis de costos</th><td>{{economic_data.cost_analysis_justification}}</td></tr>
+                <tr><th>Resumen farmacoecon&oacute;mico</th><td>{{economic_data.pharmacoeconomic_summary}}</td></tr>
+            </table>
+
+            <p class="section-title">8. DATOS DE CONVENIENCIA</p>
+            <table>
+                <tr><th style="width:30%;">&iquest;Frecuencia de administraci&oacute;n menor?</th><td>{{convenience_data.frequency}} - {{convenience_data.frequency_justification}}</td></tr>
+                <tr><th>&iquest;Mejora la adherencia?</th><td>{{convenience_data.adherence}} - {{convenience_data.adherence_justification}}</td></tr>
+                <tr><th>&iquest;Disminuye hospitalizaci&oacute;n?</th><td>{{convenience_data.hospitalization}} - {{convenience_data.hospitalization_justification}}</td></tr>
+            </table>
+            
+            <p class="section-title">9. CONCLUSI&Oacute;N DEL REVISOR</p>
+            <p>{{conclusion_text}}</p>
+
+            <p class="section-title">10. BIBLIOGRAF&Iacute;A</p>
+            <ul>{{bibliography_items}}</ul>
+
+            <div class="page-break"></div>
+            
+            <p class="section-title">13. MATRIZ 1: EVALUACI&Oacute;N INICIAL</p>
+            <table>
+                <thead><tr><th style="width:15%">Categor&iacute;a</th><th>Pregunta</th><th style="width:15%">Resultado</th><th style="width:10%">Puntaje</th><th>Justificaci&oacute;n</th></tr></thead>
+                <tbody>{{matrix_rows}}</tbody>
+                <tfoot>
+                    <tr><td colspan="3" style="text-align:right; font-weight:bold;">PUNTAJE TOTAL</td><td><strong>{{total_score}}</strong></td><td></td></tr>
+                    <tr><td colspan="3" style="text-align:right; font-weight:bold;">DECISI&Oacute;N</td><td colspan="2"><strong>{{decision}}</strong></td></tr>
+                </tfoot>
+            </table>
+            <img src="https://alcyedmundo281.github.io/Aladine/assets/image10.png" alt="Pie de página CONAMEI" class="footer-img" style="margin-top: 50px;">
+        </div>
+    </body>
+    </html>
+    `;
+
+    /**
+     * WORKFLOW PRINCIPAL
+     */
+    async function handleGenerateClick() {
+        const apiKey = apiKeyInput.value.trim();
+        const dci = dciInput.value.trim();
+        const indication = indicationInput.value.trim();
+        if (!apiKey || !dci || !indication) { showStatus("ERROR: Completa todos los campos."); return; }
+
+        generateBtn.disabled = true;
+        loader.classList.remove('hidden');
+        resultContainer.classList.add('hidden');
+        
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;
+
+        try {
+            // --- PASO 1: RECOPILAR EVIDENCIA ---
+            showStatus('Paso 1/3: Recopilando evidencia m&eacute;dica...');
+            const searcherPrompt = buildSearcherPrompt(dci, indication);
+            const searchResponse = await fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: searcherPrompt }] }] })
+            });
+            if (!searchResponse.ok) throw new Error(`Error en API (Paso 1): ${searchResponse.status}`);
+            const searchData = await searchResponse.json();
+            const evidenceText = searchData.candidates[0].content.parts[0].text.replace(/^```json\s*|```\s*$/g, '').trim();
+            const evidence = JSON.parse(evidenceText);
+            
+            // --- PASO 2: EVALUACIÓN POR IA EXPERTA ---
+            showStatus('Paso 2/3: Realizando evaluaci&oacute;n HTA experta...');
+            const evaluatorPrompt = buildEvaluatorPrompt(evidence);
+            const evaluatorResponse = await fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: evaluatorPrompt }] }] })
+            });
+            if (!evaluatorResponse.ok) throw new Error(`Error en API (Paso 2): ${evaluatorResponse.status}`);
+            const evaluatorData = await evaluatorResponse.json();
+            const evaluationText = evaluatorData.candidates[0].content.parts[0].text.replace(/^```json\s*|```\s*$/g, '').trim();
+            const evaluationResult = JSON.parse(evaluationText);
+
+            // --- PASO 3: ENSAMBLAJE FINAL (LÓGICA LOCAL) ---
+            showStatus('Paso 3/3: Ensamblando el informe HTML final...');
+            
+            const renderPoliciesRows = (data) => Array.isArray(data) ? data.map(row => `<tr><td>${row['agency'] || 'N/A'}</td><td><p class="bold">${row['indication'] || 'N/A'}</p><small>${row['details'] || ''}</small></td><td>${row['date'] || 'N/A'}</td></tr>`).join('') : '';
+            const renderApprovalsRows = (data) => Array.isArray(data) ? data.map(row => `<tr><td>${row['agency'] || 'N/A'}</td><td>${row['indication'] || 'N/A'}</td><td>${row['type'] || 'N/A'}</td><td>${row['date'] || 'N/A'}</td></tr>`).join('') : '';
+            const renderSearchStrategyRows = (data) => Array.isArray(data) ? data.map(row => `<tr><td>${row['database'] || 'N/A'}</td><td><code>${row['strategy'] || 'N/A'}</code></td></tr>`).join('') : '';
+            const renderMatrixRows = (data) => Array.isArray(data) ? data.map(row => `<tr><td>${row.category}</td><td>${row.question}</td><td>${row.result}</td><td>${row.score}</td><td>${row.justification}</td></tr>`).join('') : '';
+
+            let studiesSectionHtml = '';
+            if (Array.isArray(evidence.studies)) {
+                evidence.studies.forEach(study => {
+                    studiesSectionHtml += `
+                        <p class="sub-section-title">${study.title || 'Estudio de Evidencia'}</p>
+                        <table>
+                            <tr><th style="width:25%;">Referencia</th><td>${study.reference || 'N/A'}</td></tr>
+                            <tr><th>Tipo de Estudio</th><td>${study.type || 'N/A'}</td></tr>
+                            <tr><th>Nivel / Grado</th><td>${study.evidence_level || 'N/A'} / ${study.recommendation_grade || 'N/A'}</td></tr>
+                            <tr><th>S&iacute;ntesis</th><td><p>${study.synthesis || 'N/A'}</p></td></tr>
+                        </table>`;
+                });
+            }
+
+            let gradeTablesHtml = '';
+            if (Array.isArray(evidence.grade_summary)) {
+                evidence.grade_summary.forEach(grade => {
+                    gradeTablesHtml += `
+                        <p class="sub-section-title">${grade.outcome}</p>
+                        <table style="font-size: 8pt;">
+                            <thead><tr><th>Diseño</th><th>Riesgo Sesgo</th><th>Incons.</th><th>Indirec.</th><th>Imprec.</th><th>Otras</th><th>Efecto Relativo</th><th>Efecto Absoluto</th><th>Certeza</th></tr></thead>
+                            <tbody><tr><td>${grade.design || 'N/A'}</td><td>${grade.risk_of_bias || 'N/A'}</td><td>${grade.inconsistency || 'N/A'}</td><td>${grade.indirectness || 'N/A'}</td><td>${grade.imprecision || 'N/A'}</td><td>${grade.other || 'N/A'}</td><td>${grade.relative_effect || 'N/A'}</td><td>${grade.absolute_effect || 'N/A'}</td><td class="bold">${grade.certainty || 'N/A'}</td></tr></tbody>
+                        </table>`;
+                });
+            }
+
+            const getValue = (obj, path) => path.split('.').reduce((acc, part) => acc && acc[part], obj) || 'No encontrado';
+            let finalHtml = HTML_TEMPLATE
+                .replace('{{report_id}}', `CONAMEI-2024-${Math.floor(Math.random() * 90 + 10)}`)
+                .replace('{{city_date}}', new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }))
+                .replace(/{{drug_id\.atc_code}}/g, getValue(evidence, 'drug_id.atc_code'))
+                .replace(/{{drug_id\.dci}}/g, getValue(evidence, 'drug_id.dci'))
+                .replace(/{{drug_id\.pharma_form_cnmb}}/g, getValue(evidence, 'drug_id.pharma_form_cnmb'))
+                .replace(/{{drug_id\.pharma_form_arcsa}}/g, getValue(evidence, 'drug_id.pharma_form_arcsa'))
+                .replace(/{{drug_id\.concentration}}/g, getValue(evidence, 'drug_id.concentration'))
+                .replace(/{{drug_id\.admin_route}}/g, getValue(evidence, 'drug_id.admin_route'))
+                .replace(/{{drug_id\.commercial_presentation}}/g, getValue(evidence, 'drug_id.commercial_presentation'))
+                .replace(/{{drug_id\.sanitary_info}}/g, getValue(evidence, 'drug_id.sanitary_info'))
+                .replace(/{{therapeutic_indication\.indication}}/g, getValue(evidence, 'therapeutic_indication.indication'))
+                .replace(/{{therapeutic_indication\.mechanism_of_action}}/g, getValue(evidence, 'therapeutic_indication.mechanism_of_action'))
+                .replace(/{{therapeutic_indication\.dosage_guideline}}/g, getValue(evidence, 'therapeutic_indication.dosage_guideline'))
+                .replace(/{{therapeutic_indication\.alternatives_cnmb}}/g, getValue(evidence, 'therapeutic_indication.alternatives_cnmb'))
+                .replace(/{{therapeutic_indication\.alternatives_not_cnmb}}/g, getValue(evidence, 'therapeutic_indication.alternatives_not_cnmb'))
+                .replace('{{policies_rows}}', renderPoliciesRows(evidence.coverage.policies))
+                .replace('{{approvals_rows}}', renderApprovalsRows(evidence.coverage.approvals))
+                .replace(/{{pico\.p}}/g, getValue(evidence, 'pico.p'))
+                .replace(/{{pico\.i}}/g, getValue(evidence, 'pico.i'))
+                .replace(/{{pico\.c}}/g, getValue(evidence, 'pico.c'))
+                .replace(/{{pico\.o}}/g, getValue(evidence, 'pico.o'))
+                .replace('{{search_strategy_rows}}', renderSearchStrategyRows(evidence.search_strategy))
+                .replace('{{studies_section}}', studiesSectionHtml)
+                .replace('{{grade_tables}}', gradeTablesHtml)
+                .replace('{{safety_details.adverse_reactions}}', getValue(evidence, 'safety_details.adverse_reactions'))
+                .replace('{{safety_details.has_alerts}}', getValue(evidence, 'safety_details.has_alerts'))
+                .replace('{{safety_details.alerts_details}}', getValue(evidence, 'safety_details.alerts_details'))
+                .replace('{{safety_details.is_safer}}', getValue(evidence, 'safety_details.is_safer'))
+                .replace('{{safety_details.safety_justification}}', getValue(evidence, 'safety_details.safety_justification'))
+                .replace('{{economic_data.unit_price}}', getValue(evidence, 'economic_data.unit_price'))
+                .replace('{{economic_data.posology}}', getValue(evidence, 'economic_data.posology'))
+                .replace('{{economic_data.annual_cost}}', getValue(evidence, 'economic_data.annual_cost'))
+                .replace('{{economic_data.cost_analysis_justification}}', getValue(evidence, 'economic_data.cost_analysis_justification'))
+                .replace('{{economic_data.pharmacoeconomic_summary}}', getValue(evidence, 'economic_data.pharmacoeconomic_summary'))
+                .replace('{{convenience_data.frequency}}', getValue(evidence, 'convenience_data.frequency'))
+                .replace('{{convenience_data.adherence}}', getValue(evidence, 'convenience_data.adherence'))
+                .replace('{{convenience_data.hospitalization}}', getValue(evidence, 'convenience_data.hospitalization'))
+                .replace('{{convenience_data.frequency_justification}}', getValue(evidence, 'convenience_data.frequency_justification'))
+                .replace('{{convenience_data.adherence_justification}}', getValue(evidence, 'convenience_data.adherence_justification'))
+                .replace('{{convenience_data.hospitalization_justification}}', getValue(evidence, 'convenience_data.hospitalization_justification'))
+                .replace('{{conclusion_text}}', evaluationResult.conclusion_text)
+                .replace('{{bibliography_items}}', (Array.isArray(evidence.bibliography) ? evidence.bibliography.map(item => `<li>${item}</li>`).join('') : ''))
+                .replace('{{matrix_rows}}', renderMatrixRows(evaluationResult.matrix_rows))
+                .replace('{{total_score}}', evaluationResult.total_score)
+                .replace('{{decision}}', evaluationResult.decision);
+
+            // --- MOSTRAR RESULTADO ---
+            hiddenHtmlSource.value = finalHtml;
+            reportFrame.srcdoc = finalHtml;
+            resultContainer.classList.remove('hidden');
+            showStatus('¡Informe completo generado con éxito!');
+
+        } catch (error) {
+            console.error("Error detallado:", error);
+            let errorMessage = `Error: ${error.message}. Revisa la consola (F12) para más detalles.`;
+            if (error.message.includes('API key not valid')) {
+                errorMessage = 'Error: La API Key no es válida o no tiene permisos para este modelo (prueba gemini-1.5-pro).';
+            } else if (error instanceof SyntaxError) {
+                errorMessage = 'Error: La respuesta de la API no era un JSON válido. Esto puede ser un error temporal del modelo. Inténtalo de nuevo.';
+            }
+            showStatus(errorMessage);
+        } finally {
+            generateBtn.disabled = false;
+            loader.classList.add('hidden');
+        }
+    }
+    
+    // --- Button Event Listeners ---
+    generateBtn.addEventListener('click', handleGenerateClick);
+    copyBtn.addEventListener('click', () => { navigator.clipboard.writeText(hiddenHtmlSource.value); showStatus('¡Código HTML copiado!', true, 3000); });
+    downloadBtn.addEventListener('click', () => { 
+        const blob = new Blob([hiddenHtmlSource.value], { type: 'text/html' }); 
+        const a = document.createElement('a'); 
+        a.href = URL.createObjectURL(blob); 
+        a.download = `informe_conamei_${dciInput.value.trim().toLowerCase() || 'informe'}.html`; 
+        a.click();
+        showStatus('Informe HTML descargado.', true, 3000);
+    });
+</script>
+
 </body>
 </html>
