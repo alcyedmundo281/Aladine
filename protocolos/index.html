@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Protocolos Médicos - HECAM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://www.iess.gob.ec/documents/10162/34411/hcam.png/267d605c-3a3f-42ba-81f1-30de6da52528?t=1432240905000" alt="Logo HECAM" class="logo">
+            <h1>Generador Automático de Protocolos Médicos</h1>
+            <p>Una herramienta para estandarizar la atención en el HECAM</p>
+        </header>
+        
+        <main>
+            <div class="input-section">
+                <label for="protocolTitle">1. Ingrese el título del protocolo a generar:</label>
+                <input type="text" id="protocolTitle" placeholder="Ej: Manejo de la Sepsis en Adultos">
+
+                <!-- NUEVO: Input para la unidad médica -->
+                <label for="medicalUnit">2. Seleccione la Unidad Médica responsable:</label>
+                <select id="medicalUnit">
+                    <option value="Medicina Interna">Medicina Interna</option>
+                    <option value="Neurología">Neurología</option>
+                    <option value="Gastroenterología">Gastroenterología</option>
+                    <option value="Traumatología">Traumatología</option>
+                    <option value="Cardiología">Cardiología</option>
+                    <option value="Neumología">Neumología</option>
+                    <option value="Cirugía General">Cirugía General</option>
+                </select>
+
+                <label for="apiKey">3. Ingrese su Clave API de Google Gemini:</label>
+                <input type="password" id="apiKey" placeholder="Su clave es privada y no se almacena">
+                
+                <!-- NUEVO: Advertencia de seguridad -->
+                <div class="api-warning">
+                    <strong>Nota de Seguridad:</strong> Su clave API se utiliza únicamente para esta sesión, directamente desde su navegador. No se guarda en nuestro código ni se almacena en ningún servidor. Es 100% client-side.
+                </div>
+
+                <button id="generateButton">Generar Protocolo</button>
+            </div>
+            
+            <div class="loader" id="loader" style="display: none;"></div>
+            
+            <div id="protocolOutput" class="protocol-container">
+                <!-- El protocolo generado se insertará aquí -->
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: false });
+        window.mermaid = mermaid;
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
