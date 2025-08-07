@@ -1,60 +1,89 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Protocolos Médicos - HECAM</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <img src="https://www.iess.gob.ec/documents/10162/34411/hcam.png/267d605c-3a3f-42ba-81f1-30de6da52528?t=1432240905000" alt="Logo HECAM" class="logo">
-            <h1>Generador Automático de Protocolos Médicos</h1>
-            <p>Una herramienta para estandarizar la atención en el HECAM</p>
-        </header>
+function renderProtocol(data) {
+    const outputDiv = document.getElementById('protocolOutput');
+    // Comprobación inicial más robusta
+    if (!data || !data.metadata || !data.secciones) {
+        outputDiv.innerHTML = `<p style="color: orange;">El protocolo generado no tiene la estructura esperada o está incompleto.</p>`;
+        console.error("Datos del protocolo inválidos:", data);
+        return;
+    }
+
+    // Construcción segura del encabezado
+    let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo || 'Sin Título'}</h1>`;
+    html += `<p><strong>Código:</strong> ${data.metadata.protocoloCodigo || 'N/A'}</p>`;
+    if (data.metadata.unidadResponsable) {
+        html += `<p><strong>Versión:</strong> ${data.metadata.version || '1.0'} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre || 'N/A'}</p>`;
+    }
+    html += `<p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion || 'N/A'}</p></div><hr>`;
+
+    // Iteración segura de las secciones
+    Object.values(data.secciones).forEach(section => {
+        if (!section || !section.titulo) return; // Salta secciones inválidas
+
+        html += `<section><h2>${section.titulo}</h2>`;
+
+        // Contenido de la justificación
+        if (section.contenido) {
+            if (section.contenido.problemaSaludPublica) html += `<p>${section.contenido.problemaSaludPublica}</p>`;
+            if (section.contenido.prevalencia && section.contenido.prevalencia.institucional_hecam) html += `<p><strong>Prevalencia Institucional:</strong> ${section.contenido.prevalencia.institucional_hecam}</p>`;
+            if (section.contenido.poblacionObjetivo) html += `<p><strong>Población Objetivo:</strong> ${section.contenido.poblacionObjetivo}</p>`;
+            if (Array.isArray(section.contenido.unidadesInvolucradas)) html += `<p><strong>Unidades Involucradas:</strong> ${section.contenido.unidadesInvolucradas.join(', ')}</p>`;
+            if (Array.isArray(section.contenido.resultadosEsperados)) { html += `<strong>Resultados Esperados:</strong><ul>${section.contenido.resultadosEsperados.map(item => `<li>${item}</li>`).join('')}</ul>`; }
+        }
+
+        // Objetivos
+        if (section.general) html += `<p><strong>Objetivo General:</strong> ${section.general}</p>`;
+        if (Array.isArray(section.especificos)) { html += `<strong>Objetivos Específicos:</strong><ul>${section.especificos.map(obj => `<li>${obj}</li>`).join('')}</ul>`; }
         
-        <main>
-            <div class="input-section">
-                <label for="protocolTitle">1. Ingrese el título del protocolo a generar:</label>
-                <input type="text" id="protocolTitle" placeholder="Ej: Manejo de la Sepsis en Adultos">
+        // Glosario
+        if (Array.isArray(section.terminos)) { html += '<ul>'; section.terminos.forEach(term => html += `<li><strong>${term.abreviatura}:</strong> ${term.definicion}</li>`); html += '</ul>'; }
+        
+        // Procedimiento y subsecciones
+        if (section.subsecciones) {
+            Object.values(section.subsecciones).forEach(sub => {
+                if (!sub || !sub.titulo) return;
+                html += `<h3>${sub.titulo}</h3>`;
+                for (const [key, value] of Object.entries(sub)) {
+                    if (key === 'titulo') continue;
+                    const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                    html += `<strong>${formattedKey}:</strong>`;
+                    if (Array.isArray(value)) {
+                         // Manejo específico y seguro para calculadorasRecomendadas
+                        if (key === 'calculadorasRecomendadas' && value.length > 0) {
+                            html += `<ul>${value.map(item => `<li>${item.nombre} (<a href='${item.link}' target='_blank'>Ir a la calculadora</a>)</li>`).join('')}</ul>`;
+                        } else {
+                            html += `<ul>${value.map(v => `<li>${typeof v === 'object' ? JSON.stringify(v) : v}</li>`).join('')}</ul>`;
+                        }
+                    } else if (typeof value === 'object' && value !== null) {
+                        html += `<ul style="list-style-type: none; padding-left: 15px;">`;
+                        for (const [subKey, subValue] of Object.entries(value)) {
+                             html += `<li><em>${subKey.replace(/([A-Z])/g, ' $1').trim()}:</em> ${subValue}</li>`;
+                        }
+                        html += `</ul>`;
+                    }
+                }
+            });
+        }
+        
+        // Algoritmos
+        if (Array.isArray(section.flujogramas)) { section.flujogramas.forEach((flujo) => { html += `<h4>${flujo.tituloFigura}</h4>`; html += `<div class="mermaid">${flujo.descripcion_mermaid}</div>`; }); }
+        
+        // Indicadores
+        if (Array.isArray(section.items) && section.items.length > 0) {
+            html += '<table><thead><tr>';
+            const headers = Object.keys(section.items[0]);
+            headers.forEach(header => html += `<th>${header.charAt(0).toUpperCase() + header.slice(1)}</th>`);
+            html += '</tr></thead><tbody>';
+            section.items.forEach(item => { html += '<tr>'; headers.forEach(header => html += `<td>${item[header] || 'N/A'}</td>`); html += '</tr>'; });
+            html += '</tbody></table>';
+        }
 
-                <!-- NUEVO: Input para la unidad médica -->
-                <label for="medicalUnit">2. Seleccione la Unidad Médica responsable:</label>
-                <select id="medicalUnit">
-                    <option value="Medicina Interna">Medicina Interna</option>
-                    <option value="Neurología">Neurología</option>
-                    <option value="Gastroenterología">Gastroenterología</option>
-                    <option value="Traumatología">Traumatología</option>
-                    <option value="Cardiología">Cardiología</option>
-                    <option value="Neumología">Neumología</option>
-                    <option value="Cirugía General">Cirugía General</option>
-                </select>
+        // Bibliografía
+        if (Array.isArray(section.referencias)) { html += '<h4>Referencias</h4><ol>'; section.referencias.forEach(ref => html += `<li>${ref}</li>`); html += '</ol>'; }
 
-                <label for="apiKey">3. Ingrese su Clave API de Google Gemini:</label>
-                <input type="password" id="apiKey" placeholder="Su clave es privada y no se almacena">
-                
-                <!-- NUEVO: Advertencia de seguridad -->
-                <div class="api-warning">
-                    <strong>Nota de Seguridad:</strong> Su clave API se utiliza únicamente para esta sesión, directamente desde su navegador. No se guarda en nuestro código ni se almacena en ningún servidor. Es 100% client-side.
-                </div>
+        html += `</section>`;
+    });
 
-                <button id="generateButton">Generar Protocolo</button>
-            </div>
-            
-            <div class="loader" id="loader" style="display: none;"></div>
-            
-            <div id="protocolOutput" class="protocol-container">
-                <!-- El protocolo generado se insertará aquí -->
-            </div>
-        </main>
-    </div>
-
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: false });
-        window.mermaid = mermaid;
-    </script>
-    <script src="script.js"></script>
-</body>
-</html>
+    outputDiv.innerHTML = html;
+    // El renderizado de Mermaid debe estar en un try-catch para no detener la app
+    setTimeout(() => { try { if (window.mermaid) window.mermaid.run(); } catch (e) { console.error("Error al renderizar Mermaid:", e); } }, 100);
+}
