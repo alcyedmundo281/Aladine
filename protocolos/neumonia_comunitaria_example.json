@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "protocoloCodigo": "HECAM-MI-PR-002",
+    "titulo": "Manejo de la Neumonía Adquirida en la Comunidad (NAC) en Adultos",
+    "version": "1.0",
+    "fechaElaboracion": "2024-10-26",
+    "fechaVigencia": "2026-10-26",
+    "unidadResponsable": {
+      "nombre": "Unidad Técnica de Medicina Interna"
+    },
+    "autores": [{"nombre": "Dr. Juan Pérez", "rol": "Médico Especialista en Neumología"}],
+    "revisores": [],
+    "aprobador": {}
+  },
+  "secciones": {
+    "justificacion": {
+      "titulo": "1. Justificación",
+      "contenido": {
+        "problemaSaludPublica": "La Neumonía Adquirida en la Comunidad (NAC) es una de las principales causas de morbimortalidad por enfermedades infecciosas a nivel mundial y una causa frecuente de hospitalización.",
+        "prevalencia": {
+          "institucional_hecam": "En el HECAM, la NAC representa un porcentaje significativo de los ingresos al servicio de Medicina Interna, especialmente durante los picos estacionales. Un manejo estandarizado es clave para mejorar los desenlaces y optimizar el uso de antibióticos."
+        },
+        "poblacionObjetivo": "Pacientes adultos inmunocompetentes con diagnóstico de NAC.",
+        "unidadesInvolucradas": ["Medicina Interna", "Neumología", "Emergencia", "Laboratorio Clínico", "Imagenología", "Farmacia"]
+      }
+    },
+    "objetivos": {
+        "titulo": "2. Objetivos",
+        "general": "Establecer un protocolo para el diagnóstico, estratificación de riesgo y tratamiento de la NAC en adultos en el HECAM, promoviendo el uso racional de antibióticos.",
+        "especificos": ["Definir criterios diagnósticos y de ingreso hospitalario.", "Implementar el uso de escalas de riesgo como CURB-65 para guiar el manejo.", "Establecer esquemas antibióticos empíricos basados en la estratificación de riesgo y el CNMB.", "Definir criterios de cambio a terapia oral y de alta hospitalaria."]
+    },
+    "glosario": {
+        "titulo": "3. Glosario",
+        "terminos": [
+            {"abreviatura": "NAC", "definicion": "Neumonía Adquirida en la Comunidad"},
+            {"abreviatura": "CURB-65", "definicion": "Escala de riesgo (Confusión, Urea, Frecuencia Respiratoria, Presión Arterial, Edad ≥ 65)"},
+            {"abreviatura": "PSI", "definicion": "Pneumonia Severity Index"},
+            {"abreviatura": "UCI", "definicion": "Unidad de Cuidados Intensivos"},
+            {"abreviatura": "EPOC", "definicion": "Enfermedad Pulmonar Obstructiva Crónica"}
+        ]
+    },
+    "procedimiento": {
+      "titulo": "4. Procedimiento",
+      "subsecciones": {
+        "diagnostico": {
+          "titulo": "4.1. Diagnóstico y Estratificación",
+          "criteriosDiagnosticos": ["Presencia de un infiltrado nuevo en la radiografía de tórax más al menos dos de los siguientes: fiebre/hipotermia, tos (con o sin esputo), disnea, leucocitosis/leucopenia, dolor pleurítico."],
+          "estratificacionRiesgo": {
+            "descripcion": "Utilizar la escala CURB-65 para decidir el lugar de tratamiento.",
+            "calculadorasRecomendadas": [{"nombre": "Calculadora CURB-65", "link": "https://www.mdcalc.com/calc/390/curb-65-score-pneumonia-severity"}]
+          }
+        },
+        "planTerapeutico": {
+          "titulo": "4.2. Plan Terapéutico",
+          "tratamientoFarmacologico": {
+            "algoritmoTerapeutico": [
+              {"paso": "CURB-65: 0-1 (Manejo Ambulatorio)", "descripcion": "Monoterapia oral.", "medicamentos_cnmb": [{"nombre": "Amoxicilina", "dosis_tipica": "1g VO cada 8h"} , {"nombre": "Doxiciclina", "dosis_tipica": "100mg VO cada 12h"}]},
+              {"paso": "CURB-65: 2 (Manejo Hospitalario)", "descripcion": "Terapia combinada IV.", "medicamentos_cnmb": [{"nombre": "Ceftriaxona", "dosis_tipica": "1-2g IV cada 24h"} , {"nombre": "Claritromicina", "dosis_tipica": "500mg IV/VO cada 12h"}]},
+              {"paso": "CURB-65: ≥3 (Considerar UCI)", "descripcion": "Terapia combinada IV de amplio espectro.", "medicamentos_cnmb": [{"nombre": "Ceftriaxona + Claritromicina", "dosis_tipica": "Ver dosis previas"}]}
+            ]
+          }
+        }
+      }
+    }
+  }
+}
