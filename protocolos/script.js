@@ -185,72 +185,80 @@ function renderProtocol(data) {
 
         html += `<section><h2>${section.titulo}</h2>`;
 
-        if (key === 'justificacion' && section.contenido) {
+        // Renderizado de contenido simple
+        if (section.contenido) {
             if (section.contenido.problemaSaludPublica) html += `<p>${section.contenido.problemaSaludPublica}</p>`;
             if (section.contenido.prevalencia && section.contenido.prevalencia.institucional_hecam) html += `<p><strong>Prevalencia Institucional:</strong> ${section.contenido.prevalencia.institucional_hecam}</p>`;
             if (section.contenido.poblacionObjetivo) html += `<p><strong>Población Objetivo:</strong> ${section.contenido.poblacionObjetivo}</p>`;
             if (Array.isArray(section.contenido.unidadesInvolucradas)) html += `<p><strong>Unidades Involucradas:</strong> ${section.contenido.unidadesInvolucradas.join(', ')}</p>`;
             if (Array.isArray(section.contenido.resultadosEsperados)) { html += `<strong>Resultados Esperados:</strong><ul>${section.contenido.resultadosEsperados.map(item => `<li>${item}</li>`).join('')}</ul>`; }
-        } else if (key === 'objetivos') {
-             if (section.general) html += `<p><strong>Objetivo General:</strong> ${section.general}</p>`;
-             if (Array.isArray(section.especificos)) { html += `<strong>Objetivos Específicos:</strong><ul>${section.especificos.map(obj => `<li>${obj}</li>`).join('')}</ul>`; }
-        } else if (key === 'glosario' && Array.isArray(section.terminos)) {
-             html += '<ul>'; section.terminos.forEach(term => html += `<li><strong>${term.abreviatura || term.termino}:</strong> ${term.definicion}</li>`); html += '</ul>';
-        } else if (key === 'procedimiento' && section.subsecciones) {
+        }
+        if (section.general) html += `<p><strong>Objetivo General:</strong> ${section.general}</p>`;
+        if (Array.isArray(section.especificos)) { html += `<strong>Objetivos Específicos:</strong><ul>${section.especificos.map(obj => `<li>${obj}</li>`).join('')}</ul>`; }
+        if (Array.isArray(section.terminos)) { html += '<ul>'; section.terminos.forEach(term => html += `<li><strong>${term.abreviatura || term.termino}:</strong> ${term.definicion}</li>`); html += '</ul>'; }
+
+        // --- INICIO DE LA LÓGICA DE RENDERIZADO RECURSIVA Y CORREGIDA ---
+        function renderValue(value) {
+            if (Array.isArray(value)) {
+                let listHtml = '<ul>';
+                value.forEach(item => {
+                    listHtml += `<li>${renderValue(item)}</li>`;
+                });
+                listHtml += '</ul>';
+                return listHtml;
+            } else if (typeof value === 'object' && value !== null) {
+                if (value.nombre && value.link) { // Caso especial para calculadoras
+                    return `${value.nombre} (<a href='${value.link}' target='_blank' rel='noopener noreferrer'>Ir a la calculadora</a>)`;
+                }
+                let objectHtml = '<ul style="list-style-type: none; padding-left: 15px;">';
+                for (const [key, val] of Object.entries(value)) {
+                    const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                    objectHtml += `<li><em>${formattedKey}:</em> ${renderValue(val)}</li>`;
+                }
+                objectHtml += '</ul>';
+                return objectHtml;
+            } else {
+                return value; // Es un string, número, etc.
+            }
+        }
+        
+        if (section.subsecciones) {
             Object.values(section.subsecciones).forEach(sub => {
                 if (!sub || !sub.titulo) return;
                 html += `<h3>${sub.titulo}</h3>`;
-                for (const [subKey, value] of Object.entries(sub)) {
-                    if (subKey === 'titulo') continue;
-                    const formattedKey = subKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                for (const [key, value] of Object.entries(sub)) {
+                    if (key === 'titulo') continue;
+                    const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
                     html += `<strong>${formattedKey}:</strong>`;
-                    if (Array.isArray(value)) {
-                        html += `<ul>`;
-                        value.forEach(item => {
-                            let listItem = '';
-                            if (typeof item === 'object' && item !== null && item.nombre && item.link) { listItem = `${item.nombre} (<a href='${item.link}' target='_blank' rel='noopener noreferrer'>Ir a la calculadora</a>)`;}
-                            else if (typeof item === 'object' && item !== null) { listItem = JSON.stringify(item); }
-                            else { listItem = item; }
-                            html += `<li>${listItem}</li>`;
-                        });
-                        html += `</ul>`;
-                    } else if (typeof value === 'object' && value !== null) {
-                        html += `<ul style="list-style-type: none; padding-left: 15px;">`;
-                        for (const [objKey, objValue] of Object.entries(value)) {
-                            const formattedObjKey = objKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                            html += `<li><em>${formattedObjKey}:</em>`;
-                            if (Array.isArray(objValue)) {
-                                html += `<ul>${objValue.map(item => `<li>${item}</li>`).join('')}</ul>`;
-                            } else { html += ` ${objValue}`; }
-                            html += `</li>`;
-                        }
-                        html += `</ul>`;
-                    }
+                    html += renderValue(value);
                 }
             });
-        } else if (key === 'algoritmosFlujogramas' && Array.isArray(section.flujogramas) && section.flujogramas.length > 0) {
+        }
+        // --- FIN DE LA LÓGICA DE RENDERIZADO CORREGIDA ---
+
+        if (Array.isArray(section.flujogramas) && section.flujogramas.length > 0) {
              section.flujogramas.forEach((flujo) => { html += `<h4>${flujo.tituloFigura || 'Flujograma'}</h4>`; html += `<div class="mermaid">${flujo.descripcion_mermaid}</div>`; });
-        } else if (key === 'indicadores' && Array.isArray(section.items) && section.items.length > 0) {
+        }
+        if (Array.isArray(section.items) && section.items.length > 0) {
             html += '<table><thead><tr>';
             const headers = Object.keys(section.items[0]);
             headers.forEach(header => html += `<th>${header.charAt(0).toUpperCase() + header.slice(1)}</th>`);
             html += '</tr></thead><tbody>';
             section.items.forEach(item => { html += '<tr>'; headers.forEach(header => html += `<td>${item[header] || 'N/A'}</td>`); html += '</tr>'; });
             html += '</tbody></table>';
-        } else if (key === 'bibliografia' && Array.isArray(section.referencias) && section.referencias.length > 0) {
-             html += '<h4>Referencias</h4><ol>'; section.referencias.forEach(ref => html += `<li>${ref}</li>`); html += '</ol>';
-        } else if (!section.contenido && !section.general && !section.terminos && !section.subsecciones && !section.flujogramas && !section.items && !section.referencias) {
-             html += `<p style="color: orange;"><em>Contenido para esta sección no fue generado o no pudo ser interpretado.</em></p>`;
         }
+        if (Array.isArray(section.referencias) && section.referencias.length > 0) {
+             html += '<h4>Referencias</h4><ol>'; section.referencias.forEach(ref => html += `<li>${ref}</li>`); html += '</ol>';
+        } else if (key === 'bibliografia' && (!section.referencias || section.referencias.length === 0)) {
+            html += `<p style="color: orange;"><em>No se generaron referencias bibliográficas.</em></p>`;
+        }
+        
         html += `</section>`;
     });
 
     outputDiv.innerHTML = html;
     
-    actionButtonsDiv.innerHTML = `
-        <button onclick="copyHtml()">Copiar HTML</button>
-        <button onclick="downloadHtml()">Descargar como HTML</button>
-    `;
+    actionButtonsDiv.innerHTML = `<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>`;
 
     setTimeout(() => { 
         try { 
@@ -263,7 +271,6 @@ function renderProtocol(data) {
         } 
     }, 100);
 }
-
 
 /**
  * Copia el contenido HTML del protocolo al portapapeles.
@@ -299,6 +306,12 @@ function downloadHtml() {
  * Crea el prompt para la API de Gemini, incluyendo los ejemplos.
  * @returns {string} - El prompt completo.
  */
+
 function createGeminiPromptWithExamples(newTitle, newUnit, example1, example2) {
-    return `**ROL Y OBJETIVO:**\nEres un asistente médico experto en la redacción de guías clínicas y protocolos hospitalarios para el Hospital de Especialidades Carlos Andrade Marín (HECAM) en Quito, Ecuador. Tu tarea es generar un protocolo completo, basado en evidencia y adaptado al contexto local.\n\n**CONTEXTO CLAVE (DEBE APLICARSE A LA NUEVA GENERACIÓN):**\n1.  **CNMB:** Los medicamentos deben priorizar el Cuadro Nacional de Medicamentos Básicos de Ecuador.\n2.  **ALTITUD:** Siempre que sea relevante (cardio, neumo), añade una nota sobre el impacto de la altitud de Quito (2800m).\n3.  **RECURSOS:** Los recursos y escalas deben ser de acceso libre y validados internacionalmente (ej. MDCalc, calculadoras de sociedades médicas).\n\n**INSTRUCCIÓN:**\nA continuación se presentan dos ejemplos completos de protocolos. Analiza su estructura, nivel de detalle, tono clínico y cómo integran el contexto ecuatoriano. Luego, genera un **NUEVO** protocolo siguiendo **EXACTAMENTE** el mismo formato y calidad.\n\n---\n**EJEMPLO 1:**\n${JSON.stringify(example1, null, 2)}\n---\n\n---\n**EJEMPLO 2:**\n${JSON.stringify(example2, null, 2)}\n---\n\n**TAREA FINAL:**\nAhora, genera un nuevo protocolo en formato JSON válido.\n- **Título del Protocolo:** "${newTitle}"\n- **Unidad Médica Responsable:** "Unidad Técnica de ${newUnit}"\n\n**RECORDATORIO CRÍTICO: Es imperativo que completes TODAS las secciones del JSON, incluyendo algoritmos, indicadores y bibliografía, basándote en la evidencia actual para el tema solicitado. No dejes ninguna sección vacía.**\n\nTu respuesta debe ser **ÚNICAMENTE el objeto JSON completo y válido** para el nuevo protocolo, sin ningún texto, formato markdown o explicación adicional.`;
+    // **NUEVO: Añadimos un ejemplo explícito de código Mermaid simple**
+    const mermaidExample = "graph TD; A[Sospecha de Infección] --> B{Evaluar con qSOFA ≥ 2?}; B -- Sí --> C[Iniciar Paquete de 1 Hora: Cultivos, Lactato, Antibióticos, Fluidos]; B -- No --> D[Monitorear y reevaluar]; C --> E[Reevaluación hemodinámica];";
+
+    return `**ROL Y OBJETIVO:**\nEres un asistente médico experto en la redacción de guías clínicas y protocolos hospitalarios para el Hospital de Especialidades Carlos Andrade Marín (HECAM) en Quito, Ecuador. Tu tarea es generar un protocolo completo, basado en evidencia y adaptado al contexto local.\n\n**CONTEXTO CLAVE (DEBE APLICARSE A LA NUEVA GENERACIÓN):**\n1.  **CNMB:** Los medicamentos deben priorizar el Cuadro Nacional de Medicamentos Básicos de Ecuador.\n2.  **ALTITUD:** Siempre que sea relevante (cardio, neumo), añade una nota sobre el impacto de la altitud de Quito (2800m).\n3.  **RECURSOS:** Los recursos y escalas deben ser de acceso libre y validados internacionalmente (ej. MDCalc, calculadoras de sociedades médicas).\n\n**INSTRUCCIÓN:**\nA continuación se presentan dos ejemplos completos de protocolos. Analiza su estructura, nivel de detalle y tono clínico. Luego, genera un **NUEVO** protocolo siguiendo **EXACTAMENTE** el mismo formato y calidad.\n
+    **IMPORTANTE PARA EL ALGORITMO:** Para la clave "descripcion_mermaid", debes generar un código de diagrama de flujo simple y sintácticamente correcto para Mermaid.js, siguiendo este formato: \`${mermaidExample}\`\n
+    ---\n**EJEMPLO 1:**\n${JSON.stringify(example1, null, 2)}\n---\n\n---\n**EJEMPLO 2:**\n${JSON.stringify(example2, null, 2)}\n---\n\n**TAREA FINAL:**\nAhora, genera un nuevo protocolo en formato JSON válido.\n- **Título del Protocolo:** "${newTitle}"\n- **Unidad Médica Responsable:** "Unidad Técnica de ${newUnit}"\n\n**RECORDATORIO CRÍTICO: Es imperativo que completes TODAS las secciones del JSON, incluyendo algoritmos, indicadores y bibliografía, basándote en la evidencia actual para el tema solicitado. No dejes ninguna sección vacía.**\n\nTu respuesta debe ser **ÚNICAMENTE el objeto JSON completo y válido** para el nuevo protocolo, sin ningún texto, formato markdown o explicación adicional.`;
 }
