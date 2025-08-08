@@ -20,7 +20,7 @@
                 <label for="protocolTitle">1. Ingrese el título del protocolo a generar:</label>
                 <input type="text" id="protocolTitle" placeholder="Ej: Manejo de la Sepsis en Adultos">
 
-                <label for="medicalUnit">2. Seleccione la Unidad Médrica responsable:</label>
+                <label for="medicalUnit">2. Seleccione la Unidad Médica responsable:</label>
                 <select id="medicalUnit">
                     <option value="Medicina Interna">Medicina Interna</option>
                     <option value="Neurología">Neurología</option>
@@ -43,6 +43,11 @@
             
             <div class="loader" id="loader" style="display: none;"></div>
             
+            <!-- =============================================================== -->
+            <!--   ** LÍNEA AÑADIDA: Contenedor para los botones de acción  **   -->
+            <!-- =============================================================== -->
+            <div id="actionButtons" class="action-buttons-container"></div>
+
             <div id="protocolOutput" class="protocol-container"></div>
         </main>
     </div>
