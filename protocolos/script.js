@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Función principal que se activa al hacer clic en el botón.
  */
+// En tu archivo script.js, reemplaza esta función completa:
+
 async function generateProtocol() {
     console.log("Botón presionado. Iniciando generación de protocolo.");
     
@@ -54,11 +56,9 @@ async function generateProtocol() {
     loader.style.display = 'block';
     outputDiv.innerHTML = '';
 
-    // Definir modelName aquí para que esté disponible en el bloque catch.
     const modelName = 'gemini-1.5-flash-latest';
 
     try {
-        // 1. Cargar los archivos JSON de ejemplo de forma asíncrona.
         const [htaResponse, nacResponse] = await Promise.all([
             fetch('hipertension_arterial_example.json'),
             fetch('neumonia_comunitaria_example.json')
@@ -70,10 +70,8 @@ async function generateProtocol() {
         const htaExample = await htaResponse.json();
         const nacExample = await nacResponse.json();
         
-        // 2. Crear el prompt dinámico.
         const prompt = createGeminiPromptWithExamples(protocolTitle, medicalUnit, htaExample, nacExample);
         
-        // 3. Llamar a la API de Gemini.
         const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -82,10 +80,94 @@ async function generateProtocol() {
                 "generationConfig": {
                     "temperature": 0.4,
                     "maxOutputTokens": 8192,
-                    "responseMimeType": "application/json", // Forzar salida JSON
+                    // Dejaremos que la respuesta sea texto para tener más control
+                    // "responseMimeType": "application/json", 
                 }
             })
         });
+
+        const responseData = await apiResponse.json();
+
+        if (!apiResponse.ok) {
+            let errorMessage = `Error ${apiResponse.status}: ${apiResponse.statusText}`;
+            if (responseData && responseData.error && responseData.error.message) {
+                errorMessage += ` - ${responseData.error.message}`;
+            }
+            throw new Error(errorMessage);
+        }
+        
+        // --- INICIO DE LA NUEVA Y MÁS ROBUSTA LÓGICA DE PARSEO ---
+        
+        const rawText = responseData.candidates[0].content.parts[0].text;
+        
+        // Función para extraer el primer objeto JSON válido de una cadena de texto.
+        function extractJson(str) {
+            let firstOpen, firstClose, candidate;
+            firstOpen = str.indexOf('{');
+            if (firstOpen === -1) {
+                return null;
+            }
+            firstClose = str.lastIndexOf('}');
+            if (firstClose === -1) {
+                return null;
+            }
+            
+            // Recorta la cadena desde el primer '{' hasta el último '}'
+            candidate = str.substring(firstOpen, firstClose + 1);
+            try {
+                // Intenta parsear directamente. Si funciona, es un JSON simple.
+                return JSON.parse(candidate);
+            } catch (e) {
+                // Si falla, puede haber múltiples objetos.
+                // Intentamos encontrar el primer objeto completo.
+                console.warn("El parseo directo falló. Intentando encontrar el primer objeto JSON completo...");
+                let openBraces = 0;
+                let jsonEnd = -1;
+
+                for (let i = firstOpen; i < str.length; i++) {
+                    if (str[i] === '{') {
+                        openBraces++;
+                    } else if (str[i] === '}') {
+                        openBraces--;
+                    }
+                    if (openBraces === 0) {
+                        jsonEnd = i + 1;
+                        break;
+                    }
+                }
+                
+                if (jsonEnd !== -1) {
+                    try {
+                        const finalJsonString = str.substring(firstOpen, jsonEnd);
+                        return JSON.parse(finalJsonString);
+                    } catch (finalError) {
+                        console.error("No se pudo parsear el JSON extraído.", finalError);
+                        return null;
+                    }
+                }
+            }
+            return null;
+        }
+
+        const protocolData = extractJson(rawText);
+
+        if (!protocolData) {
+            console.error("Respuesta cruda de la API que no pudo ser parseada:", rawText);
+            throw new Error("La respuesta de la API no contenía un JSON válido que pudiera ser extraído.");
+        }
+        
+        // --- FIN DE LA NUEVA LÓGICA DE PARSEO ---
+
+        localStorage.setItem('lastGeneratedProtocol', JSON.stringify(protocolData));
+        renderProtocol(protocolData);
+
+    } catch (error) {
+        console.error('Error detallado en generateProtocol:', error);
+        outputDiv.innerHTML = `<p style="color: red;"><strong>Ocurrió un error:</strong> ${error.message}. <br><strong>Posibles causas:</strong><br>1. La API Key es inválida, no tiene permisos para el modelo '${modelName}', o tiene restricciones.<br>2. Los archivos JSON de ejemplo no se encuentran en la misma carpeta.<br>3. Problema de red.<br><strong>Revisa la consola del navegador (F12) para más detalles.</strong></p>`;
+    } finally {
+        loader.style.display = 'none';
+    }
+}
 
         const responseData = await apiResponse.json();
 
