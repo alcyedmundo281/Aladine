@@ -34,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// En tu script.js
+/**
+ * Función principal que se activa al hacer clic en el botón.
+ */
 async function generateProtocol() {
     console.log("Botón presionado. Iniciando generación de protocolo.");
     
@@ -77,8 +79,7 @@ async function generateProtocol() {
                 contents: [{ parts: [{ text: prompt }] }],
                 "generationConfig": {
                     "temperature": 0.4,
-                    // *** CAMBIO CLAVE: AUMENTAR EL LÍMITE DE TOKENS AL MÁXIMO PRÁCTICO ***
-                    "maxOutputTokens": 32768, // Aumentado significativamente
+                    "maxOutputTokens": 16384, // Límite de tokens aumentado
                 }
             })
         });
@@ -121,87 +122,6 @@ async function generateProtocol() {
     }
 }
 
-async function generateProtocol() {
-    console.log("Botón presionado. Iniciando generación de protocolo.");
-    
-    const protocolTitle = document.getElementById('protocolTitle').value.trim();
-    const medicalUnit = document.getElementById('medicalUnit').value;
-    const apiKey = document.getElementById('apiKey').value.trim();
-    const loader = document.getElementById('loader');
-    const outputDiv = document.getElementById('protocolOutput');
-    const actionButtonsDiv = document.getElementById('actionButtons');
-
-    if (!protocolTitle || !medicalUnit || !apiKey) {
-        alert("Por favor, complete todos los campos: Título, Unidad Médica y API Key.");
-        return;
-    }
-
-    // Oculta botones de acciones previas y el resultado anterior
-    actionButtonsDiv.innerHTML = '';
-    outputDiv.innerHTML = '';
-    loader.style.display = 'block';
-
-    const modelName = 'gemini-1.5-flash-latest';
-
-    try {
-        const [htaResponse, nacResponse] = await Promise.all([
-            fetch('hipertension_arterial_example.json'),
-            fetch('neumonia_comunitaria_example.json')
-        ]);
-
-        if (!htaResponse.ok) throw new Error(`Fallo al cargar 'hipertension_arterial_example.json' (Estado: ${htaResponse.status})`);
-        if (!nacResponse.ok) throw new Error(`Fallo al cargar 'neumonia_comunitaria_example.json' (Estado: ${nacResponse.status})`);
-        
-        const htaExample = await htaResponse.json();
-        const nacExample = await nacResponse.json();
-        
-        const prompt = createGeminiPromptWithExamples(protocolTitle, medicalUnit, htaExample, nacExample);
-        
-        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                "generationConfig": {
-                    "temperature": 0.4,
-                    "maxOutputTokens": 16384, // Límite de tokens aumentado para protocolos completos
-                }
-            })
-        });
-
-        const responseData = await apiResponse.json();
-
-        if (!apiResponse.ok) {
-            let errorMessage = `Error ${apiResponse.status}: ${apiResponse.statusText}`;
-            if (responseData && responseData.error && responseData.error.message) {
-                errorMessage += ` - ${responseData.error.message}`;
-            }
-            throw new Error(errorMessage);
-        }
-        
-        if (!responseData.candidates || !responseData.candidates[0].content) {
-            const reason = responseData.promptFeedback ? responseData.promptFeedback.blockReason : "Razón desconocida";
-            throw new Error(`La respuesta de la API fue bloqueada o está vacía. Razón: ${reason}.`);
-        }
-        
-        const rawText = responseData.candidates[0].content.parts[0].text;
-        const protocolData = extractJson(rawText);
-
-        if (!protocolData) {
-            console.error("Respuesta cruda de la API que no pudo ser parseada:", rawText);
-            throw new Error("La respuesta de la API no contenía un JSON válido que pudiera ser extraído.");
-        }
-        
-        localStorage.setItem('lastGeneratedProtocol', JSON.stringify(protocolData));
-        renderProtocol(protocolData);
-
-    } catch (error) {
-        console.error('Error detallado en generateProtocol:', error);
-        outputDiv.innerHTML = `<p style="color: red;"><strong>Ocurrió un error:</strong> ${error.message}. <br><strong>Posibles causas:</strong><br>1. La API Key es inválida o tiene restricciones.<br>2. Los archivos JSON de ejemplo no se encuentran en la misma carpeta.<br>3. Problema de red.<br><strong>Revisa la consola (F12) para más detalles.</strong></p>`;
-    } finally {
-        loader.style.display = 'none';
-    }
-}
 
 /**
  * Extrae el primer objeto JSON válido de una cadena de texto.
@@ -239,7 +159,10 @@ function extractJson(str) {
     return null;
 }
 
-// En tu script.js
+/**
+ * Renderiza el objeto de protocolo en el DOM y añade los botones de acción.
+ * @param {object} data - El objeto JSON completo del protocolo.
+ */
 function renderProtocol(data) {
     const outputDiv = document.getElementById('protocolOutput');
     const actionButtonsDiv = document.getElementById('actionButtons');
@@ -251,20 +174,17 @@ function renderProtocol(data) {
 
     let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo || 'Sin Título'}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo || 'HECAM-XX-PR-XXX'}</p><p><strong>Versión:</strong> ${data.metadata.version || '1.0'} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre || 'N/A'}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion || 'N/A'}</p></div><hr>`;
     
-    // **NUEVO: Usamos un array de claves para asegurar el orden de las secciones**
     const sectionKeys = ['justificacion', 'objetivos', 'glosario', 'procedimiento', 'algoritmosFlujogramas', 'indicadores', 'bibliografia'];
 
     sectionKeys.forEach(key => {
         const section = data.secciones[key];
         if (!section || !section.titulo) {
-            // Si la sección falta en el JSON, lo indicamos
-            html += `<section><h2>${key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</h2><p style="color: orange;"><em>Esta sección no fue generada por el modelo.</em></p></section>`;
+            html += `<section><h2>${key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</h2><p style="color: orange;"><em>Esta sección no fue generada por el modelo.</em></p></section>`;
             return;
         }
 
         html += `<section><h2>${section.titulo}</h2>`;
 
-        // Lógica de renderizado específica
         if (key === 'justificacion' && section.contenido) {
             if (section.contenido.problemaSaludPublica) html += `<p>${section.contenido.problemaSaludPublica}</p>`;
             if (section.contenido.prevalencia && section.contenido.prevalencia.institucional_hecam) html += `<p><strong>Prevalencia Institucional:</strong> ${section.contenido.prevalencia.institucional_hecam}</p>`;
@@ -281,7 +201,6 @@ function renderProtocol(data) {
                 if (!sub || !sub.titulo) return;
                 html += `<h3>${sub.titulo}</h3>`;
                 for (const [subKey, value] of Object.entries(sub)) {
-                    // ... (la lógica interna de renderizado de subsecciones que ya funcionaba)
                     if (subKey === 'titulo') continue;
                     const formattedKey = subKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
                     html += `<strong>${formattedKey}:</strong>`;
@@ -320,17 +239,18 @@ function renderProtocol(data) {
             html += '</tbody></table>';
         } else if (key === 'bibliografia' && Array.isArray(section.referencias) && section.referencias.length > 0) {
              html += '<h4>Referencias</h4><ol>'; section.referencias.forEach(ref => html += `<li>${ref}</li>`); html += '</ol>';
-        } else if (!html.endsWith('</section>')) {
-             // Si la sección estaba en el JSON pero no tenía contenido renderizable
+        } else if (!section.contenido && !section.general && !section.terminos && !section.subsecciones && !section.flujogramas && !section.items && !section.referencias) {
              html += `<p style="color: orange;"><em>Contenido para esta sección no fue generado o no pudo ser interpretado.</em></p>`;
         }
-
         html += `</section>`;
     });
 
     outputDiv.innerHTML = html;
     
-    actionButtonsDiv.innerHTML = `<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>`;
+    actionButtonsDiv.innerHTML = `
+        <button onclick="copyHtml()">Copiar HTML</button>
+        <button onclick="downloadHtml()">Descargar como HTML</button>
+    `;
 
     setTimeout(() => { 
         try { 
@@ -343,6 +263,7 @@ function renderProtocol(data) {
         } 
     }, 100);
 }
+
 
 /**
  * Copia el contenido HTML del protocolo al portapapeles.
@@ -373,7 +294,11 @@ function downloadHtml() {
     document.body.removeChild(link);
 }
 
-// En tu script.js
+
+/**
+ * Crea el prompt para la API de Gemini, incluyendo los ejemplos.
+ * @returns {string} - El prompt completo.
+ */
 function createGeminiPromptWithExamples(newTitle, newUnit, example1, example2) {
     return `**ROL Y OBJETIVO:**\nEres un asistente médico experto en la redacción de guías clínicas y protocolos hospitalarios para el Hospital de Especialidades Carlos Andrade Marín (HECAM) en Quito, Ecuador. Tu tarea es generar un protocolo completo, basado en evidencia y adaptado al contexto local.\n\n**CONTEXTO CLAVE (DEBE APLICARSE A LA NUEVA GENERACIÓN):**\n1.  **CNMB:** Los medicamentos deben priorizar el Cuadro Nacional de Medicamentos Básicos de Ecuador.\n2.  **ALTITUD:** Siempre que sea relevante (cardio, neumo), añade una nota sobre el impacto de la altitud de Quito (2800m).\n3.  **RECURSOS:** Los recursos y escalas deben ser de acceso libre y validados internacionalmente (ej. MDCalc, calculadoras de sociedades médicas).\n\n**INSTRUCCIÓN:**\nA continuación se presentan dos ejemplos completos de protocolos. Analiza su estructura, nivel de detalle, tono clínico y cómo integran el contexto ecuatoriano. Luego, genera un **NUEVO** protocolo siguiendo **EXACTAMENTE** el mismo formato y calidad.\n\n---\n**EJEMPLO 1:**\n${JSON.stringify(example1, null, 2)}\n---\n\n---\n**EJEMPLO 2:**\n${JSON.stringify(example2, null, 2)}\n---\n\n**TAREA FINAL:**\nAhora, genera un nuevo protocolo en formato JSON válido.\n- **Título del Protocolo:** "${newTitle}"\n- **Unidad Médica Responsable:** "Unidad Técnica de ${newUnit}"\n\n**RECORDATORIO CRÍTICO: Es imperativo que completes TODAS las secciones del JSON, incluyendo algoritmos, indicadores y bibliografía, basándote en la evidencia actual para el tema solicitado. No dejes ninguna sección vacía.**\n\nTu respuesta debe ser **ÚNICAMENTE el objeto JSON completo y válido** para el nuevo protocolo, sin ningún texto, formato markdown o explicación adicional.`;
 }
