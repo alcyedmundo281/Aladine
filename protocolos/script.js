@@ -1,24 +1,23 @@
 // =============================================================================
-//  SCRIPT.JS - VERSIÓN COMPLETA Y CORREGIDA
+//  SCRIPT.JS - VERSIÓN FINAL UNIFICADA Y CORREGIDA
 // =============================================================================
 
-// Espera a que el DOM esté completamente cargado antes de ejecutar cualquier script.
+// Espera a que el DOM esté completamente cargado para iniciar la app.
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM listo. Inicializando la aplicación...");
 
     const generateButton = document.getElementById('generateButton');
     
-    // Asocia el evento 'click' al botón.
     if (generateButton) {
-        console.log("Botón 'Generar Protocolo' encontrado. Asociando evento.");
+        console.log("Botón 'Generar Protocolo' encontrado y evento asociado.");
         generateButton.addEventListener('click', generateProtocol);
     } else {
         console.error("Error CRÍTICO: No se encontró el botón con id='generateButton'.");
-        alert("Error de inicialización. El botón de generar no se encuentra.");
+        alert("Error de inicialización: El botón de generar no se encuentra.");
         return;
     }
 
-    // Intenta cargar el último protocolo guardado para conveniencia del usuario.
+    // Carga el último protocolo guardado si existe.
     try {
         const savedProtocol = localStorage.getItem('lastGeneratedProtocol');
         if (savedProtocol) {
@@ -26,19 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const protocolData = JSON.parse(savedProtocol);
             renderProtocol(protocolData);
             document.getElementById('protocolTitle').value = protocolData.metadata.titulo;
-            document.getElementById('medicalUnit').value = protocolData.metadata.unidadResponsable.nombre.replace('Unidad Técnica de ', '');
+            const unitName = protocolData.metadata.unidadResponsable.nombre.replace('Unidad Técnica de ', '');
+            document.getElementById('medicalUnit').value = unitName;
         }
     } catch (e) {
         console.error("Error al cargar datos desde Local Storage:", e);
-        localStorage.removeItem('lastGeneratedProtocol'); // Limpia datos corruptos.
+        localStorage.removeItem('lastGeneratedProtocol');
     }
 });
 
 /**
  * Función principal que se activa al hacer clic en el botón.
  */
-// En tu archivo script.js, reemplaza esta función completa:
-
 async function generateProtocol() {
     console.log("Botón presionado. Iniciando generación de protocolo.");
     
@@ -47,14 +45,17 @@ async function generateProtocol() {
     const apiKey = document.getElementById('apiKey').value.trim();
     const loader = document.getElementById('loader');
     const outputDiv = document.getElementById('protocolOutput');
+    const actionButtonsDiv = document.getElementById('actionButtons');
 
     if (!protocolTitle || !medicalUnit || !apiKey) {
         alert("Por favor, complete todos los campos: Título, Unidad Médica y API Key.");
         return;
     }
 
-    loader.style.display = 'block';
+    // Oculta botones de acciones previas y el resultado anterior
+    actionButtonsDiv.innerHTML = '';
     outputDiv.innerHTML = '';
+    loader.style.display = 'block';
 
     const modelName = 'gemini-1.5-flash-latest';
 
@@ -79,9 +80,7 @@ async function generateProtocol() {
                 contents: [{ parts: [{ text: prompt }] }],
                 "generationConfig": {
                     "temperature": 0.4,
-                    "maxOutputTokens": 8192,
-                    // Dejaremos que la respuesta sea texto para tener más control
-                    // "responseMimeType": "application/json", 
+                    "maxOutputTokens": 16384, // Límite de tokens aumentado para protocolos completos
                 }
             })
         });
@@ -96,59 +95,12 @@ async function generateProtocol() {
             throw new Error(errorMessage);
         }
         
-        // --- INICIO DE LA NUEVA Y MÁS ROBUSTA LÓGICA DE PARSEO ---
+        if (!responseData.candidates || !responseData.candidates[0].content) {
+            const reason = responseData.promptFeedback ? responseData.promptFeedback.blockReason : "Razón desconocida";
+            throw new Error(`La respuesta de la API fue bloqueada o está vacía. Razón: ${reason}.`);
+        }
         
         const rawText = responseData.candidates[0].content.parts[0].text;
-        
-        // Función para extraer el primer objeto JSON válido de una cadena de texto.
-        function extractJson(str) {
-            let firstOpen, firstClose, candidate;
-            firstOpen = str.indexOf('{');
-            if (firstOpen === -1) {
-                return null;
-            }
-            firstClose = str.lastIndexOf('}');
-            if (firstClose === -1) {
-                return null;
-            }
-            
-            // Recorta la cadena desde el primer '{' hasta el último '}'
-            candidate = str.substring(firstOpen, firstClose + 1);
-            try {
-                // Intenta parsear directamente. Si funciona, es un JSON simple.
-                return JSON.parse(candidate);
-            } catch (e) {
-                // Si falla, puede haber múltiples objetos.
-                // Intentamos encontrar el primer objeto completo.
-                console.warn("El parseo directo falló. Intentando encontrar el primer objeto JSON completo...");
-                let openBraces = 0;
-                let jsonEnd = -1;
-
-                for (let i = firstOpen; i < str.length; i++) {
-                    if (str[i] === '{') {
-                        openBraces++;
-                    } else if (str[i] === '}') {
-                        openBraces--;
-                    }
-                    if (openBraces === 0) {
-                        jsonEnd = i + 1;
-                        break;
-                    }
-                }
-                
-                if (jsonEnd !== -1) {
-                    try {
-                        const finalJsonString = str.substring(firstOpen, jsonEnd);
-                        return JSON.parse(finalJsonString);
-                    } catch (finalError) {
-                        console.error("No se pudo parsear el JSON extraído.", finalError);
-                        return null;
-                    }
-                }
-            }
-            return null;
-        }
-
         const protocolData = extractJson(rawText);
 
         if (!protocolData) {
@@ -156,72 +108,70 @@ async function generateProtocol() {
             throw new Error("La respuesta de la API no contenía un JSON válido que pudiera ser extraído.");
         }
         
-        // --- FIN DE LA NUEVA LÓGICA DE PARSEO ---
-
         localStorage.setItem('lastGeneratedProtocol', JSON.stringify(protocolData));
         renderProtocol(protocolData);
 
     } catch (error) {
         console.error('Error detallado en generateProtocol:', error);
-        outputDiv.innerHTML = `<p style="color: red;"><strong>Ocurrió un error:</strong> ${error.message}. <br><strong>Posibles causas:</strong><br>1. La API Key es inválida, no tiene permisos para el modelo '${modelName}', o tiene restricciones.<br>2. Los archivos JSON de ejemplo no se encuentran en la misma carpeta.<br>3. Problema de red.<br><strong>Revisa la consola del navegador (F12) para más detalles.</strong></p>`;
-    } finally {
-        loader.style.display = 'none';
-    }
-}
-
-        const responseData = await apiResponse.json();
-
-        if (!apiResponse.ok) {
-            let errorMessage = `Error ${apiResponse.status}: ${apiResponse.statusText}`;
-            if (responseData && responseData.error && responseData.error.message) {
-                errorMessage += ` - ${responseData.error.message}`;
-            }
-            throw new Error(errorMessage);
-        }
-
-        // --- INICIO DE LA CORRECCIÓN DEL PARSEO ---
-        
-        const rawText = responseData.candidates[0].content.parts[0].text;
-        
-        // Lógica de parseo robusta para extraer el JSON de la respuesta de texto.
-        const startIndex = rawText.indexOf('{');
-        const endIndex = rawText.lastIndexOf('}');
-        
-        if (startIndex === -1 || endIndex === -1) {
-            console.error("No se pudo encontrar un objeto JSON válido en la respuesta:", rawText);
-            throw new Error("La respuesta de la API no contenía un formato JSON reconocible.");
-        }
-        
-        const jsonString = rawText.substring(startIndex, endIndex + 1);
-
-        const protocolData = JSON.parse(jsonString);
-
-        // --- FIN DE LA CORRECCIÓN DEL PARSEO ---
-
-        // 4. Guardar y renderizar el resultado.
-        localStorage.setItem('lastGeneratedProtocol', JSON.stringify(protocolData));
-        renderProtocol(protocolData);
-
-    } catch (error) {
-        console.error('Error detallado en generateProtocol:', error);
-        outputDiv.innerHTML = `<p style="color: red;"><strong>Ocurrió un error:</strong> ${error.message}. <br><strong>Posibles causas:</strong><br>1. La API Key es inválida, no tiene permisos para el modelo '${modelName}', o tiene restricciones.<br>2. Los archivos JSON de ejemplo no se encuentran en la misma carpeta.<br>3. Problema de red.<br><strong>Revisa la consola del navegador (F12) para más detalles.</strong></p>`;
+        outputDiv.innerHTML = `<p style="color: red;"><strong>Ocurrió un error:</strong> ${error.message}. <br><strong>Posibles causas:</strong><br>1. La API Key es inválida o tiene restricciones.<br>2. Los archivos JSON de ejemplo no se encuentran en la misma carpeta.<br>3. Problema de red.<br><strong>Revisa la consola (F12) para más detalles.</strong></p>`;
     } finally {
         loader.style.display = 'none';
     }
 }
 
 /**
- * Renderiza el objeto de protocolo en el DOM.
+ * Extrae el primer objeto JSON válido de una cadena de texto.
+ * @param {string} str - La cadena que contiene el JSON.
+ * @returns {object|null} - El objeto JSON parseado o null si no se encuentra.
+ */
+function extractJson(str) {
+    let firstOpen = str.indexOf('{');
+    if (firstOpen === -1) return null;
+    
+    let openBraces = 0;
+    let jsonEnd = -1;
+
+    for (let i = firstOpen; i < str.length; i++) {
+        if (str[i] === '{') {
+            openBraces++;
+        } else if (str[i] === '}') {
+            openBraces--;
+        }
+        if (openBraces === 0) {
+            jsonEnd = i + 1;
+            break;
+        }
+    }
+    
+    if (jsonEnd !== -1) {
+        try {
+            const finalJsonString = str.substring(firstOpen, jsonEnd);
+            return JSON.parse(finalJsonString);
+        } catch (finalError) {
+            console.error("No se pudo parsear el JSON extraído.", finalError);
+            return null;
+        }
+    }
+    return null;
+}
+
+/**
+ * Renderiza el objeto de protocolo en el DOM y añade los botones de acción.
  * @param {object} data - El objeto JSON completo del protocolo.
  */
 function renderProtocol(data) {
     const outputDiv = document.getElementById('protocolOutput');
+    const actionButtonsDiv = document.getElementById('actionButtons');
+
     if (!data || !data.metadata || !data.secciones) {
         outputDiv.innerHTML = `<p style="color: orange;">El protocolo generado no tiene la estructura esperada.</p>`;
         return;
     }
+
     let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo || 'Sin Título'}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo || 'HECAM-XX-PR-XXX'}</p><p><strong>Versión:</strong> ${data.metadata.version || '1.0'} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre || 'N/A'}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion || 'N/A'}</p></div><hr>`;
+    
     Object.values(data.secciones).forEach(section => {
+        // ... (resto de la lógica de renderizado que ya tenías y funcionaba)
         if (!section || !section.titulo) return;
         html += `<section><h2>${section.titulo}</h2>`;
         if (section.contenido) {
@@ -276,16 +226,59 @@ function renderProtocol(data) {
         if (Array.isArray(section.referencias)) { html += '<h4>Referencias</h4><ol>'; section.referencias.forEach(ref => html += `<li>${ref}</li>`); html += '</ol>'; }
         html += `</section>`;
     });
+
     outputDiv.innerHTML = html;
-    setTimeout(() => { try { if (window.mermaid) { document.querySelectorAll('.mermaid').forEach(el => { el.removeAttribute('data-processed'); }); window.mermaid.run(); } } catch (e) { console.error("Error al renderizar Mermaid:", e); } }, 100);
+    
+    // Añade los botones de acción después de renderizar el protocolo.
+    actionButtonsDiv.innerHTML = `
+        <button onclick="copyHtml()">Copiar HTML</button>
+        <button onclick="downloadHtml()">Descargar como HTML</button>
+    `;
+
+    setTimeout(() => { 
+        try { 
+            if (window.mermaid) { 
+                document.querySelectorAll('.mermaid').forEach(el => el.removeAttribute('data-processed')); 
+                window.mermaid.run(); 
+            } 
+        } catch (e) { 
+            console.error("Error al renderizar Mermaid:", e); 
+        } 
+    }, 100);
 }
 
 /**
+ * Copia el contenido HTML del protocolo al portapapeles.
+ */
+function copyHtml() {
+    const protocolHtml = document.getElementById('protocolOutput').innerHTML;
+    navigator.clipboard.writeText(protocolHtml).then(() => {
+        alert('¡HTML del protocolo copiado al portapapeles!');
+    }).catch(err => {
+        console.error('Error al copiar el HTML: ', err);
+        alert('No se pudo copiar el texto. Revisa la consola.');
+    });
+}
+
+/**
+ * Descarga el protocolo como un archivo .html.
+ */
+function downloadHtml() {
+    const protocolHtml = document.getElementById('protocolOutput').innerHTML;
+    const protocolTitle = document.getElementById('protocolTitle').value.trim() || 'protocolo';
+    const fullHtml = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${protocolTitle}</title><style>body{font-family:Arial,sans-serif;line-height:1.6;margin:2cm}h1,h2,h3,h4{color:#005a9c}h2{border-bottom:1px solid #eee;padding-bottom:5px;margin-top:30px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background-color:#f2f2f2}.mermaid{display:none}</style></head><body>${protocolHtml}</body></html>`;
+    const blob = new Blob([fullHtml], { type: 'text/html' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${protocolTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+
+/**
  * Crea el prompt para la API de Gemini, incluyendo los ejemplos.
- * @param {string} newTitle - El título del nuevo protocolo.
- * @param {string} newUnit - La unidad médica responsable.
- * @param {object} example1 - El objeto JSON del primer ejemplo.
- * @param {object} example2 - El objeto JSON del segundo ejemplo.
  * @returns {string} - El prompt completo.
  */
 function createGeminiPromptWithExamples(newTitle, newUnit, example1, example2) {
