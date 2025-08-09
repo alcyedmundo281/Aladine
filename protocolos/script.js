@@ -192,8 +192,6 @@ async function generateSectionContent(sectionKey) {
  * @returns {string} El prompt especializado.
  */
 
-// En tu script.js
-
 function getSpecializedPrompt(sectionKey, protocolTitle, htaExample, nacExample) {
     // **PROMPT SIMPLIFICADO PARA DEPURACIÓN**
     // Nos enfocamos en una sola cosa: que devuelva la clave correcta.
