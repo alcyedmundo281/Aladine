@@ -156,30 +156,55 @@ async function fetchSectionData(sectionKey) {
 
 // --- SECCIÓN 3: FUNCIONES DE UTILIDAD (SIN CAMBIOS) ---
 
+// En tu script.js
+
 function getSpecializedPrompt(sectionKey, protocolTitle, htaExample, nacExample) {
     const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
-    
-    // Simplificamos los ejemplos, ya no son necesarios para la estructura
     const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
-                     `**Tarea:** Genera el contenido para la sección "${sectionKey}" de un protocolo sobre "${protocolTitle}".\n` +
+                     `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
                      `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}".\n`;
-
+    
     let specificInstructions = '';
+    let exampleStructure = {};
 
-    // Instrucciones para las secciones que mantienen su estructura JSON
-    if (['nivelesEvidencia', 'indicadores', 'anexos', 'algoritmosFlujogramas', 'bibliografia'].includes(sectionKey)) {
-        specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto con el contenido estructurado como en los ejemplos anteriores. Para "${protocolTitle}", genera el contenido apropiado.`;
-    } 
-    // Instrucciones para las secciones que ahora usarán Markdown
-    else {
-        specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto que contenga "titulo" y "markdownContent". En "markdownContent", escribe el texto completo y detallado para esta sección usando formato Markdown (ej. ### Título, * Cursiva, ** Negrita, - Elemento de lista). Incluye todos los sub-puntos relevantes como se ve en el documento de Sepsis de ejemplo.`;
+    switch (sectionKey) {
+        // ... (casos para justificacion, objetivos, glosario, procedimiento que ya funcionan bien)
+        case 'justificacion':
+        case 'objetivos':
+        case 'glosario':
+        case 'procedimiento':
+            specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto con "titulo" y "markdownContent". En "markdownContent", escribe el texto completo y detallado usando formato Markdown (### Título, **Negrita**, - Lista). Incluye todos los sub-puntos relevantes como se ve en el documento de Sepsis de ejemplo.`;
+            exampleStructure = { [sectionKey]: { titulo: "...", markdownContent: "..." } };
+            break;
+
+        case 'nivelesEvidencia':
+            specificInstructions = `El valor de la clave debe ser un objeto con "titulo", un array "tablaRecomendaciones" (con 4-6 objetos), y un objeto "interpretacion" con la explicación de GRADE.`;
+            exampleStructure = { nivelesEvidencia: htaExample.secciones.nivelesEvidencia };
+            break;
+
+        // --- CORRECCIONES CLAVE ---
+        case 'algoritmosFlujogramas':
+            specificInstructions = `**Detalles para '${sectionKey}':** El objeto debe contener "titulo" y un array "flujogramas". Genera al menos un flujograma. Cada objeto en el array debe tener "tituloFigura" y "descripcion_mermaid". El valor de "descripcion_mermaid" DEBE ser un string de una sola línea, sintácticamente correcto para Mermaid.js, como este ejemplo: \`${mermaidExample}\`. NO uses saltos de línea ni caracteres complejos dentro del código mermaid.`;
+            exampleStructure = { algoritmosFlujogramas: htaExample.secciones.algoritmosFlujogramas };
+            break;
+
+        case 'indicadores':
+            specificInstructions = `**Detalles para '${sectionKey}':** El objeto debe contener "titulo" y un array "items". Genera 3-5 indicadores de calidad REALISTAS y COMPLETOS para monitorizar el protocolo de "${protocolTitle}". Cada indicador debe ser un objeto con "nombre", "definicion", "calculo", "meta", "periodo", y "responsable". No dejes ningún campo como 'N/A'.`;
+            exampleStructure = { indicadores: htaExample.secciones.indicadores };
+            break;
+
+        case 'bibliografia':
+            specificInstructions = `**Detalles para '${sectionKey}':** El objeto debe contener "titulo" y un array "referencias". El array "referencias" DEBE ser un array de STRINGS, donde cada string es una referencia completa en formato Vancouver. Genera entre 10 y 15 referencias.`;
+            exampleStructure = { bibliografia: htaExample.secciones.bibliografia };
+            break;
+        // --- FIN DE CORRECCIONES ---
+
+        case 'anexos':
+             specificInstructions = `**Detalles para '${sectionKey}':** El objeto debe contener "titulo" y un array "items". Genera un cronograma Gantt con 8 pasos.`;
+             exampleStructure = { anexos: htaExample.secciones.anexos };
+            break;
     }
-
-    // Simplificamos los ejemplos drásticamente
-    const examplePrompt = `\n**Ejemplo de formato para 'justificacion':**\n` +
-                        `{"justificacion": {"titulo": "1. Justificación y Alcance", "markdownContent": "### Carga Global\\nLa enfermedad X es un problema...\\n### Impacto en HECAM\\nEn nuestro hospital..."}}`;
-
-    return `${promptBase}\n${specificInstructions}\n${examplePrompt}`;
+    return `${promptBase}\n${specificInstructions}\n\n**EJEMPLO DE ESTRUCTURA REQUERIDA:**\n${JSON.stringify({[sectionKey]: exampleStructure[sectionKey] || {}})}`;
 }
 
 function extractJson(str) {
