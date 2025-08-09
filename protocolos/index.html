@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generador Avanzado de Protocolos Médicos - HECAM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Generador Avanzado de Protocolos Médicos</h1>
+      <p>Herramienta para protocolos HECAM</p>
+    </header>
+
+    <main>
+      <div class="input-section">
+        <label for="protocolTitle">Título del protocolo:</label>
+        <input type="text" id="protocolTitle" placeholder="Ej: Manejo de la Sepsis en Adultos">
+
+        <label for="medicalUnit">Unidad Médica:</label>
+        <select id="medicalUnit">
+          <option value="Medicina Interna">Medicina Interna</option>
+          <option value="Neurología">Neurología</option>
+          <option value="Gastroenterología">Gastroenterología</option>
+          <option value="Traumatología">Traumatología</option>
+          <option value="Cardiología">Cardiología</option>
+          <option value="Neumología">Neumología</option>
+          <option value="Cirugía General">Cirugía General</option>
+        </select>
+
+        <label for="engine">Motor:</label>
+        <select id="engine">
+          <option value="gemini">Gemini (API)</option>
+          <option value="local">Local (WebGPU)</option>
+          <option value="demo">Demo</option>
+        </select>
+
+        <label for="apiKey">API Key (Gemini):</label>
+        <input type="password" id="apiKey">
+
+        <button id="generateButton">Generar Estructura</button>
+      </div>
+
+      <div id="protocolStructure"></div>
+      <div id="actionButtons"></div>
+      <div id="protocolOutput" style="display:none;"></div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: false });
+    window.mermaid = mermaid;
+    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+    window.webllm = webllm;
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
