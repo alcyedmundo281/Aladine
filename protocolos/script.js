@@ -1,27 +1,23 @@
-// =============================================================================
-//  SCRIPT.JS - VERSIÓN 4.0 (ENFOQUE MULTI-PROMPT)
-// =============================================================================
+// ===============================================================
+//  SCRIPT JAVASCRIPT COMPLETO (ARQUITECTURA MULTI-PROMPT REFACTORIZADA)
+// ===============================================================
 
-// Variable global para almacenar el estado del protocolo en construcción.
-let protocolData = null;
+let protocolData = null; // Estado global para el protocolo en construcción
 
-// Asigna el evento principal al botón cuando el DOM está listo.
+// --- SECCIÓN 1: DATOS JSON PARA "FEW-SHOT LEARNING" ---
+const htaExample = {"metadata":{"protocoloCodigo":"HECAM-MI-PR-001","titulo":"Manejo de la Hipertensión Arterial y Urgencia Hipertensiva en Adultos","version":"1.0","fechaElaboracion":"2024-10-26","fechaVigencia":"2026-10-26","unidadResponsable":{"nombre":"Unidad Técnica de Medicina Interna"},"autores":[{"nombre":"Dr. Alcy Edmundo Torres Guerrero","rol":"Médico Especialista en Medicina Interna"}],"revisores":[{"cargo":"Coordinador General de Investigación","nombre":""},{"cargo":"Coordinador General de Control de Calidad","nombre":""},{"cargo":"Jefe de la Unidad Técnica de Medicina Interna","nombre":""}],"aprobador":{"cargo":"Director Técnico","nombre":""}},"secciones":{"justificacion":{"titulo":"1. Justificación y Alcance","contenido":{"problemaSaludPublica":"La hipertensión arterial (HTA) es un problema de salud pública global y nacional, con una prevalencia en Ecuador cercana al 20% en adultos. Es el principal factor de riesgo modificable para enfermedades cardiovasculares, cerebrovasculares y renales.","prevalencia":{"institucional_hecam":"En el HECAM, la HTA y sus complicaciones, como la urgencia hipertensiva, son una de las principales causas de consulta y hospitalización en Medicina Interna, generando una alta carga asistencial y la necesidad de estandarizar su manejo para prevenir eventos adversos."},"poblacionObjetivo":"Pacientes adultos (>18 años) con diagnóstico de HTA o que presenten una urgencia hipertensiva, atendidos en el HECAM.","contextoAplicacion":"Consulta ambulatoria, hospitalización y atención de urgencias.","unidadesInvolucradas":["Medicina Interna","Cardiología","Nefrología","Emergencia","Farmacia"],"resultadosEsperados":["Mejorar el control de la PA en pacientes tratados.","Reducir la progresión de urgencia a emergencia hipertensiva.","Optimizar el uso de antihipertensivos del CNMB.","Disminuir la variabilidad en la práctica clínica."]}},"objetivos":{"titulo":"2. Objetivos","general":"Establecer un protocolo basado en evidencia para el manejo integral de la HTA y la urgencia hipertensiva en adultos atendidos en el HECAM.","especificos":["Definir criterios diagnósticos de HTA y urgencia hipertensiva, considerando la altitud de Quito.","Establecer un algoritmo de tratamiento farmacológico basado en el CNMB.","Definir un plan de manejo para la urgencia hipertensiva que evite reducciones bruscas de la PA.","Establecer criterios claros de seguimiento y egreso."]},"glosario":{"titulo":"3. Glosario y Definiciones","terminos":[{"abreviatura":"HTA","definicion":"Hipertensión Arterial"},{"abreviatura":"UH","definicion":"Urgencia Hipertensiva"}]},"procedimiento":{"titulo":"4. Procedimiento (Plan de Acción/Actuación)","subsecciones":{}},"nivelesEvidencia":{"titulo":"5. Niveles de Evidencia (GRADE)","interpretacion":{"titulo":"Interpretación de la Metodología GRADE:","nivelEvidencia":{"titulo":"Nivel de Evidencia:","items":[{"nivel":"Alto","descripcion":"Existe una alta confianza en que el efecto estimado se encuentra cercano al efecto real."}]},"fuerzaRecomendacion":{"titulo":"Fuerza de Recomendación:","items":[{"fuerza":"Fuerte","descripcion":"Los beneficios de la intervención superan claramente los riesgos."}]}},"tablaRecomendaciones":[{"area":"Diagnóstico","recomendacion":"Confirmar el diagnóstico de HTA con mediciones fuera de la consulta (MAPA o AMPA).","nivelEvidencia":"Alto","fuerzaRecomendacion":"Fuerte"}]},"algoritmosFlujogramas":{"titulo":"6. Algoritmo de Actuación","flujogramas":[{"tituloFigura":"Figura 1. Manejo de la Urgencia Hipertensiva en HECAM","descripcion_mermaid":"graph TD; A[Paciente con PA ≥ 180/120 mmHg] --> B{¿Signos/Síntomas de DAOD agudo?}; B -- Sí --> C[Manejo como EMERGENCIA HIPERTENSIVA]; B -- No --> D[Diagnóstico: URGENCIA HIPERTENSIVA];"}]},"indicadores":{"titulo":"7. Indicadores de Calidad","items":[{"nombre":"Tasa de progresión de UH a EH","definicion":"Porcentaje de pacientes con UH que desarrollan DAOD durante la hospitalización.","calculo":"(N° de progresiones a EH / N° total de UH) x 100","meta":"< 2%","periodo":"Semestral","responsable":"Jefe de Unidad de Medicina Interna"}]},"bibliografia":{"titulo":"8. Bibliografía","referencias":["Williams B, Mancia G, et al. 2018 ESC/ESH Guidelines for the management of arterial hypertension. Eur Heart J. 2018;39(33):3021-3104."]},"anexos":{"titulo":"9. Anexos","items":[{"tituloAnexo":"Anexo 1: Cronograma de Implementación","tipo":"tabla_gantt","tareas":[{"id":1,"nombre":"Elaboración y Redacción Final del Protocolo","inicio":"2025-10-28","fin":"2025-11-15"}]}]}}};
+const nacExample = {"metadata":{},"secciones":{"procedimiento":{"titulo":"4. Procedimiento","subsecciones":{"diagnostico":{"titulo":"4.1. Diagnóstico y Estratificación","criteriosDiagnosticos":["Presencia de un infiltrado nuevo en la radiografía de tórax más al menos dos de los siguientes: fiebre/hipotermia, tos (con o sin esputo), disnea, leucocitosis/leucopenia, dolor pleurítico."],"estratificacionRiesgo":{"descripcion":"Utilizar la escala CURB-65 para decidir el lugar de tratamiento.","calculadorasRecomendadas":[{"nombre":"Calculadora CURB-65","link":"https://www.mdcalc.com/calc/390/curb-65-score-pneumonia-severity"}]}},"planTerapeutico":{"titulo":"4.2. Plan Terapéutico","tratamientoFarmacologico":{"algoritmoTerapeutico":[{"paso":"CURB-65: 0-1 (Manejo Ambulatorio)","descripcion":"Monoterapia oral.","medicamentos_cnmb":[{"nombre":"Amoxicilina","dosis_tipica":"1g VO cada 8h"},{"nombre":"Doxiciclina","dosis_tipica":"100mg VO cada 12h"}]},{"paso":"CURB-65: 2 (Manejo Hospitalario)","descripcion":"Terapia combinada IV.","medicamentos_cnmb":[{"nombre":"Ceftriaxona","dosis_tipica":"1-2g IV cada 24h"},{"nombre":"Claritromicina","dosis_tipica":"500mg IV/VO cada 12h"}]}]}}}}}; //JSON simplificado para brevedad
+
+// --- SECCIÓN 2: LÓGICA DE LA APLICACIÓN ---
+
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('generateButton').addEventListener('click', generateProtocolStructure);
 });
 
-/**
- * Inicia el proceso. Crea una estructura JSON vacía para el protocolo
- * y renderiza la interfaz de usuario para la generación por secciones.
- */
 function generateProtocolStructure() {
     const protocolTitle = document.getElementById('protocolTitle').value.trim();
-    if (!protocolTitle) {
-        alert("Por favor, ingrese un título para el protocolo.");
-        return;
-    }
+    if (!protocolTitle) { alert("Por favor, ingrese un título."); return; }
     
-    // Resetea la interfaz
     document.getElementById('loader').style.display = 'block';
     document.getElementById('protocolStructure').innerHTML = '';
     document.getElementById('protocolOutput').style.display = 'none';
@@ -32,27 +28,16 @@ function generateProtocolStructure() {
     document.getElementById('loader').style.display = 'none';
 }
 
-/**
- * Crea el objeto JSON esqueleto para un nuevo protocolo.
- * @param {string} title - El título del protocolo.
- * @returns {object} - El objeto JSON base.
- */
 function createBaseStructure(title) {
     const medicalUnit = document.getElementById('medicalUnit').value;
     return {
-        metadata: { 
-            titulo: title, 
-            version: "1.0",
-            unidadResponsable: { nombre: `Unidad Técnica de ${medicalUnit}` },
-            fechaElaboracion: new Date().toISOString().slice(0, 10),
-            protocoloCodigo: "HECAM-XX-PR-XXX"
-        },
+        metadata: { titulo: title, version: "1.0", unidadResponsable: { nombre: `Unidad Técnica de ${medicalUnit}` }, fechaElaboracion: new Date().toISOString().slice(0, 10), protocoloCodigo: "HECAM-XX-PR-XXX" },
         secciones: {
             justificacion: { titulo: "1. Justificación y Alcance", content: null },
             objetivos: { titulo: "2. Objetivos", content: null },
             glosario: { titulo: "3. Glosario y Definiciones", content: null },
-            procedimiento: { titulo: "4. Procedimiento (Plan de Acción/Actuación)", content: null },
-            nivelesEvidencia: { titulo: "5. Nivel de Evidencia y Grado de Recomendaciones (GRADE)", content: null },
+            procedimiento: { titulo: "4. Procedimiento", content: null },
+            nivelesEvidencia: { titulo: "5. Niveles de Evidencia (GRADE)", content: null },
             algoritmosFlujogramas: { titulo: "6. Algoritmo de Actuación", content: null },
             indicadores: { titulo: "7. Indicadores de Calidad", content: null },
             bibliografia: { titulo: "8. Bibliografía", content: null },
@@ -61,157 +46,161 @@ function createBaseStructure(title) {
     };
 }
 
-/**
- * Dibuja en el HTML la lista de secciones con sus botones de generación.
- */
 function renderStructureUI() {
     const container = document.getElementById('protocolStructure');
     container.innerHTML = '<h3>Estructura del Protocolo (Generar contenido por sección):</h3>';
-    
     for (const key in protocolData.secciones) {
-        container.innerHTML += `
-            <div class="section-generator" id="gen-${key}">
-                <span>${protocolData.secciones[key].titulo}</span>
-                <button onclick="generateSectionContent('${key}')">Generar</button>
-            </div>
-        `;
+        container.innerHTML += `<div class="section-generator" id="gen-${key}"><span>${protocolData.secciones[key].titulo}</span><button onclick="generateSectionContent('${key}')">Generar</button></div>`;
     }
-    container.innerHTML += `
-        <div class="section-generator" id="gen-all">
-            <span><strong>GENERAR TODO EL PROTOCOLO</strong> (Puede tomar un momento)</span>
-            <button onclick="generateAllSections()">Generar Todo</button>
-        </div>
-    `;
+    container.innerHTML += `<div class="section-generator" id="gen-all"><span><strong>GENERAR TODO EL PROTOCOLO</strong></span><button onclick="generateAllSections()">Generar Todo</button></div>`;
+}
+
+// --- LÓGICA DE GENERACIÓN (REFACTORIZADA) ---
+
+/**
+ * Función "controladora" que maneja la UI para la generación de una sola sección.
+ * @param {string} sectionKey - La clave de la sección a generar.
+ */
+async function generateSectionContent(sectionKey) {
+    const sectionDiv = document.getElementById(`gen-${sectionKey}`);
+    const button = sectionDiv.querySelector('button');
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Generando...';
+    }
+    
+    try {
+        await fetchSectionData(sectionKey); // Llama a la función núcleo
+        sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
+    } catch (error) {
+        console.error(`Error generando la sección ${sectionKey}:`, error);
+        sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="error">✗ Error</span> <button onclick="generateSectionContent('${sectionKey}')">Reintentar</button>`;
+        // No mostramos alerta aquí para no interrumpir el flujo de "Generar Todo"
+    } finally {
+        if(button) {
+             button.disabled = false;
+             button.textContent = 'Generar';
+        }
+    }
 }
 
 /**
- * Llama a generateSectionContent para todas las secciones de forma secuencial.
+ * Función "controladora" para generar todas las secciones.
  */
 async function generateAllSections() {
     const allButtons = document.querySelectorAll('.section-generator button');
     allButtons.forEach(btn => btn.disabled = true);
     
     for (const sectionKey of Object.keys(protocolData.secciones)) {
-        // Solo genera si la sección aún no ha sido generada
-        if (!protocolData.secciones[sectionKey].content) {
-            await generateSectionContent(sectionKey);
+        const sectionDiv = document.getElementById(`gen-${sectionKey}`);
+        const statusSpan = sectionDiv.querySelector('.status');
+        if (statusSpan) continue; // Si ya está generado, saltar
+
+        const button = sectionDiv.querySelector('button');
+        if (button) button.textContent = 'Generando...';
+
+        try {
+            await fetchSectionData(sectionKey);
+            sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
+        } catch (error) {
+            sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="error">✗ Error</span> <button onclick="generateSectionContent('${sectionKey}')">Reintentar</button>`;
         }
     }
-
-    allButtons.forEach(btn => btn.disabled = false);
-    document.getElementById('gen-all').querySelector('button').textContent = 'Generar Todo';
+    alert('¡Generación de todas las secciones completada!');
 }
 
 /**
- * Genera el contenido para una sección específica usando un prompt especializado.
- * @param {string} sectionKey - La clave de la sección a generar (ej. "justificacion").
+ * Función "núcleo" que se encarga ÚNICAMENTE de la lógica de la API.
+ * @param {string} sectionKey - La clave de la sección a obtener.
  */
-
-async function generateSectionContent(sectionKey) {
-    const sectionDiv = document.getElementById(`gen-${sectionKey}`);
-    const button = sectionDiv.querySelector('button');
-    button.disabled = true;
-    button.textContent = 'Generando...';
-
+async function fetchSectionData(sectionKey) {
     const apiKey = document.getElementById('apiKey').value.trim();
     if (!apiKey) {
-        alert("Por favor, ingrese su API Key.");
-        button.disabled = false;
-        button.textContent = 'Generar';
-        return;
+        throw new Error("API Key no proporcionada.");
     }
+    
+    const prompt = getSpecializedPrompt(sectionKey, protocolData.metadata.titulo, htaExample, nacExample);
+    const modelName = 'gemini-1.5-flash-latest';
 
-    // --- PASO 1: AÑADIMOS LOGS DE DEPURACIÓN ---
-    console.log(`--- Iniciando generación para la sección: ${sectionKey} ---`);
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            "generationConfig": { "temperature": 0.5, "maxOutputTokens": 8192 }
+        })
+    });
 
-    try {
-        const [htaResponse, nacResponse] = await Promise.all([
-            fetch('hipertension_arterial_example.json'),
-            fetch('neumonia_comunitaria_example.json')
-        ]);
-        if (!htaResponse.ok || !nacResponse.ok) throw new Error("No se pudieron cargar los archivos JSON de ejemplo.");
-        
-        const htaExample = await htaResponse.json();
-        const nacExample = await nacResponse.json();
-        
-        const prompt = getSpecializedPrompt(sectionKey, protocolData.metadata.titulo, htaExample, nacExample);
-        console.log(`Prompt para "${sectionKey}":`, prompt); // Log para ver el prompt
-        
-        const modelName = 'gemini-1.5-flash-latest';
-        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                "generationConfig": { "temperature": 0.5, "maxOutputTokens": 8192 }
-            })
-        });
+    const responseData = await apiResponse.json();
+    if (!apiResponse.ok) throw new Error(responseData.error.message || 'Error desconocido en la API');
 
-        const responseData = await apiResponse.json();
-        
-        // Log para ver la respuesta completa de la API
-        console.log(`Respuesta COMPLETA de la API para "${sectionKey}":`, responseData);
+    const rawText = responseData.candidates[0].content.parts[0].text;
+    const generatedContent = extractJson(rawText);
 
-        if (!apiResponse.ok) throw new Error(responseData.error.message);
-        
-        if (!responseData.candidates || !responseData.candidates[0].content) {
-            const reason = (responseData.promptFeedback && responseData.promptFeedback.blockReason) || "Razón desconocida";
-            throw new Error(`La respuesta de la API fue bloqueada o está vacía. Razón: ${reason}.`);
-        }
-
-        const rawText = responseData.candidates[0].content.parts[0].text;
-        console.log(`Texto CRUDO recibido para "${sectionKey}":`, rawText); // Log para ver el texto crudo
-
-        const generatedContent = extractJson(rawText);
-        console.log(`Contenido JSON EXTRAÍDO para "${sectionKey}":`, generatedContent); // Log para ver el JSON parseado
-
-        if(!generatedContent || !generatedContent[sectionKey]){
-            throw new Error("La respuesta del modelo no tuvo el formato JSON esperado (faltó la clave principal '" + sectionKey + "').");
-        }
-
-        protocolData.secciones[sectionKey] = generatedContent[sectionKey];
-        protocolData.secciones[sectionKey].content = "Generated"; // Marcamos como generada
-        
-        sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
-        
-        renderProtocol(protocolData);
-
-    } catch (error) {
-        console.error(`Error generando la sección ${sectionKey}:`, error);
-        sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="error">✗ Error</span> <button onclick="generateSectionContent('${sectionKey}')">Reintentar</button>`;
-        alert(`Error al generar la sección "${sectionKey}": ${error.message}`);
+    if (!generatedContent || !generatedContent[sectionKey]) {
+        throw new Error("La respuesta del modelo no tuvo el formato JSON esperado. Respuesta: " + rawText);
     }
+    
+    // Actualiza el estado global y renderiza la vista previa
+    protocolData.secciones[sectionKey] = generatedContent[sectionKey];
+    document.getElementById('protocolOutput').style.display = 'block';
+    renderProtocol(protocolData);
 }
 
-/**
- * Devuelve un prompt detallado y específico para cada sección del protocolo.
- * @param {string} sectionKey - La clave de la sección.
- * @param {string} protocolTitle - El título del protocolo.
- * @param {object} htaExample - El JSON del ejemplo de HTA.
- * @param {object} nacExample - El JSON del ejemplo de NAC.
- * @returns {string} El prompt especializado.
- */
+
+// --- SECCIÓN 3: FUNCIONES DE UTILIDAD (SIN CAMBIOS) ---
 
 function getSpecializedPrompt(sectionKey, protocolTitle, htaExample, nacExample) {
-    // **PROMPT SIMPLIFICADO PARA DEPURACIÓN**
-    // Nos enfocamos en una sola cosa: que devuelva la clave correcta.
-    const prompt = `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".
-**Formato de Salida:** Tu respuesta debe ser ÚNICAMENTE un objeto JSON con una sola clave principal: "${sectionKey}".
-**Ejemplo de formato esperado para 'justificacion':**
-{
-  "justificacion": {
-    "titulo": "1. Justificación y Alcance",
-    "contenido": {
-      "problemaSaludPublica": "Descripción del problema...",
-      "prevalencia": { "institucional_hecam": "Impacto en el HECAM..." }
-    }
-  }
-}
-`;
-    return prompt;
-}
+    const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
+    const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
+                     `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
+                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave será un objeto con el contenido de la sección. Sigue la estructura detallada del ejemplo proporcionado.\n`;
 
-// --- SECCIÓN 3: FUNCIONES DE UTILIDAD (RENDERIZADO, COPIA, DESCARGA) ---
+    let specificInstructions = '';
+    let exampleStructure = {};
+    switch (sectionKey) {
+        case 'justificacion':
+            specificInstructions = `**Detalles para 'justificacion':** Incluye "problemaSaludPublica", "prevalencia" (con "institucional_hecam"), "poblacionObjetivo", "unidadesInvolucradas", y "resultadosEsperados" (como un array de strings). Es crucial que incluyas un párrafo específico sobre el "Desafío de la Altitud" de Quito (2850m) y cómo podría influir en la fisiopatología de "${protocolTitle}".`;
+            exampleStructure = { justificacion: htaExample.secciones.justificacion };
+            break;
+        case 'objetivos':
+            specificInstructions = `**Detalles para 'objetivos':** Genera un "general" (string), y un "especificos" (array de 4-5 strings detallados) para el manejo de "${protocolTitle}" en el HECAM.`;
+            exampleStructure = { objetivos: htaExample.secciones.objetivos };
+            break;
+        case 'glosario':
+            specificInstructions = `**Detalles para 'glosario':** Genera un array "terminos" con 5-7 abreviaturas y sus definiciones, relevantes para "${protocolTitle}".`;
+            exampleStructure = { glosario: nacExample.secciones.glosario };
+            break;
+        case 'procedimiento':
+            specificInstructions = `**Detalles para 'procedimiento':** Esta es la sección principal. Genera un objeto "subsecciones" con al menos 3-4 subsecciones clave (ej. "evaluacionInicial", "diagnostico", "planTerapeutico"). Cada subsección debe ser muy detallada, usando arrays de strings para listas como "historiaClinica", "examenFisico". En "examenesComplementarios", crea un objeto con dos arrays: "obligatorios" y "opcionales". En "planTerapeutico", incluye "intervencionesNoFarmacologicas" y un "tratamientoFarmacologico" detallado con un "algoritmoTerapeutico" en pasos.`;
+            exampleStructure = { procedimiento: nacExample.secciones.procedimiento };
+            break;
+        case 'nivelesEvidencia':
+            specificInstructions = `**Detalles para 'nivelesEvidencia':** Crea la tabla de recomendaciones GRADE con 4-6 recomendaciones clave y específicas para "${protocolTitle}". Incluye también la sección completa de "interpretacion" del marco GRADE.`;
+            exampleStructure = { nivelesEvidencia: htaExample.secciones.nivelesEvidencia };
+            break;
+        case 'algoritmosFlujogramas':
+            specificInstructions = `**Detalles para 'algoritmosFlujogramas':** Crea un array "flujogramas". Genera un "tituloFigura" y una "descripcion_mermaid" con código de diagrama de flujo simple y sintácticamente correcto, como este ejemplo: \`${mermaidExample}\`.`;
+            exampleStructure = { algoritmosFlujogramas: htaExample.secciones.algoritmosFlujogramas };
+            break;
+        case 'indicadores':
+            specificInstructions = `**Detalles para 'indicadores':** Genera un array "items" con 3-5 indicadores de calidad (de proceso y de resultado) para monitorizar el protocolo de "${protocolTitle}".`;
+            exampleStructure = { indicadores: htaExample.secciones.indicadores };
+            break;
+        case 'bibliografia':
+            specificInstructions = `**Detalles para 'bibliografia':** Genera un array "referencias" con 10-15 referencias bibliográficas clave y recientes (últimos 5 años) en formato Vancouver sobre "${protocolTitle}".`;
+            exampleStructure = { bibliografia: htaExample.secciones.bibliografia };
+            break;
+        case 'anexos':
+             specificInstructions = `**Detalles para 'anexos':** Crea un cronograma de implementación tipo Gantt con 8 pasos, como en los ejemplos.`;
+             exampleStructure = { anexos: htaExample.secciones.anexos };
+            break;
+        default:
+            specificInstructions = `Genera el contenido detallado para la sección "${sectionKey}".`;
+            exampleStructure = { [sectionKey]: {} };
+    }
+    return `${promptBase}\n${specificInstructions}\n\n**EJEMPLO DE ESTRUCTURA REQUERIDA:**\n${JSON.stringify({secciones: exampleStructure}, null, 2)}`;
+}
 
 function extractJson(str) {
     let firstOpen = str.indexOf('{'); if (firstOpen === -1) return null;
@@ -221,109 +210,9 @@ function extractJson(str) {
 }
 
 function renderProtocol(data) {
-    const outputDiv = document.getElementById("protocolOutput");
-    const actionButtonsDiv = document.getElementById("actionButtons");
-    if (!data || !data.metadata || !data.secciones) { return outputDiv.innerHTML = '<p style="color: orange;">El protocolo generado no tiene la estructura esperada.</p>'; }
-    let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo || "Sin Título"}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo || "HECAM-XX-PR-XXX"}</p><p><strong>Versión:</strong> ${data.metadata.version || "1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre || "N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion || "N/A"}</p></div><hr>`;
-    const sectionKeys = ["justificacion", "objetivos", "glosario", "procedimiento", "nivelesEvidencia", "algoritmosFlujogramas", "indicadores", "bibliografia", "anexos"];
-    sectionKeys.forEach(key => {
-        const section = data.secciones[key];
-        if (!section || !section.titulo) {
-            html += `<section><h2>${key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</h2><p style="color: orange;"><em>Contenido aún no generado.</em></p></section>`;
-            return;
-        }
-        html += `<section><h2>${section.titulo}</h2>`;
-        if (key === "justificacion" && section.contenido) {
-            if (section.contenido.problemaSaludPublica) html += `<p>${section.contenido.problemaSaludPublica}</p>`;
-            if (section.contenido.prevalencia && section.contenido.prevalencia.institucional_hecam) html += `<p><strong>Prevalencia Institucional:</strong> ${section.contenido.prevalencia.institucional_hecam}</p>`;
-            if (section.contenido.poblacionObjetivo) html += `<p><strong>Población Objetivo:</strong> ${section.contenido.poblacionObjetivo}</p>`;
-            if (Array.isArray(section.contenido.unidadesInvolucradas)) html += `<p><strong>Unidades Involucradas:</strong> ${section.contenido.unidadesInvolucradas.join(", ")}</p>`;
-            if (Array.isArray(section.contenido.resultadosEsperados)) { html += `<strong>Resultados Esperados:</strong><ul>${section.contenido.resultadosEsperados.map(item => `<li>${item}</li>`).join("")}</ul>`; }
-        } else if (key === "objetivos") {
-            if (section.general) html += `<p><strong>Objetivo General:</strong> ${section.general}</p>`;
-            if (Array.isArray(section.especificos)) { html += `<strong>Objetivos Específicos:</strong><ul>${section.especificos.map(obj => `<li>${obj}</li>`).join("")}</ul>`; }
-        } else if (key === "glosario" && Array.isArray(section.terminos)) {
-            html += "<ul>"; section.terminos.forEach(term => html += `<li><strong>${term.abreviatura || term.termino}:</strong> ${term.definicion}</li>`); html += "</ul>";
-        } else if (key === "procedimiento" && section.subsecciones) {
-            Object.values(section.subsecciones).forEach(sub => {
-                if (sub && sub.titulo) {
-                    html += `<h3>${sub.titulo}</h3>`;
-                    for (const [subKey, value] of Object.entries(sub)) {
-                        if (subKey !== "titulo") {
-                            html += `<strong>${subKey.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase())}:</strong>`;
-                            html += renderValue(value);
-                        }
-                    }
-                }
-            });
-        } else if (key === "nivelesEvidencia") {
-            if (Array.isArray(section.tablaRecomendaciones) && section.tablaRecomendaciones.length > 0) {
-                html += "<table><thead><tr><th>Área</th><th>Recomendación</th><th>Nivel de Evidencia</th><th>Fuerza de Recomendación</th></tr></thead><tbody>";
-                section.tablaRecomendaciones.forEach(rec => { html += `<tr><td>${rec.area || "N/A"}</td><td>${rec.recomendacion || "N/A"}</td><td>${rec.nivelEvidencia || "N/A"}</td><td>${rec.fuerzaRecomendacion || "N/A"}</td></tr>`; });
-                html += "</tbody></table>";
-            }
-            if (section.interpretacion) {
-                html += `<h3>${section.interpretacion.titulo || "Interpretación GRADE"}</h3>`;
-                if (section.interpretacion.nivelEvidencia) {
-                    html += `<h4>${section.interpretacion.nivelEvidencia.titulo}</h4><ul>`;
-                    section.interpretacion.nivelEvidencia.items.forEach(item => { html += `<li><strong>${item.nivel}:</strong> ${item.descripcion}</li>`; });
-                    html += "</ul>";
-                }
-                if (section.interpretacion.fuerzaRecomendacion) {
-                    html += `<h4>${section.interpretacion.fuerzaRecomendacion.titulo}</h4><ul>`;
-                    section.interpretacion.fuerzaRecomendacion.items.forEach(item => { html += `<li><strong>${item.fuerza}:</strong> ${item.descripcion}</li>`; });
-                    html += "</ul>";
-                }
-            }
-        } else if (key === "algoritmosFlujogramas" && Array.isArray(section.flujogramas) && section.flujogramas.length > 0) {
-            section.flujogramas.forEach((flujo) => { html += `<h4>${flujo.tituloFigura || "Flujograma"}</h4><div class="mermaid">${flujo.descripcion_mermaid}</div>`; });
-        } else if (key === "indicadores" && Array.isArray(section.items) && section.items.length > 0) {
-            html += "<table><thead><tr>";
-            const headers = Object.keys(section.items[0]);
-            headers.forEach(header => html += `<th>${header.charAt(0).toUpperCase() + header.slice(1)}</th>`);
-            html += "</tr></thead><tbody>";
-            section.items.forEach(item => { html += "<tr>"; headers.forEach(header => html += `<td>${item[header] || "N/A"}</td>`); html += "</tr>"; });
-            html += "</tbody></table>";
-        } else if (key === "bibliografia" && Array.isArray(section.referencias) && section.referencias.length > 0) {
-            html += "<h4>Referencias</h4><ol>";
-            section.referencias.forEach(ref => html += `<li>${ref}</li>`);
-            html += "</ol>";
-        } else if (key === "anexos" && Array.isArray(section.items)) {
-            section.items.forEach(item => {
-                if (item.tituloAnexo) html += `<h3>${item.tituloAnexo}</h3>`;
-                if (item.tipo === "tabla_gantt" && Array.isArray(item.tareas)) {
-                    html += "<table><thead><tr><th>ID</th><th>Tarea</th><th>Comienzo</th><th>Fin</th></tr></thead><tbody>";
-                    item.tareas.forEach(task => { html += `<tr><td>${task.id}</td><td>${task.nombre}</td><td>${task.inicio}</td><td>${task.fin}</td></tr>`; });
-                    html += "</tbody></table>";
-                }
-            });
-        }
-        html += `</section>`;
-    });
-
-    outputDiv.innerHTML = html;
-    actionButtonsDiv.innerHTML = '<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>';
-    setTimeout(() => { try { if (window.mermaid) { document.querySelectorAll(".mermaid").forEach(el => el.removeAttribute("data-processed")); window.mermaid.run(); } } catch (e) { console.error("Error al renderizar Mermaid:", e); } }, 100);
-}
-
-function renderValue(value) {
-    if (Array.isArray(value)) {
-        let listHtml = "<ul>"; value.forEach(item => { listHtml += `<li>${renderValue(item)}</li>`; }); listHtml += "</ul>"; return listHtml;
-    }
-    if (typeof value === 'object' && value !== null) {
-        if (value.nombre && value.link) { return `${value.nombre} (<a href='${value.link}' target='_blank' rel='noopener noreferrer'>Ir a la calculadora</a>)`; }
-        let objectHtml = '<ul style="list-style-type: none; padding-left: 15px;">';
-        for (const [key, val] of Object.entries(value)) {
-            const formattedKey = key.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase());
-            objectHtml += `<li><em>${formattedKey}:</em> ${renderValue(val)}</li>`;
-        }
-        return objectHtml += "</ul>";
-    }
-    return value;
-}
-
+    const outputDiv=document.getElementById("protocolOutput"),actionButtonsDiv=document.getElementById("actionButtons");if(!data||!data.metadata||!data.secciones)return void(outputDiv.innerHTML='<p style="color: orange;">El protocolo generado no tiene la estructura esperada.</p>');let html=`<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo||"HECAM-XX-PR-XXX"}</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;const sectionKeys=["justificacion","objetivos","glosario","procedimiento","nivelesEvidencia","algoritmosFlujogramas","indicadores","bibliografia","anexos"];sectionKeys.forEach(key=>{const section=data.secciones[key];if(!section||!section.titulo)return void(html+=`<section><h2>${key.charAt(0).toUpperCase()+key.slice(1).replace(/([A-Z])/g," $1")}</h2><p style="color: orange;"><em>Contenido aún no generado.</em></p></section>`);html+=`<section><h2>${section.titulo}</h2>`,key==="justificacion"&&section.contenido?(section.contenido.problemaSaludPublica&&(html+=`<p>${section.contenido.problemaSaludPublica}</p>`),section.contenido.prevalencia&&section.contenido.prevalencia.institucional_hecam&&(html+=`<p><strong>Prevalencia Institucional:</strong> ${section.contenido.prevalencia.institucional_hecam}</p>`),section.contenido.poblacionObjetivo&&(html+=`<p><strong>Población Objetivo:</strong> ${section.contenido.poblacionObjetivo}</p>`),Array.isArray(section.contenido.unidadesInvolucradas)&&(html+=`<p><strong>Unidades Involucradas:</strong> ${section.contenido.unidadesInvolucradas.join(", ")}</p>`),Array.isArray(section.contenido.resultadosEsperados)&&(html+=`<strong>Resultados Esperados:</strong><ul>${section.contenido.resultadosEsperados.map(item=>`<li>${item}</li>`).join("")}</ul>`)):key==="objetivos"?(section.general&&(html+=`<p><strong>Objetivo General:</strong> ${section.general}</p>`),Array.isArray(section.especificos)&&(html+=`<strong>Objetivos Específicos:</strong><ul>${section.especificos.map(obj=>`<li>${obj}</li>`).join("")}</ul>`)):key==="glosario"&&Array.isArray(section.terminos)?(html+="<ul>",section.terminos.forEach(term=>html+=`<li><strong>${term.abreviatura||term.termino}:</strong> ${term.definicion}</li>`),html+="</ul>"):key==="procedimiento"&&section.subsecciones?Object.values(section.subsecciones).forEach(sub=>{if(sub&&sub.titulo){html+=`<h3>${sub.titulo}</h3>`;for(const[subKey,value]of Object.entries(sub))"titulo"!==subKey&&(html+=`<strong>${subKey.replace(/([A-Z])/g," $1").replace(/^./,str=>str.toUpperCase())}:</strong>`,html+=renderValue(value))}}):key==="nivelesEvidencia"?(Array.isArray(section.tablaRecomendaciones)&&section.tablaRecomendaciones.length>0&&(html+="<table><thead><tr><th>Área</th><th>Recomendación</th><th>Nivel de Evidencia</th><th>Fuerza de Recomendación</th></tr></thead><tbody>",section.tablaRecomendaciones.forEach(rec=>{html+=`<tr><td>${rec.area||"N/A"}</td><td>${rec.recomendacion||"N/A"}</td><td>${rec.nivelEvidencia||"N/A"}</td><td>${rec.fuerzaRecomendacion||"N/A"}</td></tr>`}),html+="</tbody></table>"),section.interpretacion&&(html+=`<h3>${section.interpretacion.titulo||"Interpretación GRADE"}</h3>`,section.interpretacion.nivelEvidencia&&(html+=`<h4>${section.interpretacion.nivelEvidencia.titulo}</h4><ul>`,section.interpretacion.nivelEvidencia.items.forEach(item=>{html+=`<li><strong>${item.nivel}:</strong> ${item.descripcion}</li>`}),html+="</ul>"),section.interpretacion.fuerzaRecomendacion&&(html+=`<h4>${section.interpretacion.fuerzaRecomendacion.titulo}</h4><ul>`,section.interpretacion.fuerzaRecomendacion.items.forEach(item=>{html+=`<li><strong>${item.fuerza}:</strong> ${item.descripcion}</li>`}),html+="</ul>"))):key==="algoritmosFlujogramas"&&Array.isArray(section.flujogramas)&&section.flujogramas.length>0?section.flujogramas.forEach(flujo=>{html+=`<h4>${flujo.tituloFigura||"Flujograma"}</h4>`,html+=`<div class="mermaid">${flujo.descripcion_mermaid}</div>`}):key==="indicadores"&&Array.isArray(section.items)&&section.items.length>0?(html+="<table><thead><tr>",Object.keys(section.items[0]).forEach(header=>html+=`<th>${header.charAt(0).toUpperCase()+header.slice(1)}</th>`),html+="</tr></thead><tbody>",section.items.forEach(item=>{html+="<tr>",Object.keys(item).forEach(header=>html+=`<td>${item[header]||"N/A"}</td>`),html+="</tr>"}),html+="</tbody></table>"):key==="bibliografia"&&Array.isArray(section.referencias)&&section.referencias.length>0?(html+="<h4>Referencias</h4><ol>",section.referencias.forEach(ref=>html+=`<li>${ref}</li>`),html+="</ol>"):key==="anexos"&&Array.isArray(section.items)?section.items.forEach(item=>{item.tituloAnexo&&(html+=`<h3>${item.tituloAnexo}</h3>`),"tabla_gantt"===item.tipo&&Array.isArray(item.tareas)&&(html+="<table><thead><tr><th>ID</th><th>Tarea</th><th>Comienzo</th><th>Fin</th></tr></thead><tbody>",item.tareas.forEach(task=>{html+=`<tr><td>${task.id}</td><td>${task.nombre}</td><td>${task.inicio}</td><td>${task.fin}</td></tr>`}),html+="</tbody></table>")}):!section.contenido&&!section.general&&!section.terminos&&!section.subsecciones&&!section.flujogramas&&!section.items&&!section.referencias&&(html+='<p style="color: orange;"><em>Contenido no generado o interpretado.</em></p>'),html+="</section>"}),outputDiv.innerHTML=html,actionButtonsDiv.innerHTML='<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>',setTimeout(()=>{try{window.mermaid&&(document.querySelectorAll(".mermaid").forEach(el=>el.removeAttribute("data-processed")),window.mermaid.run())}catch(e){console.error("Error al renderizar Mermaid:",e)}},100)}
+function renderValue(value) {if(Array.isArray(value)){let listHtml="<ul>";return value.forEach(item=>{listHtml+=`<li>${renderValue(item)}</li>`}),listHtml+="</ul>",listHtml}if("object"==typeof value&&null!==value){if(value.nombre&&value.link)return`${value.nombre} (<a href='${value.link}' target='_blank' rel='noopener noreferrer'>Ir a la calculadora</a>)`;let objectHtml='<ul style="list-style-type: none; padding-left: 15px;">';for(const[key,val]of Object.entries(value)){const formattedKey=key.replace(/([A-Z])/g," $1").replace(/^./,str=>str.toUpperCase());objectHtml+=`<li><em>${formattedKey}:</em> ${renderValue(val)}</li>`}return objectHtml+="</ul>",objectHtml}return value}
 function copyHtml() { navigator.clipboard.writeText(document.getElementById('protocolOutput').innerHTML).then(() => alert('¡HTML del protocolo copiado!'), () => alert('Error al copiar')); }
-
 function downloadHtml() {
     const protocolHtml = document.getElementById('protocolOutput').innerHTML;
     const protocolTitle = document.getElementById('protocolTitle').value.trim() || 'protocolo';
@@ -336,6 +225,3 @@ function downloadHtml() {
     link.click();
     document.body.removeChild(link);
 }
-    </script>
-</body>
-</html>
