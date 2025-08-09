@@ -106,6 +106,7 @@ async function generateAllSections() {
  * Genera el contenido para una sección específica usando un prompt especializado.
  * @param {string} sectionKey - La clave de la sección a generar (ej. "justificacion").
  */
+
 async function generateSectionContent(sectionKey) {
     const sectionDiv = document.getElementById(`gen-${sectionKey}`);
     const button = sectionDiv.querySelector('button');
@@ -120,6 +121,9 @@ async function generateSectionContent(sectionKey) {
         return;
     }
 
+    // --- PASO 1: AÑADIMOS LOGS DE DEPURACIÓN ---
+    console.log(`--- Iniciando generación para la sección: ${sectionKey} ---`);
+
     try {
         const [htaResponse, nacResponse] = await Promise.all([
             fetch('hipertension_arterial_example.json'),
@@ -131,6 +135,7 @@ async function generateSectionContent(sectionKey) {
         const nacExample = await nacResponse.json();
         
         const prompt = getSpecializedPrompt(sectionKey, protocolData.metadata.titulo, htaExample, nacExample);
+        console.log(`Prompt para "${sectionKey}":`, prompt); // Log para ver el prompt
         
         const modelName = 'gemini-1.5-flash-latest';
         const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
@@ -143,26 +148,38 @@ async function generateSectionContent(sectionKey) {
         });
 
         const responseData = await apiResponse.json();
+        
+        // Log para ver la respuesta completa de la API
+        console.log(`Respuesta COMPLETA de la API para "${sectionKey}":`, responseData);
+
         if (!apiResponse.ok) throw new Error(responseData.error.message);
+        
+        if (!responseData.candidates || !responseData.candidates[0].content) {
+            const reason = (responseData.promptFeedback && responseData.promptFeedback.blockReason) || "Razón desconocida";
+            throw new Error(`La respuesta de la API fue bloqueada o está vacía. Razón: ${reason}.`);
+        }
 
         const rawText = responseData.candidates[0].content.parts[0].text;
+        console.log(`Texto CRUDO recibido para "${sectionKey}":`, rawText); // Log para ver el texto crudo
+
         const generatedContent = extractJson(rawText);
+        console.log(`Contenido JSON EXTRAÍDO para "${sectionKey}":`, generatedContent); // Log para ver el JSON parseado
 
         if(!generatedContent || !generatedContent[sectionKey]){
-            throw new Error("La respuesta del modelo no tuvo el formato JSON esperado. Respuesta: " + rawText);
+            throw new Error("La respuesta del modelo no tuvo el formato JSON esperado (faltó la clave principal '" + sectionKey + "').");
         }
 
         protocolData.secciones[sectionKey] = generatedContent[sectionKey];
+        protocolData.secciones[sectionKey].content = "Generated"; // Marcamos como generada
         
         sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
         
-        document.getElementById('protocolOutput').style.display = 'block';
         renderProtocol(protocolData);
 
     } catch (error) {
         console.error(`Error generando la sección ${sectionKey}:`, error);
         sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="error">✗ Error</span> <button onclick="generateSectionContent('${sectionKey}')">Reintentar</button>`;
-        alert(`Error al generar la sección: ${error.message}`);
+        alert(`Error al generar la sección "${sectionKey}": ${error.message}`);
     }
 }
 
@@ -174,115 +191,28 @@ async function generateSectionContent(sectionKey) {
  * @param {object} nacExample - El JSON del ejemplo de NAC.
  * @returns {string} El prompt especializado.
  */
-function getSpecializedPrompt(sectionKey, protocolTitle, htaExample, nacExample) {
-    const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
-    const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
-                     `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
-                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave será un objeto con el contenido de la sección. Sigue la estructura detallada en los ejemplos.\n`;
 
-    let specificInstructions = '';
-    switch (sectionKey) {
-        case 'justificacion':
-            specificInstructions = `**Detalles para 'justificacion':** Incluye "problemaSaludPublica", "prevalencia" (con "institucional_hecam"), "poblacionObjetivo", "unidadesInvolucradas", y "resultadosEsperados". Menciona el desafío de la altitud de Quito (2850m) y cómo afecta a la fisiopatología de "${protocolTitle}".`;
-            break;
-        case 'objetivos':
-            specificInstructions = `**Detalles para 'objetivos':** Genera un "general" y un array de 4-5 "especificos" detallados para el manejo de "${protocolTitle}" en el HECAM.`;
-            break;
-        case 'glosario':
-            specificInstructions = `**Detalles para 'glosario':** Genera un array "terminos" con 5-7 abreviaturas y sus definiciones, relevantes para "${protocolTitle}".`;
-            break;
-        case 'procedimiento':
-            specificInstructions = `**Detalles para 'procedimiento':** Genera un objeto "subsecciones" con al menos "evaluacionInicial", "diagnostico", y "planTerapeutico". Cada subsección debe ser detallada, incluyendo listas para "historiaClinica", "examenFisico", y "examenesComplementarios" (separando "obligatorios" y "opcionales"). En "planTerapeutico", incluye "intervencionesNoFarmacologicas" y un "tratamientoFarmacologico" detallado con un "algoritmoTerapeutico" en pasos.`;
-            break;
-        case 'nivelesEvidencia':
-            specificInstructions = `**Detalles para 'nivelesEvidencia':** Crea la tabla de recomendaciones GRADE con 4-6 recomendaciones clave y específicas para "${protocolTitle}". Incluye también la sección completa de "interpretacion" del marco GRADE.`;
-            break;
-        case 'algoritmosFlujogramas':
-            specificInstructions = `**Detalles para 'algoritmosFlujogramas':** Crea un array "flujogramas". Genera al menos un "tituloFigura" y una "descripcion_mermaid" con código de diagrama de flujo simple y sintácticamente correcto, como este: \`${mermaidExample}\`.`;
-            break;
-        case 'indicadores':
-            specificInstructions = `**Detalles para 'indicadores':** Genera un array "items" con 3-5 indicadores de calidad (de proceso y de resultado) para monitorizar la adherencia y el impacto del protocolo de "${protocolTitle}".`;
-            break;
-        case 'bibliografia':
-            specificInstructions = `**Detalles para 'bibliografia':** Genera un array "referencias" con 10-15 referencias bibliográficas clave y recientes (últimos 5 años) en formato Vancouver sobre "${protocolTitle}".`;
-            break;
-        case 'anexos':
-             specificInstructions = `**Detalles para 'anexos':** Crea un cronograma de implementación tipo Gantt con 8 pasos, similar a los ejemplos.`;
-            break;
-        default:
-            specificInstructions = `Genera el contenido detallado para esta sección siguiendo la estructura de los ejemplos.`;
-    }
-    
-    // Proporciona ejemplos de las secciones más complejas para guiar al modelo
-    return `${promptBase}\n${specificInstructions}\n\n**EJEMPLOS DE ESTRUCTURA (NO COPIAR CONTENIDO, SOLO SEGUIR EL FORMATO):**\n${JSON.stringify({secciones: {justificacion: htaExample.secciones.justificacion, procedimiento: nacExample.secciones.procedimiento, nivelesEvidencia: htaExample.secciones.nivelesEvidencia}})}`;
-}
-
-// En tu archivo script.js, reemplaza esta función completa:
+// En tu script.js
 
 function getSpecializedPrompt(sectionKey, protocolTitle, htaExample, nacExample) {
-    const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
-    
-    const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
-                     `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
-                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave será un objeto con el contenido de la sección. Sigue la estructura detallada del ejemplo proporcionado.\n`;
-
-    let specificInstructions = '';
-    let exampleStructure = {}; // Objeto para construir un ejemplo relevante y corto
-
-    switch (sectionKey) {
-        case 'justificacion':
-            specificInstructions = `**Detalles para 'justificacion':** Incluye "problemaSaludPublica", "prevalencia" (con "institucional_hecam"), "poblacionObjetivo", "unidadesInvolucradas", y "resultadosEsperados" (como un array de strings). Es crucial que incluyas un párrafo específico sobre el "Desafío de la Altitud" de Quito (2850m) y cómo podría influir en la fisiopatología de "${protocolTitle}".`;
-            exampleStructure = { justificacion: htaExample.secciones.justificacion };
-            break;
-
-        case 'objetivos':
-            specificInstructions = `**Detalles para 'objetivos':** Genera un "general" (string), y un "especificos" (array de 4-5 strings detallados) para el manejo de "${protocolTitle}" en el HECAM.`;
-            exampleStructure = { objetivos: htaExample.secciones.objetivos };
-            break;
-
-        case 'glosario':
-            specificInstructions = `**Detalles para 'glosario':** Genera un array "terminos" con 5-7 abreviaturas y sus definiciones, relevantes para "${protocolTitle}".`;
-            exampleStructure = { glosario: nacExample.secciones.glosario };
-            break;
-
-        case 'procedimiento':
-            specificInstructions = `**Detalles para 'procedimiento':** Esta es la sección principal. Genera un objeto "subsecciones" con al menos 3-4 subsecciones clave (ej. "evaluacionInicial", "diagnostico", "planTerapeutico"). Cada subsección debe ser muy detallada. En "examenesComplementarios", crea un objeto con dos arrays: "obligatorios" y "opcionales". En "planTerapeutico", incluye "intervencionesNoFarmacologicas" y un "tratamientoFarmacologico" detallado.`;
-            exampleStructure = { procedimiento: nacExample.secciones.procedimiento };
-            break;
-
-        case 'nivelesEvidencia':
-            specificInstructions = `**Detalles para 'nivelesEvidencia':** Crea la tabla de recomendaciones GRADE con 4-6 recomendaciones clave y específicas para "${protocolTitle}". Incluye también la sección completa de "interpretacion" del marco GRADE.`;
-            exampleStructure = { nivelesEvidencia: htaExample.secciones.nivelesEvidencia };
-            break;
-
-        case 'algoritmosFlujogramas':
-            specificInstructions = `**Detalles para 'algoritmosFlujogramas':** Crea un array "flujogramas". Genera un "tituloFigura" y una "descripcion_mermaid" con código de diagrama de flujo simple, en una sola línea, como este ejemplo: \`${mermaidExample}\`.`;
-            exampleStructure = { algoritmosFlujogramas: htaExample.secciones.algoritmosFlujogramas };
-            break;
-
-        case 'indicadores':
-            specificInstructions = `**Detalles para 'indicadores':** Genera un array "items" con 3-5 indicadores de calidad (de proceso y de resultado) para monitorizar el protocolo de "${protocolTitle}". Cada indicador debe ser un objeto con "nombre", "definicion", "calculo", "meta", "periodo", y "responsable".`;
-            exampleStructure = { indicadores: htaExample.secciones.indicadores };
-            break;
-
-        case 'bibliografia':
-            specificInstructions = `**Detalles para 'bibliografia':** Genera un array "referencias" con 10-15 referencias bibliográficas clave y recientes (últimos 5 años) en formato Vancouver sobre "${protocolTitle}".`;
-            exampleStructure = { bibliografia: htaExample.secciones.bibliografia };
-            break;
-
-        case 'anexos':
-             specificInstructions = `**Detalles para 'anexos':** Crea un cronograma de implementación tipo Gantt con 8 pasos, como en los ejemplos.`;
-             exampleStructure = { anexos: htaExample.secciones.anexos };
-            break;
-            
-        default:
-            specificInstructions = `Genera el contenido detallado para la sección "${sectionKey}".`;
-            exampleStructure = { [sectionKey]: {} };
+    // **PROMPT SIMPLIFICADO PARA DEPURACIÓN**
+    // Nos enfocamos en una sola cosa: que devuelva la clave correcta.
+    const prompt = `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".
+**Formato de Salida:** Tu respuesta debe ser ÚNICAMENTE un objeto JSON con una sola clave principal: "${sectionKey}".
+**Ejemplo de formato esperado para 'justificacion':**
+{
+  "justificacion": {
+    "titulo": "1. Justificación y Alcance",
+    "contenido": {
+      "problemaSaludPublica": "Descripción del problema...",
+      "prevalencia": { "institucional_hecam": "Impacto en el HECAM..." }
     }
-    
-    // **CAMBIO CLAVE:** Construimos un prompt mucho más corto y enfocado.
-    return `${promptBase}\n${specificInstructions}\n\n**EJEMPLO DE ESTRUCTURA REQUERIDA (NO COPIAR CONTENIDO, SOLO SEGUIR EL FORMATO):**\n${JSON.stringify({secciones: exampleStructure}, null, 2)}`;
+  }
 }
+`;
+    return prompt;
+}
+
 // --- SECCIÓN 3: FUNCIONES DE UTILIDAD (RENDERIZADO, COPIA, DESCARGA) ---
 
 function extractJson(str) {
