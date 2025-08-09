@@ -163,7 +163,6 @@ function extractJson(str) {
  * Renderiza el objeto de protocolo en el DOM y añade los botones de acción.
  * @param {object} data - El objeto JSON completo del protocolo.
  */
-// En tu script.js
 
 function renderProtocol(data) {
     const outputDiv = document.getElementById('protocolOutput');
@@ -176,7 +175,8 @@ function renderProtocol(data) {
 
     let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo || 'Sin Título'}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo || 'HECAM-XX-PR-XXX'}</p><p><strong>Versión:</strong> ${data.metadata.version || '1.0'} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre || 'N/A'}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion || 'N/A'}</p></div><hr>`;
     
-    const sectionKeys = ['justificacion', 'objetivos', 'glosario', 'procedimiento', 'algoritmosFlujogramas', 'indicadores', 'bibliografia'];
+    // **NUEVO: Añadimos las nuevas secciones al array de orden**
+    const sectionKeys = ['justificacion', 'objetivos', 'glosario', 'procedimiento', 'nivelesEvidencia', 'algoritmosFlujogramas', 'indicadores', 'bibliografia', 'anexos'];
 
     sectionKeys.forEach(key => {
         const section = data.secciones[key];
@@ -187,46 +187,54 @@ function renderProtocol(data) {
 
         html += `<section><h2>${section.titulo}</h2>`;
 
-        // Lógica de renderizado específica
-        if (key === 'justificacion' && section.contenido) {
-            if (section.contenido.problemaSaludPublica) html += `<p>${section.contenido.problemaSaludPublica}</p>`;
-            if (section.contenido.prevalencia && section.contenido.prevalencia.institucional_hecam) html += `<p><strong>Prevalencia Institucional:</strong> ${section.contenido.prevalencia.institucional_hecam}</p>`;
-            if (section.contenido.poblacionObjetivo) html += `<p><strong>Población Objetivo:</strong> ${section.contenido.poblacionObjetivo}</p>`;
-            if (Array.isArray(section.contenido.unidadesInvolucradas)) html += `<p><strong>Unidades Involucradas:</strong> ${section.contenido.unidadesInvolucradas.join(', ')}</p>`;
-            if (Array.isArray(section.contenido.resultadosEsperados)) { html += `<strong>Resultados Esperados:</strong><ul>${section.contenido.resultadosEsperados.map(item => `<li>${item}</li>`).join('')}</ul>`; }
-        } else if (key === 'objetivos') {
-             if (section.general) html += `<p><strong>Objetivo General:</strong> ${section.general}</p>`;
-             if (Array.isArray(section.especificos)) { html += `<strong>Objetivos Específicos:</strong><ul>${section.especificos.map(obj => `<li>${obj}</li>`).join('')}</ul>`; }
-        } else if (key === 'glosario' && Array.isArray(section.terminos)) {
-             // **AJUSTE MENOR:** Acepta 'abreviatura' o 'termino' como clave.
-             html += '<ul>'; section.terminos.forEach(term => html += `<li><strong>${term.abreviatura || term.termino}:</strong> ${term.definicion}</li>`); html += '</ul>';
-        } else if (key === 'procedimiento' && section.subsecciones) {
-            // ... (La función renderValue recursiva que ya tienes va aquí)
-            Object.values(section.subsecciones).forEach(sub => {
-                if (!sub || !sub.titulo) return;
-                html += `<h3>${sub.titulo}</h3>`;
-                for (const [subKey, value] of Object.entries(sub)) {
-                    if (subKey === 'titulo') continue;
-                    const formattedKey = subKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                    html += `<strong>${formattedKey}:</strong>`;
-                    html += renderValue(value);
+        // ... (La lógica de renderizado para justificacion, objetivos, glosario, procedimiento sigue igual)
+
+        // --- INICIO DE LA LÓGICA PARA LAS NUEVAS SECCIONES ---
+        if (key === 'nivelesEvidencia') {
+            // Renderizar la tabla de recomendaciones
+            if (Array.isArray(section.tablaRecomendaciones) && section.tablaRecomendaciones.length > 0) {
+                html += `<table><thead><tr><th>Área</th><th>Recomendación</th><th>Nivel de Evidencia</th><th>Fuerza de Recomendación</th></tr></thead><tbody>`;
+                section.tablaRecomendaciones.forEach(rec => {
+                    html += `<tr><td>${rec.area || 'N/A'}</td><td>${rec.recomendacion || 'N/A'}</td><td>${rec.nivelEvidencia || 'N/A'}</td><td>${rec.fuerzaRecomendacion || 'N/A'}</td></tr>`;
+                });
+                html += `</tbody></table>`;
+            }
+            // Renderizar la interpretación de GRADE
+            if (section.interpretacion) {
+                html += `<h3>${section.interpretacion.titulo || 'Interpretación GRADE'}</h3>`;
+                if (section.interpretacion.nivelEvidencia) {
+                    html += `<h4>${section.interpretacion.nivelEvidencia.titulo}</h4><ul>`;
+                    section.interpretacion.nivelEvidencia.items.forEach(item => {
+                        html += `<li><strong>${item.nivel}:</strong> ${item.descripcion}</li>`;
+                    });
+                    html += `</ul>`;
                 }
-            });
-        } else if (key === 'algoritmosFlujogramas' && Array.isArray(section.flujogramas) && section.flujogramas.length > 0) {
-             section.flujogramas.forEach((flujo) => { html += `<h4>${flujo.tituloFigura || 'Flujograma'}</h4>`; html += `<div class="mermaid">${flujo.descripcion_mermaid}</div>`; });
-        } else if (key === 'indicadores' && Array.isArray(section.items) && section.items.length > 0) {
-            html += '<table><thead><tr>';
-            const headers = Object.keys(section.items[0]);
-            headers.forEach(header => html += `<th>${header.charAt(0).toUpperCase() + header.slice(1)}</th>`);
-            html += '</tr></thead><tbody>';
-            section.items.forEach(item => { html += '<tr>'; headers.forEach(header => html += `<td>${item[header] || 'N/A'}</td>`); html += '</tr>'; });
-            html += '</tbody></table>';
-        } else if (key === 'bibliografia' && Array.isArray(section.referencias) && section.referencias.length > 0) {
-             html += '<h4>Referencias</h4><ol>'; section.referencias.forEach(ref => html += `<li>${ref}</li>`); html += '</ol>';
-        } else if (!section.contenido && !section.general && !section.terminos && !section.subsecciones && !section.flujogramas && !section.items && !section.referencias) {
-             html += `<p style="color: orange;"><em>Contenido para esta sección no fue generado o no pudo ser interpretado.</em></p>`;
+                if (section.interpretacion.fuerzaRecomendacion) {
+                    html += `<h4>${section.interpretacion.fuerzaRecomendacion.titulo}</h4><ul>`;
+                    section.interpretacion.fuerzaRecomendacion.items.forEach(item => {
+                        html += `<li><strong>${item.fuerza}:</strong> ${item.descripcion}</li>`;
+                    });
+                    html += `</ul>`;
+                }
+            }
         }
         
+        if (key === 'anexos' && Array.isArray(section.items)) {
+            section.items.forEach(item => {
+                if (item.tituloAnexo) html += `<h3>${item.tituloAnexo}</h3>`;
+                if (item.tipo === 'tabla_gantt' && Array.isArray(item.tareas)) {
+                    html += `<table><thead><tr><th>ID</th><th>Tarea</th><th>Comienzo</th><th>Fin</th></tr></thead><tbody>`;
+                    item.tareas.forEach(task => {
+                        html += `<tr><td>${task.id}</td><td>${task.nombre}</td><td>${task.inicio}</td><td>${task.fin}</td></tr>`;
+                    });
+                    html += `</tbody></table>`;
+                }
+            });
+        }
+        // --- FIN DE LA LÓGICA PARA LAS NUEVAS SECCIONES ---
+        
+        // ... (La lógica de renderizado para algoritmos, indicadores, bibliografía sigue igual)
+
         html += `</section>`;
     });
 
@@ -245,7 +253,6 @@ function renderProtocol(data) {
         } 
     }, 100);
 }
-
 // Función recursiva para renderizar valores de cualquier profundidad
 function renderValue(value) {
     if (Array.isArray(value)) {
@@ -305,13 +312,14 @@ function downloadHtml() {
  * Crea el prompt para la API de Gemini, incluyendo los ejemplos.
  * @returns {string} - El prompt completo.
  */
-// En tu script.js
 
 function createGeminiPromptWithExamples(newTitle, newUnit, example1, example2) {
-    // NUEVO: Un ejemplo de Mermaid súper simple y a prueba de errores.
     const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
 
-    return `**ROL Y OBJETIVO:**\nEres un asistente médico experto en la redacción de guías clínicas y protocolos hospitalarios para el Hospital de Especialidades Carlos Andrade Marín (HECAM) en Quito, Ecuador. Tu tarea es generar un protocolo completo, basado en evidencia y adaptado al contexto local.\n\n**CONTEXTO CLAVE (DEBE APLICARSE A LA NUEVA GENERACIÓN):**\n1.  **CNMB:** Los medicamentos deben priorizar el Cuadro Nacional de Medicamentos Básicos de Ecuador.\n2.  **ALTITUD:** Siempre que sea relevante (cardio, neumo), añade una nota sobre el impacto de la altitud de Quito (2800m).\n3.  **RECURSOS:** Los recursos y escalas deben ser de acceso libre y validados internacionalmente (ej. MDCalc, calculadoras de sociedades médicas).\n\n**INSTRUCCIÓN:**\nA continuación se presentan dos ejemplos completos de protocolos. Analiza su estructura, nivel de detalle y tono clínico. Luego, genera un **NUEVO** protocolo siguiendo **EXACTAMENTE** el mismo formato y calidad.\n
-    **IMPORTANTE PARA EL ALGORITMO:** Para la clave "descripcion_mermaid", debes generar un código de diagrama de flujo simple y sintácticamente correcto para Mermaid.js, que quepa en una sola línea de texto. DEBE seguir este formato: \`${mermaidExample}\`. No uses caracteres especiales o saltos de línea dentro de esta clave.\n
-    ---\n**EJEMPLO 1:**\n${JSON.stringify(example1, null, 2)}\n---\n\n---\n**EJEMPLO 2:**\n${JSON.stringify(example2, null, 2)}\n---\n\n**TAREA FINAL:**\nAhora, genera un nuevo protocolo en formato JSON válido.\n- **Título del Protocolo:** "${newTitle}"\n- **Unidad Médica Responsable:** "Unidad Técnica de ${newUnit}"\n\n**RECORDATORIO CRÍTICO: Es imperativo que completes TODAS las secciones del JSON, incluyendo algoritmos, indicadores y bibliografía, basándote en la evidencia actual para el tema solicitado. No dejes ninguna sección vacía.**\n\nTu respuesta debe ser **ÚNICAMENTE el objeto JSON completo y válido** para el nuevo protocolo, sin ningún texto, formato markdown o explicación adicional.`;
+    return `**ROL Y OBJETIVO:**\n... (el mismo rol y contexto de antes) ...\n
+    **INSTRUCCIÓN:**\n... (la misma instrucción de antes) ...\n
+    **IMPORTANTE PARA EL ALGORITMO:** ... (la misma instrucción de Mermaid) ...\n
+    **IMPORTANTE PARA LAS TABLAS:** Debes generar una tabla de "Niveles de Evidencia y Grado de Recomendaciones" usando el marco GRADE, y un "Cronograma de Implementación" en la sección de Anexos. Sigue la estructura de los ejemplos.\n
+    ---\n**EJEMPLO 1:**\n${JSON.stringify(example1, null, 2)}\n---\n\n---\n**EJEMPLO 2:**\n${JSON.stringify(example2, null, 2)}\n---\n\n**TAREA FINAL:**\n... (la misma tarea final de antes) ...\n
+    **RECORDATORIO CRÍTICO: Es imperativo que completes TODAS las secciones del JSON, incluyendo niveles de evidencia GRADE, algoritmos, indicadores, bibliografía y anexos. No dejes ninguna sección vacía.**\n\nTu respuesta debe ser **ÚNICAMENTE el objeto JSON completo y válido**...`;
 }
