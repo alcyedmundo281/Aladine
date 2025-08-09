@@ -11,7 +11,6 @@ body {
     background-color: #f4f4f4;
     color: #333;
 }
-
 .container {
     max-width: 900px;
     margin: auto;
@@ -20,19 +19,16 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
-
 header {
     text-align: center;
     border-bottom: 2px solid #005a9c;
     padding-bottom: 20px;
     margin-bottom: 30px;
 }
-
 .logo {
     max-width: 200px;
     margin-bottom: 15px;
 }
-
 header h1 {
     color: #005a9c;
     margin: 0;
@@ -45,19 +41,16 @@ header h1 {
     gap: 15px;
     margin-bottom: 30px;
 }
-
 .input-section label {
     font-weight: bold;
     color: #333;
 }
-
 .input-section input, .input-section select {
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
 }
-
 .input-section button {
     padding: 12px 20px;
     background-color: #007bff;
@@ -69,11 +62,9 @@ header h1 {
     transition: background-color 0.3s;
     font-weight: bold;
 }
-
 .input-section button:hover {
     background-color: #0056b3;
 }
-
 .api-warning {
     background-color: #e7f3fe;
     border-left: 5px solid #2196F3;
@@ -81,7 +72,6 @@ header h1 {
     margin-top: 5px;
     font-size: 14px;
 }
-
 .loader {
     border: 8px solid #f3f3f3;
     border-radius: 50%;
@@ -91,20 +81,18 @@ header h1 {
     animation: spin 2s linear infinite;
     margin: 40px auto;
 }
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* --- NUEVOS ESTILOS PARA LA INTERFAZ MULTI-PROMPT --- */
+/* --- INTERFAZ MULTI-PROMPT --- */
 .protocol-structure-container {
     margin-bottom: 20px;
     border: 1px solid #eee;
     border-radius: 5px;
     padding: 15px;
 }
-
 .section-generator {
     display: flex;
     justify-content: space-between;
@@ -115,11 +103,9 @@ header h1 {
 .section-generator:last-child {
     border-bottom: none;
 }
-
 .section-generator span {
     font-weight: bold;
 }
-
 .section-generator button {
     font-size: 12px;
     padding: 5px 10px;
@@ -130,45 +116,38 @@ header h1 {
     border-radius: 4px;
     transition: background-color 0.2s;
 }
-
 .section-generator button:hover {
     background-color: #5a6268;
 }
-
 .section-generator button:disabled {
     cursor: not-allowed;
     background-color: #ccc;
 }
-
 #gen-all button {
     background-color: #17a2b8;
     font-weight: bold;
 }
-
 #gen-all button:hover {
     background-color: #138496;
 }
-
 .section-generator .status {
     font-style: italic;
     color: green;
     font-weight: bold;
 }
-
 .section-generator .error {
     font-style: italic;
     color: red;
     font-weight: bold;
 }
 
-/* --- ESTILOS PARA LOS BOTONES DE ACCIÓN FINALES --- */
+/* --- BOTONES DE ACCIÓN FINALES --- */
 .action-buttons-container {
     display: flex;
     gap: 15px;
     justify-content: center;
     margin: 20px 0;
 }
-
 .action-buttons-container button {
     padding: 10px 20px;
     font-size: 16px;
@@ -180,20 +159,18 @@ header h1 {
     transition: all 0.3s;
     font-weight: bold;
 }
-
 .action-buttons-container button:hover {
     background-color: #28a745;
     color: white;
 }
 
-/* --- ESTILOS PARA EL CONTENIDO DEL PROTOCOLO RENDERIZADO --- */
+/* --- CONTENIDO DEL PROTOCOLO RENDERIZADO --- */
 .protocol-container {
     margin-top: 20px;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
-
 .protocol-container h1, .protocol-container h2, .protocol-container h3, .protocol-container h4 {
     color: #005a9c;
 }
