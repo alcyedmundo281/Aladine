@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador Avanzado de Protocolos Médicos - HECAM</title>
+    <title>Generador de Protocolos Médicos - HECAM</title>
+    <!-- Hoja de estilos -->
     <link rel="stylesheet" href="style.css">
+    <style>
+      /* Barra de progreso para descarga de modelo local */
+      .progress { display:flex; width:100%; height:10px; background:#eee; border-radius:6px; overflow:hidden; margin-top:8px; }
+      .progress-bar { width:0%; background:#28a745; transition:width .2s ease; }
+      .hint { font-size:13px; color:#555; margin-top:6px; }
+      .warn { background:#fff3cd; border-left:5px solid #ffec99; padding:10px; border-radius:4px; margin-top:8px; }
+      .muted { color:#666; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -18,7 +27,7 @@
             <div class="input-section">
                 <label for="protocolTitle">1. Ingrese el título del protocolo:</label>
                 <input type="text" id="protocolTitle" placeholder="Ej: Manejo de la Sepsis en Adultos">
-                
+
                 <label for="medicalUnit">2. Seleccione la Unidad Médica responsable:</label>
                 <select id="medicalUnit">
                     <option value="Medicina Interna">Medicina Interna</option>
@@ -29,29 +38,44 @@
                     <option value="Neumología">Neumología</option>
                     <option value="Cirugía General">Cirugía General</option>
                 </select>
-                
-                <label for="apiKey">3. Ingrese su Clave API de Google Gemini:</label>
-                <input type="password" id="apiKey" placeholder="Su clave es privada y no se almacena">
-                <div class="api-warning">
-                    <strong>Nota de Seguridad:</strong> Su clave API se utiliza únicamente para esta sesión, directamente desde su navegador.
-                </div>
+
+                <label for="engine">3. Motor de generación:</label>
+                <select id="engine">
+                    <option value="gemini">Gemini (API)</option>
+                    <option value="local">Local (WebGPU)</option>
+                    <option value="demo">Demo (sin modelo)</option>
+                </select>
+                <label class="remember-row" style="display:flex;gap:8px;align-items:center;margin-top:6px;">                    <input type="checkbox" id="rememberEngine">
+                    <span>Recordar mi elección de motor</span>
+                </label>
+
+                <label for="apiKey">4. (Opcional) Clave API de Google Gemini:</label>
+                <input type="password" id="apiKey" placeholder="Solo si eliges Gemini">
+                <div class="api-warning"><strong>Nota:</strong> Para <em>Local (WebGPU)</em> no necesitas API. La primera carga descargará el modelo y quedará cacheado.</div>
+                <div id="compatWarning" class="warn" style="display:none;"></div>
                 <button id="generateButton">1. Generar Estructura</button>
+                <div id="modelStatus" class="api-warning" style="display:none;"></div>
+                <div id="modelProgressWrap" class="progress" style="display:none;"><div id="modelProgressBar" class="progress-bar"></div></div>
+                <div id="modelHint" class="hint muted" style="display:none;"></div>
             </div>
-            
             <div class="loader" id="loader" style="display: none;"></div>
-            
             <div id="protocolStructure" class="protocol-structure-container"></div>
             <div id="actionButtons" class="action-buttons-container"></div>
             <div id="protocolOutput" class="protocol-container" style="display: none;"></div>
         </main>
     </div>
 
+    <!-- Bibliotecas de terceros -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
         mermaid.initialize({ startOnLoad: false });
         window.mermaid = mermaid;
+        // Importa WebLLM solo cuando sea necesario
+        import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+        window.webllm = webllm;
     </script>
+    <!-- Lógica de la aplicación -->
     <script src="script.js"></script>
 </body>
 </html>
