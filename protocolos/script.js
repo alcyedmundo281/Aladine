@@ -173,42 +173,43 @@ async function generateSectionContent(sectionKey) {
 /**
  * Devuelve un prompt detallado y específico para cada sección del protocolo.
  */
-function getSpecializedPrompt(sectionKey, protocolTitle, htaExample, nacExample) {
+function getSpecializedPrompt(sectionKey, protocolTitle) {
+    // Los ejemplos ya no son necesarios en cada prompt, los mantenemos en una variable por si se necesitan
     const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
     const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
                      `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
                      `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}".\n`;
     
     let specificInstructions = '';
-    let exampleStructure = {};
 
     switch (sectionKey) {
+        // ... (casos para justificacion, objetivos, glosario, procedimiento que ya funcionan)
         case 'justificacion': case 'objetivos': case 'glosario': case 'procedimiento':
-            specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto con "titulo" y "markdownContent". En "markdownContent", escribe el texto completo y detallado usando formato Markdown (### Título, **Negrita**, - Lista). Incluye todos los sub-puntos relevantes como se ve en el documento de Sepsis de ejemplo.`;
-            exampleStructure = { [sectionKey]: { titulo: "...", markdownContent: "### Subtítulo\n- Punto 1\n- Punto 2" } };
+            specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto con "titulo" y "markdownContent". En "markdownContent", escribe el texto completo y detallado usando formato Markdown (### Título, **Negrita**, - Lista).`;
             break;
         case 'nivelesEvidencia':
             specificInstructions = `El valor de la clave debe ser un objeto con "titulo", un array "tablaRecomendaciones" (con 4-6 objetos), y un objeto "interpretacion" con la explicación de GRADE.`;
-            exampleStructure = { nivelesEvidencia: htaExample.secciones.nivelesEvidencia };
             break;
+
+        // --- INICIO DE LAS CORRECCIONES FINALES ---
         case 'algoritmosFlujogramas':
-            specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "flujogramas". Genera un objeto de flujograma con "tituloFigura" y "descripcion_mermaid" (código simple en una sola línea como: \`${mermaidExample}\`).`;
-            exampleStructure = { algoritmosFlujogramas: htaExample.secciones.algoritmosFlujogramas };
+            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "flujogramas". Genera al menos un objeto de flujograma con "tituloFigura" y "descripcion_mermaid". El valor de "descripcion_mermaid" DEBE ser un string de una sola línea, sintácticamente correcto para Mermaid.js, como este ejemplo: \`${mermaidExample}\`. NO uses caracteres especiales o saltos de línea dentro de esta clave.`;
             break;
+
         case 'indicadores':
-            specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "items" con 3-5 indicadores de calidad REALISTAS y COMPLETOS (sin 'N/A').`;
-            exampleStructure = { indicadores: htaExample.secciones.indicadores };
+            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "items". Genera 3-5 indicadores de calidad REALISTAS y COMPLETOS para monitorizar el protocolo de "${protocolTitle}". Cada indicador debe ser un objeto con "nombre", "definicion", "calculo", "meta", "periodo", y "responsable". Es crucial que inventes contenido realista para cada campo y no dejes ninguno como 'N/A'.`;
             break;
+
         case 'bibliografia':
-            specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "referencias". El array "referencias" DEBE ser un array de STRINGS, donde cada string es una referencia completa en formato Vancouver. Genera entre 10 y 15 referencias.`;
-            exampleStructure = { bibliografia: htaExample.secciones.bibliografia };
+            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "referencias". El array "referencias" debe ser un array de STRINGS, donde cada string es una referencia completa en formato Vancouver. Genera entre 10 y 15 referencias.`;
             break;
+        // --- FIN DE CORRECCIONES ---
+        
         case 'anexos':
-             specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "items". Genera un cronograma Gantt con 8 pasos.`;
-             exampleStructure = { anexos: htaExample.secciones.anexos };
-            break;
+             specificInstructions = `**Detalles para '${sectionKey}':** El objeto debe ser un objeto con "titulo" y un array "items". Genera un cronograma Gantt con 8 pasos.`;
+             break;
     }
-    return `${promptBase}\n${specificInstructions}\n\n**EJEMPLO DE ESTRUCTURA REQUERIDA:**\n${JSON.stringify(exampleStructure, null, 2)}`;
+    return `${promptBase}\n${specificInstructions}`;
 }
 
 /**
@@ -224,15 +225,19 @@ function extractJson(str) {
 /**
  * Renderiza el objeto de protocolo en el DOM y añade los botones de acción.
  */
+
 function renderProtocol(data) {
     const outputDiv = document.getElementById("protocolOutput");
     const actionButtonsDiv = document.getElementById("actionButtons");
+    if (!data || !data.metadata || !data.secciones) { return outputDiv.innerHTML = '<p style="color: orange;">El protocolo generado no tiene la estructura esperada.</p>'; }
+
     let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo||"HECAM-XX-PR-XXX"}</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;
     const sectionKeys = ["justificacion", "objetivos", "glosario", "procedimiento", "nivelesEvidencia", "algoritmosFlujogramas", "indicadores", "bibliografia", "anexos"];
     
     sectionKeys.forEach(key => {
         const section = data.secciones[key];
-        html += `<section><h2>${section.titulo || key.charAt(0).toUpperCase() + key.slice(1)}</h2>`;
+        html += `<section><h2>${section.titulo || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</h2>`;
+        
         if (!isSectionGenerated(key)) {
             html += '<p style="color: orange;"><em>Contenido aún no generado.</em></p>';
         } else {
@@ -255,10 +260,16 @@ function renderProtocol(data) {
                     html += "</ul>";
                 }
             }
-            if (Array.isArray(section.flujogramas)) { section.flujogramas.forEach((flujo) => { html += `<h4>${flujo.tituloFigura || "Flujograma"}</h4><div class="mermaid">${flujo.descripcion_mermaid}</div>`; }); }
+            if (Array.isArray(section.flujogramas) && section.flujogramas.length > 0) {
+                 section.flujogramas.forEach((flujo) => { 
+                    if (flujo.descripcion_mermaid) {
+                        html += `<h4>${flujo.tituloFigura || "Flujograma"}</h4><div class="mermaid">${flujo.descripcion_mermaid}</div>`; 
+                    }
+                });
+            }
             if (Array.isArray(section.items)) {
                 if (key === "indicadores") {
-                    html += "<table><thead><tr><th>Nombre</th><th>Definicion</th><th>Calculo</th><th>Meta</th><th>Periodo</th><th>Responsable</th></tr></thead><tbody>";
+                    html += "<table><thead><tr><th>Nombre</th><th>Definición</th><th>Cálculo</th><th>Meta</th><th>Periodo</th><th>Responsable</th></tr></thead><tbody>";
                     section.items.forEach(item => { html += `<tr><td>${item.nombre || "N/A"}</td><td>${item.definicion || "N/A"}</td><td>${item.calculo || "N/A"}</td><td>${item.meta || "N/A"}</td><td>${item.periodo || "N/A"}</td><td>${item.responsable || "N/A"}</td></tr>`; });
                     html += "</tbody></table>";
                 } else if (key === "anexos") {
@@ -272,22 +283,27 @@ function renderProtocol(data) {
                     });
                 }
             }
-            if (Array.isArray(section.referencias)) { 
-                html += "<h4>Referencias</h4><ol>"; 
-                section.referencias.forEach(ref => {
-                    if (typeof ref === 'object' && ref !== null) { html += `<li>${JSON.stringify(ref)}</li>`; } 
-                    else { html += `<li>${ref}</li>`; }
-                }); 
-                html += "</ol>"; 
+            if (Array.isArray(section.referencias)) {
+                 html += "<h4>Referencias</h4><ol>";
+                 section.referencias.forEach(ref => {
+                     // **CORRECCIÓN FINAL PARA BIBLIOGRAFÍA**
+                     // Si el LLM insiste en mandar un objeto, intentamos extraer la información.
+                     if (typeof ref === 'object' && ref !== null) {
+                         html += `<li>${Object.values(ref).join(' ')}</li>`;
+                     } else {
+                         html += `<li>${ref}</li>`;
+                     }
+                 });
+                 html += "</ol>";
             }
         }
         html += `</section>`;
     });
-
     outputDiv.innerHTML = html;
     actionButtonsDiv.innerHTML = '<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>';
     setTimeout(() => { try { if (window.mermaid) { window.mermaid.run(); } } catch (e) { console.error("Error al renderizar Mermaid:", e); } }, 100);
 }
+
 function renderValue(value) {if(Array.isArray(value)){let listHtml="<ul>";value.forEach(item=>{listHtml+=`<li>${renderValue(item)}</li>`});listHtml+="</ul>";return listHtml}if("object"==typeof value&&null!==value){if(value.nombre&&value.link)return`${value.nombre} (<a href='${value.link}' target='_blank' rel='noopener noreferrer'>Ir a la calculadora</a>)`;let objectHtml='<ul style="list-style-type: none; padding-left: 15px;">';for(const[key,val]of Object.entries(value)){const formattedKey=key.replace(/([A-Z])/g," $1").replace(/^./,str=>str.toUpperCase());objectHtml+=`<li><em>${formattedKey}:</em> ${renderValue(val)}</li>`}return objectHtml+="</ul>"}return value}
 function copyHtml() { navigator.clipboard.writeText(document.getElementById('protocolOutput').innerHTML).then(() => alert('¡HTML del protocolo copiado!'), () => alert('Error al copiar')); }
 function downloadHtml() {
