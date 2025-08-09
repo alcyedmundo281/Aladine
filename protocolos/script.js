@@ -1,22 +1,16 @@
 // =============================================================================
-//  SCRIPT.JS - V4.1 (ESTRATEGIA 100% MARKDOWN, ARCHIVOS SEPARADOS)
+//  SCRIPT.JS - VERSIÓN FINAL Y DEFINITIVA (ESTRATEGIA 100% MARKDOWN)
 // =============================================================================
 
-let protocolData = null; // Estado global para el protocolo en construcción
+let protocolData = null; 
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM listo. Aplicación iniciada.");
-    const generateButton = document.getElementById('generateButton');
-    if (generateButton) {
-        generateButton.addEventListener('click', generateProtocolStructure);
-    } else {
-        console.error("Error CRÍTICO: No se encontró el botón con id='generateButton'.");
-    }
+    document.getElementById('generateButton').addEventListener('click', generateProtocolStructure);
 });
 
 function generateProtocolStructure() {
     const protocolTitle = document.getElementById('protocolTitle').value.trim();
-    if (!protocolTitle) { alert("Por favor, ingrese un título para el protocolo."); return; }
+    if (!protocolTitle) { alert("Por favor, ingrese un título."); return; }
     
     document.getElementById('loader').style.display = 'block';
     document.getElementById('protocolStructure').innerHTML = '';
@@ -31,12 +25,7 @@ function generateProtocolStructure() {
 function createBaseStructure(title) {
     const medicalUnit = document.getElementById('medicalUnit').value;
     return {
-        metadata: { 
-            titulo: title, 
-            version: "1.0",
-            unidadResponsable: { nombre: `Unidad Técnica de ${medicalUnit}` },
-            fechaElaboracion: new Date().toISOString().slice(0, 10)
-        },
+        metadata: { titulo: title, version: "1.0", unidadResponsable: { nombre: `Unidad Técnica de ${medicalUnit}` }, fechaElaboracion: new Date().toISOString().slice(0, 10) },
         secciones: {
             justificacion: { titulo: "1. Justificación y Alcance", markdownContent: null },
             objetivos: { titulo: "2. Objetivos", markdownContent: null },
@@ -64,7 +53,6 @@ async function generateAllSections() {
     const allButtons = document.querySelectorAll('.section-generator button');
     allButtons.forEach(btn => btn.disabled = true);
     for (const sectionKey of Object.keys(protocolData.secciones)) {
-        // Verifica si la sección ya tiene contenido antes de generarla
         if (!protocolData.secciones[sectionKey].markdownContent) {
             await generateSectionContent(sectionKey);
         }
@@ -110,13 +98,11 @@ async function generateSectionContent(sectionKey) {
         const generatedContent = extractJson(rawText);
 
         if(!generatedContent || !generatedContent[sectionKey] || typeof generatedContent[sectionKey].markdownContent === 'undefined'){
-            throw new Error("La respuesta del modelo no tuvo el formato JSON esperado (faltó 'markdownContent'). Respuesta: " + rawText);
+            throw new Error("La respuesta del modelo no tuvo el formato JSON esperado. Respuesta: " + rawText);
         }
 
         protocolData.secciones[sectionKey] = generatedContent[sectionKey];
-        
         sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
-        
         document.getElementById('protocolOutput').style.display = 'block';
         renderProtocol(protocolData);
 
@@ -144,13 +130,13 @@ function getSpecializedPrompt(sectionKey, protocolTitle) {
             specificInstructions = `En "markdownContent", crea una lista de definiciones para 10-15 términos clave sobre "${protocolTitle}". Formato: **Término:** Definición.`;
             break;
         case 'procedimiento':
-            specificInstructions = `En "markdownContent", detalla el procedimiento completo, usando subtítulos (###) para "Evaluación Inicial", "Manejo Terapéutico", "Monitorización" y "Criterios de Alta". Usa listas anidadas para los detalles.`;
+            specificInstructions = `En "markdownContent", detalla el procedimiento completo, usando subtítulos (###) para "Evaluación Inicial", "Manejo Terapéutico", "Monitorización" y "Criterios de Alta". Usa listas anidadas.`;
             break;
         case 'nivelesEvidencia':
             specificInstructions = `En "markdownContent", crea una tabla en formato Markdown para las recomendaciones GRADE. La tabla debe tener las columnas: "Área", "Recomendación", "Nivel de Evidencia", "Fuerza de Recomendación". Genera 4-6 recomendaciones completas. Después, añade un subtítulo "### Interpretación GRADE" y explica los niveles.`;
             break;
         case 'algoritmosFlujogramas':
-            specificInstructions = `En "markdownContent", crea un subtítulo "### Algoritmo de Diagnóstico y Tratamiento". Luego, en un bloque de código Markdown (\`\`\`mermaid), escribe el código Mermaid.js para un diagrama de flujo simple pero completo sobre el manejo de "${protocolTitle}". Asegúrate de que la sintaxis sea correcta.`;
+            specificInstructions = `En "markdownContent", crea un subtítulo "### Algoritmo de Diagnóstico y Tratamiento". Luego, en un bloque de código Markdown (\`\`\`mermaid), escribe el código Mermaid.js para un diagrama de flujo simple pero completo.`;
             break;
         case 'indicadores':
             specificInstructions = `En "markdownContent", crea una tabla en formato Markdown con los indicadores de calidad. Columnas: "Nombre", "Definición", "Cálculo", "Meta", "Periodo", "Responsable". Genera 3-5 indicadores completos y realistas, sin usar 'N/A'.`;
@@ -159,12 +145,12 @@ function getSpecializedPrompt(sectionKey, protocolTitle) {
             specificInstructions = `En "markdownContent", crea una lista numerada con 10-15 referencias bibliográficas recientes y relevantes en formato Vancouver.`;
             break;
         case 'anexos':
-             specificInstructions = `En "markdownContent", crea un subtítulo "### Anexo 1: Cronograma de Implementación" y luego una tabla en formato Markdown con 8 pasos para la implementación del protocolo. Columnas: "ID", "Tarea", "Comienzo", "Fin".`;
+             specificInstructions = `En "markdownContent", crea un subtítulo "### Anexo 1: Cronograma de Implementación" y una tabla en formato Markdown con 8 pasos. Columnas: "ID", "Tarea", "Comienzo", "Fin".`;
              break;
     }
-    
     return `${promptBase}\n${specificInstructions}`;
 }
+
 
 function extractJson(str) {
     let firstOpen = str.indexOf('{'); if (firstOpen === -1) return null;
@@ -177,9 +163,8 @@ function renderProtocol(data) {
     const outputDiv = document.getElementById("protocolOutput");
     const actionButtonsDiv = document.getElementById("actionButtons");
     let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> HECAM-XX-PR-XXX</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;
-    const sectionKeys = ["justificacion", "objetivos", "glosario", "procedimiento", "nivelesEvidencia", "algoritmosFlujogramas", "indicadores", "bibliografia", "anexos"];
     
-    sectionKeys.forEach(key => {
+    Object.keys(data.secciones).forEach(key => {
         const section = protocolData.secciones[key];
         html += `<section><h2>${section.titulo}</h2>`;
         if (section.markdownContent) {
@@ -197,7 +182,7 @@ function renderProtocol(data) {
                         const diagramContainer = document.getElementById(mc.id);
                         if (diagramContainer && window.mermaid) {
                            mermaid.render(mc.id + '-svg', mc.code, (svgCode) => {
-                               diagramContainer.innerHTML = svgCode;
+                               if(diagramContainer) diagramContainer.innerHTML = svgCode;
                            });
                         }
                     } catch(e) {
@@ -206,7 +191,7 @@ function renderProtocol(data) {
                         if(diagramContainer) diagramContainer.innerHTML = `<p style="color:red">Error al renderizar el diagrama. Código recibido:<br><pre>${mc.code}</pre></p>`;
                     }
                 });
-            }, 100);
+            }, 200);
         } else {
             html += '<p style="color: orange;"><em>Contenido aún no generado.</em></p>';
         }
