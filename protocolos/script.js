@@ -173,42 +173,45 @@ async function generateSectionContent(sectionKey) {
 /**
  * Devuelve un prompt detallado y específico para cada sección del protocolo.
  */
+
 function getSpecializedPrompt(sectionKey, protocolTitle) {
-    // Los ejemplos ya no son necesarios en cada prompt, los mantenemos en una variable por si se necesitan
-    const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
     const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
-                     `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
-                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}".\n`;
-    
+                     `**Tarea:** Genera el contenido para la sección "${sectionKey}" de un protocolo sobre "${protocolTitle}".\n` +
+                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave debe ser un objeto con dos claves: "titulo" y "markdownContent".\n`;
+
     let specificInstructions = '';
 
     switch (sectionKey) {
-        // ... (casos para justificacion, objetivos, glosario, procedimiento que ya funcionan)
-        case 'justificacion': case 'objetivos': case 'glosario': case 'procedimiento':
-            specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto con "titulo" y "markdownContent". En "markdownContent", escribe el texto completo y detallado usando formato Markdown (### Título, **Negrita**, - Lista).`;
+        // --- NUEVA ESTRATEGIA: TODAS LAS SECCIONES PIDEN MARKDOWN ---
+        case 'justificacion':
+            specificInstructions = `En "markdownContent", escribe un texto detallado para la justificación, incluyendo subtítulos (###) para "Carga de la Enfermedad", "Relevancia en HECAM", y "Desafío de la Altitud".`;
+            break;
+        case 'objetivos':
+            specificInstructions = `En "markdownContent", crea dos listas con subtítulos (###): "Objetivos Generales" y "Objetivos Específicos". Cada lista debe tener 3-4 puntos.`;
+            break;
+        case 'glosario':
+            specificInstructions = `En "markdownContent", crea una lista de definiciones para 7-10 términos clave sobre "${protocolTitle}". Formato: **Término:** Definición.`;
+            break;
+        case 'procedimiento':
+            specificInstructions = `En "markdownContent", detalla el procedimiento completo, usando subtítulos (###) para "Evaluación Inicial", "Manejo", "Monitorización" y "Criterios de Alta". Usa listas para los detalles.`;
             break;
         case 'nivelesEvidencia':
-            specificInstructions = `El valor de la clave debe ser un objeto con "titulo", un array "tablaRecomendaciones" (con 4-6 objetos), y un objeto "interpretacion" con la explicación de GRADE.`;
+            specificInstructions = `En "markdownContent", crea una tabla en formato Markdown para las recomendaciones GRADE. La tabla debe tener las columnas: "Área", "Recomendación", "Nivel de Evidencia", "Fuerza de Recomendación". Genera 4-6 recomendaciones. Después de la tabla, añade un subtítulo "### Interpretación GRADE" y explica brevemente los niveles.`;
             break;
-
-        // --- INICIO DE LAS CORRECCIONES FINALES ---
         case 'algoritmosFlujogramas':
-            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "flujogramas". Genera al menos un objeto de flujograma con "tituloFigura" y "descripcion_mermaid". El valor de "descripcion_mermaid" DEBE ser un string de una sola línea, sintácticamente correcto para Mermaid.js, como este ejemplo: \`${mermaidExample}\`. NO uses caracteres especiales o saltos de línea dentro de esta clave.`;
+            specificInstructions = `En "markdownContent", crea un subtítulo (###) para el flujograma. Luego, en un bloque de código (tres comillas invertidas), escribe el código Mermaid.js para un diagrama de flujo simple pero completo sobre el manejo de "${protocolTitle}". Asegúrate de que la sintaxis sea correcta.`;
             break;
-
         case 'indicadores':
-            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "items". Genera 3-5 indicadores de calidad REALISTAS y COMPLETOS para monitorizar el protocolo de "${protocolTitle}". Cada indicador debe ser un objeto con "nombre", "definicion", "calculo", "meta", "periodo", y "responsable". Es crucial que inventes contenido realista para cada campo y no dejes ninguno como 'N/A'.`;
+            specificInstructions = `En "markdownContent", crea una tabla en formato Markdown con los indicadores de calidad. Columnas: "Nombre", "Definición", "Cálculo", "Meta", "Periodo", "Responsable". Genera 3-5 indicadores completos y realistas.`;
             break;
-
         case 'bibliografia':
-            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "referencias". El array "referencias" debe ser un array de STRINGS, donde cada string es una referencia completa en formato Vancouver. Genera entre 10 y 15 referencias.`;
+            specificInstructions = `En "markdownContent", crea una lista numerada con 10-15 referencias bibliográficas recientes y relevantes en formato Vancouver.`;
             break;
-        // --- FIN DE CORRECCIONES ---
-        
         case 'anexos':
-             specificInstructions = `**Detalles para '${sectionKey}':** El objeto debe ser un objeto con "titulo" y un array "items". Genera un cronograma Gantt con 8 pasos.`;
+             specificInstructions = `En "markdownContent", crea un subtítulo "### Anexo 1: Cronograma de Implementación" y luego una tabla en formato Markdown con 8 pasos para la implementación del protocolo. Columnas: "ID", "Tarea", "Comienzo", "Fin".`;
              break;
     }
+    
     return `${promptBase}\n${specificInstructions}`;
 }
 
