@@ -61,6 +61,70 @@
           }
         }
       }
+    },
+    "nivelesEvidencia": {
+      "titulo": "4.6. Nivel de evidencia y grado de recomendaciones",
+      "interpretacion": {
+        "titulo": "Interpretación de la Metodología GRADE:",
+        "nivelEvidencia": {
+          "titulo": "Nivel de Evidencia:",
+          "items": [
+            {"nivel": "Alto", "descripcion": "Existe una alta confianza en que el efecto estimado se encuentra cercano al efecto real."},
+            {"nivel": "Moderado", "descripcion": "Existe una confianza moderada en el efecto estimado, pero existe la posibilidad de que sea diferente."},
+            {"nivel": "Bajo", "descripcion": "La confianza en el efecto estimado es limitada. El efecto real puede ser sustancialmente diferente."},
+            {"nivel": "Muy Bajo", "descripcion": "Existe muy poca confianza en el efecto estimado."}
+          ]
+        },
+        "fuerzaRecomendacion": {
+          "titulo": "Fuerza de Recomendación:",
+          "items": [
+            {"fuerza": "Fuerte", "descripcion": "Los beneficios de la intervención superan claramente los riesgos. La mayoría de los pacientes deben recibir la intervención."},
+            {"fuerza": "Débil", "descripcion": "Los beneficios y riesgos están balanceados o existe incertidumbre. Se requiere considerar los valores y preferencias del paciente."}
+          ]
+        }
+      },
+      "tablaRecomendaciones": [
+        {
+          "area": "Diagnóstico", 
+          "recomendacion": "Utilizar escalas de severidad como CURB-65 o PSI para decidir el lugar de tratamiento (ambulatorio vs. hospitalario).", 
+          "nivelEvidencia": "Alto", 
+          "fuerzaRecomendacion": "Fuerte"
+        },
+        {
+          "area": "Tratamiento Antimicrobiano", 
+          "recomendacion": "Iniciar terapia antibiótica empírica lo antes posible después del diagnóstico, cubriendo patógenos típicos y atípicos según la severidad.", 
+          "nivelEvidencia": "Alto", 
+          "fuerzaRecomendacion": "Fuerte"
+        },
+        {
+            "area": "Tratamiento Antimicrobiano",
+            "recomendacion": "En NAC no severa sin factores de riesgo para Pseudomonas, no se recomienda el uso rutinario de cobertura anti-MRSA.",
+            "nivelEvidencia": "Moderado",
+            "fuerzaRecomendacion": "Fuerte"
+        },
+        {
+          "area": "Tratamiento de Soporte", 
+          "recomendacion": "El uso rutinario de corticosteroides sistémicos no está recomendado en NAC no severa.", 
+          "nivelEvidencia": "Alto", 
+          "fuerzaRecomendacion": "Fuerte"
+        }
+      ]
+    },
+    "anexos": {
+        "titulo": "Anexos",
+        "items": [
+            {
+                "tituloAnexo": "Anexo 1: Cronograma de Implementación",
+                "tipo": "tabla_gantt",
+                "tareas": [
+                    {"id": 1, "nombre": "Elaboración y Redacción Final del Protocolo", "inicio": "2025-11-01", "fin": "2025-11-20"},
+                    {"id": 2, "nombre": "Revisión por Comités de Calidad e Infecciones", "inicio": "2025-11-21", "fin": "2025-12-10"},
+                    {"id": 3, "nombre": "Capacitación a Servicios (Emergencia, MI)", "inicio": "2025-12-11", "fin": "2026-01-31"},
+                    {"id": 4, "nombre": "Fase de Implementación y Monitoreo", "inicio": "2026-02-01", "fin": "2026-04-30"},
+                    {"id": 5, "nombre": "Análisis de Indicadores y Ajustes", "inicio": "2026-05-01", "fin": "2026-05-15"}
+                ]
+            }
+        ]
     }
   }
 }
