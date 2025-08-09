@@ -126,42 +126,43 @@ async function generateSectionContent(sectionKey) {
 }
 
 function getSpecializedPrompt(sectionKey, protocolTitle) {
+    const mermaidExample = "graph TD; A[Sospecha de SIADH] --> B{Evaluar Criterios Diagnósticos}; B -- Sí --> C[Iniciar Manejo]; B -- No --> D[Buscar Otra Causa de Hiponatremia];";
     const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
-                     `**Tarea:** Genera el contenido para la sección "${sectionKey}" de un protocolo sobre "${protocolTitle}".\n` +
-                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave debe ser un objeto con dos claves: "titulo" y "markdownContent".\n`;
+                     `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
+                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}".\n`;
 
     let specificInstructions = '';
 
     switch (sectionKey) {
+        // ... (casos para justificacion, objetivos, glosario, procedimiento que ya funcionan bien)
         case 'justificacion':
-            specificInstructions = `En "markdownContent", escribe un texto detallado para la justificación, usando subtítulos (###) para "Carga Global y Local", "El Desafío Único del HECAM: ${protocolTitle} en la Altitud", "Población Objetivo y Unidades Involucradas", y "Objetivos y Resultados Esperados". Sé exhaustivo.`;
-            break;
         case 'objetivos':
-            specificInstructions = `En "markdownContent", crea dos listas con subtítulos (###): "Objetivos Generales" (2-3 puntos) y "Objetivos Específicos" (5-6 puntos detallados).`;
-            break;
         case 'glosario':
-            specificInstructions = `En "markdownContent", crea una lista de definiciones para 10-15 términos y abreviaturas clave sobre "${protocolTitle}". Formato: **Término:** Definición.`;
-            break;
         case 'procedimiento':
-            specificInstructions = `En "markdownContent", detalla el procedimiento completo, usando subtítulos (###) para "Evaluación Inicial", "Manejo Terapéutico", "Monitorización" y "Criterios de Alta". Usa listas anidadas para los detalles (ej. para exámenes de laboratorio).`;
+            specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto con "titulo" y "markdownContent". En "markdownContent", escribe el texto completo y detallado usando formato Markdown (### Título, **Negrita**, - Lista). Sé muy detallado y exhaustivo, como en el ejemplo de Sepsis.`;
             break;
         case 'nivelesEvidencia':
-            specificInstructions = `En "markdownContent", crea una tabla en formato Markdown para las recomendaciones GRADE. La tabla debe tener las columnas: "Área", "Recomendación", "Nivel de Evidencia", "Fuerza de Recomendación". Genera 4-6 recomendaciones clave. Después de la tabla, añade un subtítulo "### Interpretación GRADE" y explica los niveles.`;
+            specificInstructions = `El valor de la clave debe ser un objeto con "titulo", un array "tablaRecomendaciones" (con 4-6 objetos), y un objeto "interpretacion" con la explicación de GRADE.`;
             break;
+
+        // --- INICIO DE LAS CORRECCIONES FINALES ---
         case 'algoritmosFlujogramas':
-            specificInstructions = `En "markdownContent", crea un subtítulo (###) para el flujograma. Luego, en un bloque de código Markdown (\`\`\`mermaid), escribe el código Mermaid.js para un diagrama de flujo simple pero completo sobre el manejo de "${protocolTitle}". Asegúrate de que la sintaxis sea correcta.`;
+            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "flujogramas". Genera un objeto de flujograma con "tituloFigura" y "descripcion_mermaid". El valor de "descripcion_mermaid" DEBE ser un string de una sola línea, sintácticamente correcto para Mermaid.js, como este ejemplo: \`${mermaidExample}\`.`;
             break;
+
         case 'indicadores':
-            specificInstructions = `En "markdownContent", crea una tabla en formato Markdown con los indicadores de calidad. Columnas: "Nombre", "Definición", "Cálculo", "Meta", "Periodo", "Responsable". Genera 3-5 indicadores completos y realistas.`;
+            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "items". Genera 3-5 indicadores de calidad REALISTAS y COMPLETOS para monitorizar el protocolo de "${protocolTitle}". Cada indicador debe ser un objeto con "nombre", "definicion", "calculo", "meta", "periodo", y "responsable". Es crucial que inventes contenido realista para cada campo y no dejes ninguno como 'N/A'. **Ejemplo de un item:** {"nombre": "Tiempo hasta corrección de sodio", "definicion": "Tiempo promedio en horas para aumentar el sodio sérico en 4-6 mEq/L en casos severos.", "calculo": "Promedio de horas", "meta": "< 24 horas", "periodo": "Trimestral", "responsable": "Jefe de Medicina Interna"}`;
             break;
+
         case 'bibliografia':
-            specificInstructions = `En "markdownContent", crea una lista numerada con 15-20 referencias bibliográficas recientes y relevantes (últimos 5-7 años) en formato Vancouver.`;
+            specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "referencias". Cada elemento del array "referencias" DEBE SER UN OBJETO con las claves "autores", "titulo", "revista", "anio", y "volumen_pagina". Genera entre 10 y 15 referencias.`;
             break;
+        // --- FIN DE CORRECCIONES ---
+        
         case 'anexos':
-             specificInstructions = `En "markdownContent", crea un subtítulo "### Anexo 1: Cronograma de Implementación" y luego una tabla en formato Markdown con 8 pasos para la implementación del protocolo. Columnas: "ID", "Tarea", "Comienzo", "Fin".`;
+             specificInstructions = `**Detalles para '${sectionKey}':** El valor de la clave debe ser un objeto con "titulo" y un array "items". Genera un cronograma Gantt con 8 pasos.`;
              break;
     }
-    
     return `${promptBase}\n${specificInstructions}`;
 }
 
@@ -175,51 +176,114 @@ function extractJson(str) {
 function renderProtocol(data) {
     const outputDiv = document.getElementById("protocolOutput");
     const actionButtonsDiv = document.getElementById("actionButtons");
-    let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> HECAM-XX-PR-XXX</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;
+    if (!data || !data.metadata || !data.secciones) { return outputDiv.innerHTML = '<p style="color: orange;">El protocolo generado no tiene la estructura esperada.</p>'; }
+
+    let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo||"HECAM-XX-PR-XXX"}</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;
     const sectionKeys = ["justificacion", "objetivos", "glosario", "procedimiento", "nivelesEvidencia", "algoritmosFlujogramas", "indicadores", "bibliografia", "anexos"];
     
     sectionKeys.forEach(key => {
-        const section = protocolData.secciones[key];
-        html += `<section><h2>${section.titulo}</h2>`;
+        const section = data.secciones[key];
+        html += `<section><h2>${section.titulo || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</h2>`;
         
-        if (section.markdownContent) {
-            const mermaidRegex = /```mermaid\n([\s\S]*?)\n```/g;
-            let mermaidCodes = [];
-            
-            // Reemplaza los bloques de mermaid con placeholders y guarda los códigos
-            const contentWithPlaceholders = section.markdownContent.replace(mermaidRegex, (match, code) => {
-                const mermaidId = `mermaid-${key}-${mermaidCodes.length}`;
-                mermaidCodes.push({ id: mermaidId, code: code });
-                return `<div class="mermaid" id="${mermaidId}"></div>`;
-            });
+        const isGenerated = section && Object.keys(section).length > 1; // Verifica si hay más que solo el título
 
-            // Convierte el resto del Markdown a HTML
-            html += marked.parse(contentWithPlaceholders);
-
-            // Renderiza los diagramas de Mermaid después de que el HTML esté en su lugar
-            setTimeout(() => {
-                mermaidCodes.forEach(mc => {
-                    try {
-                        const diagramContainer = document.getElementById(mc.id);
-                        if (diagramContainer) {
-                           mermaid.render(mc.id + '-svg', mc.code, (svgCode) => {
-                               diagramContainer.innerHTML = svgCode;
-                           });
-                        }
-                    } catch(e) {
-                        console.error("Error renderizando Mermaid:", e);
-                        const diagramContainer = document.getElementById(mc.id);
-                        if(diagramContainer) diagramContainer.innerHTML = `<p style="color:red">Error al renderizar el diagrama.</p>`;
+        if (!isGenerated) {
+            html += '<p style="color: orange;"><em>Contenido aún no generado.</em></p>';
+        } else {
+            if (section.markdownContent) {
+                const mermaidRegex = /```mermaid\n([\s\S]*?)\n```/g;
+                let mermaidCodes = [];
+                const contentWithPlaceholders = section.markdownContent.replace(mermaidRegex, (match, code) => {
+                    const mermaidId = `mermaid-${key}-${mermaidCodes.length}`;
+                    mermaidCodes.push({ id: mermaidId, code: code });
+                    return `<div class="mermaid" id="${mermaidId}"></div>`;
+                });
+                html += marked.parse(contentWithPlaceholders);
+                setTimeout(() => {
+                    mermaidCodes.forEach(mc => {
+                        try {
+                            const diagramContainer = document.getElementById(mc.id);
+                            if (diagramContainer) {
+                               mermaid.render(mc.id + '-svg', mc.code, (svgCode) => {
+                                   diagramContainer.innerHTML = svgCode;
+                               });
+                            }
+                        } catch(e) { console.error("Error renderizando Mermaid:", e); }
+                    });
+                }, 100);
+            }
+            if (Array.isArray(section.tablaRecomendaciones)) {
+                html += "<table><thead><tr><th>Área</th><th>Recomendación</th><th>Nivel de Evidencia</th><th>Fuerza de Recomendación</th></tr></thead><tbody>";
+                section.tablaRecomendaciones.forEach(rec => { html += `<tr><td>${rec.area || "N/A"}</td><td>${rec.recomendacion || "N/A"}</td><td>${rec.nivelEvidencia || "N/A"}</td><td>${rec.fuerzaRecomendacion || "N/A"}</td></tr>`; });
+                html += "</tbody></table>";
+            }
+            if (section.interpretacion) {
+                html += `<h3>${section.interpretacion.titulo || "Interpretación GRADE"}</h3>`;
+                if(section.interpretacion.nivelEvidencia) {
+                    html += `<h4>${section.interpretacion.nivelEvidencia.titulo}</h4><ul>`;
+                    section.interpretacion.nivelEvidencia.items.forEach(item => { html += `<li><strong>${item.nivel}:</strong> ${item.descripcion}</li>`; });
+                    html += `</ul>`;
+                }
+                if(section.interpretacion.fuerzaRecomendacion) {
+                    html += `<h4>${section.interpretacion.fuerzaRecomendacion.titulo}</h4><ul>`;
+                    section.interpretacion.fuerzaRecomendacion.items.forEach(item => { html += `<li><strong>${item.fuerza}:</strong> ${item.descripcion}</li>`; });
+                    html += `</ul>`;
+                }
+            }
+            if (Array.isArray(section.flujogramas) && section.flujogramas.length > 0) {
+                 section.flujogramas.forEach((flujo) => { 
+                    if (flujo.descripcion_mermaid) {
+                        const mermaidId = `mermaid-direct-${Math.random()}`;
+                        html += `<h4>${flujo.tituloFigura || "Flujograma"}</h4><div class="mermaid" id="${mermaidId}"></div>`; 
+                        setTimeout(() => {
+                            try {
+                                const diagramContainer = document.getElementById(mermaidId);
+                                if(diagramContainer) {
+                                    mermaid.render(mermaidId + '-svg', flujo.descripcion_mermaid, (svgCode) => {
+                                        diagramContainer.innerHTML = svgCode;
+                                    });
+                                }
+                            } catch(e) {
+                                console.error("Error renderizando Mermaid directo:", e);
+                                const diagramContainer = document.getElementById(mermaidId);
+                                if(diagramContainer) diagramContainer.innerHTML = `<p style="color:red">Error de sintaxis en el código del diagrama.</p>`;
+                            }
+                        }, 100);
                     }
                 });
-            }, 100);
-
-        } else {
-            html += '<p style="color: orange;"><em>Contenido aún no generado.</em></p>';
+            }
+            if (Array.isArray(section.items)) {
+                if (key === "indicadores") {
+                    html += "<table><thead><tr><th>Nombre</th><th>Definición</th><th>Cálculo</th><th>Meta</th><th>Periodo</th><th>Responsable</th></tr></thead><tbody>";
+                    section.items.forEach(item => { html += `<tr><td>${item.nombre || "N/A"}</td><td>${item.definicion || "N/A"}</td><td>${item.calculo || "N/A"}</td><td>${item.meta || "N/A"}</td><td>${item.periodo || "N/A"}</td><td>${item.responsable || "N/A"}</td></tr>`; });
+                    html += "</tbody></table>";
+                } else if (key === "anexos") {
+                    section.items.forEach(item => {
+                        if (item.tituloAnexo) html += `<h3>${item.tituloAnexo}</h3>`;
+                        if (item.tipo === "tabla_gantt" && Array.isArray(item.tareas)) {
+                            html += "<table><thead><tr><th>ID</th><th>Tarea</th><th>Comienzo</th><th>Fin</th></tr></thead><tbody>";
+                            item.tareas.forEach(task => { html += `<tr><td>${task.id}</td><td>${task.nombre}</td><td>${task.inicio}</td><td>${task.fin}</td></tr>`; });
+                            html += "</tbody></table>";
+                        }
+                    });
+                }
+            }
+            // --- CORRECCIÓN FINAL PARA BIBLIOGRAFÍA ---
+            if (Array.isArray(section.referencias)) {
+                 html += "<h4>Referencias</h4><ol>";
+                 section.referencias.forEach(ref => {
+                     if (typeof ref === 'object' && ref !== null) {
+                         // Formatear como referencia Vancouver desde el objeto
+                         html += `<li>${ref.autores || ''}. ${ref.titulo || ''}. <em>${ref.revista || ''}</em>. ${ref.anio || ''};${ref.volumen_pagina || ''}.</li>`;
+                     } else {
+                         html += `<li>${ref}</li>`; // Si es un string, lo muestra directamente
+                     }
+                 });
+                 html += "</ol>";
+            }
         }
         html += `</section>`;
     });
-
     outputDiv.innerHTML = html;
     actionButtonsDiv.innerHTML = '<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>';
 }
