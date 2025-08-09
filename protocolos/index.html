@@ -1,346 +1,245 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador Avanzado de Protocolos Médicos - HECAM</title>
+// =============================================================================
+//  SCRIPT.JS - VERSIÓN FINAL UNIFICADA (TODO CON markdownContent)
+// =============================================================================
+
+let protocolData = null; // Estado global para el protocolo en construcción
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM listo. Aplicación iniciada.");
+    const generateButton = document.getElementById('generateButton');
+    if (generateButton) {
+        generateButton.addEventListener('click', generateProtocolStructure);
+    } else {
+        console.error("Error CRÍTICO: No se encontró el botón con id='generateButton'.");
+    }
+});
+
+function generateProtocolStructure() {
+    const protocolTitle = document.getElementById('protocolTitle').value.trim();
+    if (!protocolTitle) { alert("Por favor, ingrese un título para el protocolo."); return; }
     
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4; color: #333; }
-        .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-        header { text-align: center; border-bottom: 2px solid #005a9c; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo { max-width: 200px; margin-bottom: 15px; }
-        header h1 { color: #005a9c; margin: 0; }
-        .input-section { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-        .input-section label { font-weight: bold; color: #333; }
-        .input-section input, .input-section select { padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-        .input-section button { padding: 12px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 18px; transition: background-color 0.3s; font-weight: bold; }
-        .input-section button:hover { background-color: #0056b3; }
-        .api-warning { background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 10px; margin-top: 5px; font-size: 14px; }
-        .loader { border: 8px solid #f3f3f3; border-radius: 50%; border-top: 8px solid #3498db; width: 50px; height: 50px; animation: spin 2s linear infinite; margin: 40px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .protocol-structure-container { margin-bottom: 20px; border: 1px solid #eee; border-radius: 5px; padding: 15px; }
-        .section-generator { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .section-generator:last-child { border-bottom: none; }
-        .section-generator span { font-weight: bold; }
-        .section-generator button { font-size: 12px; padding: 5px 10px; cursor: pointer; background-color: #6c757d; color: white; border: none; border-radius: 4px; }
-        .section-generator button:hover { background-color: #5a6268; }
-        .section-generator button:disabled { cursor: not-allowed; background-color: #ccc; }
-        #gen-all button { background-color: #17a2b8; }
-        #gen-all button:hover { background-color: #138496; }
-        .section-generator .status { font-style: italic; color: green; font-weight: bold; }
-        .section-generator .error { font-style: italic; color: red; font-weight: bold; }
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('protocolStructure').innerHTML = '';
+    document.getElementById('protocolOutput').style.display = 'none';
+    document.getElementById('actionButtons').innerHTML = '';
 
-        .action-buttons-container { display: flex; gap: 15px; justify-content: center; margin: 20px 0; }
-        .action-buttons-container button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: 1px solid #28a745; border-radius: 4px; background-color: #e9f5ec; color: #28a745; transition: all 0.3s; }
-        .action-buttons-container button:hover { background-color: #28a745; color: white; }
+    protocolData = createBaseStructure(protocolTitle);
+    renderStructureUI();
+    document.getElementById('loader').style.display = 'none';
+}
 
-        .protocol-container { margin-top: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        .protocol-container h1, .protocol-container h2, .protocol-container h3, .protocol-container h4 { color: #005a9c; }
-        .protocol-container h2 { border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px; }
-        .protocol-container ul { list-style-type: disc; padding-left: 20px; }
-        .protocol-container li { margin-bottom: 8px; }
-        .protocol-container table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .protocol-container th, .protocol-container td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .protocol-container th { background-color: #f2f2f2; }
-        .mermaid { text-align: center; margin-top: 20px; background: #fafafa; padding: 15px; border-radius: 5px; border: 1px solid #ddd; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <img src="https://www.iess.gob.ec/documents/10162/34411/hcam.png/267d605c-3a3f-42ba-81f1-30de6da52528?t=1432240905000" alt="Logo HECAM" class="logo">
-            <h1>Generador Avanzado de Protocolos Médicos</h1>
-            <p>Una herramienta para estandarizar la atención en el HECAM</p>
-        </header>
-        
-        <main>
-            <div class="input-section">
-                <label for="protocolTitle">1. Ingrese el título del protocolo:</label>
-                <input type="text" id="protocolTitle" placeholder="Ej: Manejo de la Sepsis en Adultos">
-                <label for="medicalUnit">2. Seleccione la Unidad Médica responsable:</label>
-                <select id="medicalUnit">
-                    <option value="Medicina Interna">Medicina Interna</option>
-                    <option value="Neurología">Neurología</option>
-                    <option value="Gastroenterología">Gastroenterología</option>
-                    <option value="Traumatología">Traumatología</option>
-                    <option value="Cardiología">Cardiología</option>
-                    <option value="Neumología">Neumología</option>
-                    <option value="Cirugía General">Cirugía General</option>
-                </select>
-                <label for="apiKey">3. Ingrese su Clave API de Google Gemini:</label>
-                <input type="password" id="apiKey" placeholder="Su clave es privada y no se almacena">
-                <div class="api-warning"><strong>Nota de Seguridad:</strong> Su clave API se utiliza únicamente para esta sesión, directamente desde su navegador.</div>
-                <button id="generateButton">1. Generar Estructura</button>
-            </div>
-            
-            <div class="loader" id="loader" style="display: none;"></div>
-            
-            <div id="protocolStructure" class="protocol-structure-container"></div>
-            <div id="actionButtons" class="action-buttons-container"></div>
-            <div id="protocolOutput" class="protocol-container" style="display: none;"></div>
-        </main>
-    </div>
+function createBaseStructure(title) {
+    const medicalUnit = document.getElementById('medicalUnit').value;
+    return {
+        metadata: { 
+            titulo: title, 
+            version: "1.0",
+            unidadResponsable: { nombre: `Unidad Técnica de ${medicalUnit}` },
+            fechaElaboracion: new Date().toISOString().slice(0, 10)
+        },
+        secciones: {
+            justificacion: { titulo: "1. Justificación y Alcance", markdownContent: null },
+            objetivos: { titulo: "2. Objetivos", markdownContent: null },
+            glosario: { titulo: "3. Glosario y Definiciones", markdownContent: null },
+            procedimiento: { titulo: "4. Procedimiento", markdownContent: null },
+            nivelesEvidencia: { titulo: "5. Niveles de Evidencia (GRADE)", markdownContent: null },
+            algoritmosFlujogramas: { titulo: "6. Algoritmo de Actuación", markdownContent: null },
+            indicadores: { titulo: "7. Indicadores de Calidad", markdownContent: null },
+            bibliografia: { titulo: "8. Bibliografía", markdownContent: null },
+            anexos: { titulo: "9. Anexos", markdownContent: null }
+        }
+    };
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: false });
-        window.mermaid = mermaid;
-    </script>
-    
-    <script>
-        let protocolData = null;
+function renderStructureUI() {
+    const container = document.getElementById('protocolStructure');
+    container.innerHTML = '<h3>Estructura del Protocolo (Generar contenido por sección):</h3>';
+    for (const key in protocolData.secciones) {
+        container.innerHTML += `<div class="section-generator" id="gen-${key}"><span>${protocolData.secciones[key].titulo}</span><button onclick="generateSectionContent('${key}')">Generar</button></div>`;
+    }
+    container.innerHTML += `<div class="section-generator" id="gen-all"><span><strong>GENERAR TODO EL PROTOCOLO</strong></span><button onclick="generateAllSections()">Generar Todo</button></div>`;
+}
 
-        // --- CORRECCIÓN CRÍTICA: Se usan comillas invertidas (`) para permitir strings multilínea ---
-        const htaExample = {
-            "secciones": {
-                "justificacion": {
-                    "titulo": "1. Justificación y Alcance",
-                    "markdownContent": `### Carga Global\nLa hipertensión arterial (HTA) es el principal factor de riesgo para enfermedades cardiovasculares...`
-                },
-                "nivelesEvidencia": {
-                    "titulo": "5. Niveles de Evidencia (GRADE)",
-                    "tablaRecomendaciones": [{"area": "Diagnóstico", "recomendacion": "Confirmar HTA con mediciones fuera de la consulta (MAPA o AMPA).", "nivelEvidencia": "Alto", "fuerzaRecomendacion": "Fuerte"}],
-                    "interpretacion": {}
-                }
-            }
-        };
-        const nacExample = {
-            "secciones": {
-                "procedimiento": {
-                    "titulo": "4. Procedimiento",
-                    "markdownContent": "### 4.1. Diagnóstico y Estratificación\n- **Criterios:** Infiltrado en Rx de tórax más síntomas...\n- **Estratificación:** Usar CURB-65."
-                }
-            }
-        };
+async function generateAllSections() {
+    const allButtons = document.querySelectorAll('.section-generator button');
+    allButtons.forEach(btn => btn.disabled = true);
+    for (const sectionKey of Object.keys(protocolData.secciones)) {
+        if (!protocolData.secciones[sectionKey].markdownContent) {
+            await generateSectionContent(sectionKey);
+        }
+    }
+    allButtons.forEach(btn => btn.disabled = false);
+    document.getElementById('gen-all').querySelector('button').textContent = 'Generar Todo';
+}
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('generateButton').addEventListener('click', generateProtocolStructure);
+async function generateSectionContent(sectionKey) {
+    const sectionDiv = document.getElementById(`gen-${sectionKey}`);
+    const button = sectionDiv.querySelector('button');
+    button.disabled = true;
+    button.textContent = 'Generando...';
+
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) {
+        alert("Por favor, ingrese su API Key.");
+        button.disabled = false;
+        button.textContent = 'Generar';
+        return;
+    }
+
+    try {
+        const prompt = getSpecializedPrompt(sectionKey, protocolData.metadata.titulo);
+        const modelName = 'gemini-1.5-flash-latest';
+        const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                "generationConfig": { "temperature": 0.5, "maxOutputTokens": 8192 }
+            })
         });
 
-        function generateProtocolStructure() {
-            const protocolTitle = document.getElementById('protocolTitle').value.trim();
-            if (!protocolTitle) { alert("Por favor, ingrese un título."); return; }
-            
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('protocolStructure').innerHTML = '';
-            document.getElementById('protocolOutput').style.display = 'none';
-            document.getElementById('actionButtons').innerHTML = '';
+        const responseData = await apiResponse.json();
+        if (!apiResponse.ok) throw new Error(responseData.error.message || `Error ${apiResponse.status}`);
 
-            protocolData = createBaseStructure(protocolTitle);
-            renderStructureUI();
-            document.getElementById('loader').style.display = 'none';
-        }
-
-        function createBaseStructure(title) {
-            const medicalUnit = document.getElementById('medicalUnit').value;
-            return {
-                metadata: { titulo: title, version: "1.0", unidadResponsable: { nombre: `Unidad Técnica de ${medicalUnit}` }, fechaElaboracion: new Date().toISOString().slice(0, 10) },
-                secciones: {
-                    justificacion: { titulo: "1. Justificación y Alcance", markdownContent: null },
-                    objetivos: { titulo: "2. Objetivos", markdownContent: null },
-                    glosario: { titulo: "3. Glosario y Definiciones", markdownContent: null },
-                    procedimiento: { titulo: "4. Procedimiento", markdownContent: null },
-                    nivelesEvidencia: { titulo: "5. Niveles de Evidencia (GRADE)", tablaRecomendaciones: null, interpretacion: null },
-                    algoritmosFlujogramas: { titulo: "6. Algoritmo de Actuación", flujogramas: null },
-                    indicadores: { titulo: "7. Indicadores de Calidad", items: null },
-                    bibliografia: { titulo: "8. Bibliografía", referencias: null },
-                    anexos: { titulo: "9. Anexos", items: null }
-                }
-            };
-        }
-
-        function renderStructureUI() {
-            const container = document.getElementById('protocolStructure');
-            container.innerHTML = '<h3>Estructura del Protocolo (Generar contenido por sección):</h3>';
-            for (const key in protocolData.secciones) {
-                container.innerHTML += `<div class="section-generator" id="gen-${key}"><span>${protocolData.secciones[key].titulo}</span><button onclick="generateSectionContent('${key}')">Generar</button></div>`;
-            }
-            container.innerHTML += `<div class="section-generator" id="gen-all"><span><strong>GENERAR TODO EL PROTOCOLO</strong></span><button onclick="generateAllSections()">Generar Todo</button></div>`;
+        if (!responseData.candidates || !responseData.candidates[0].content) {
+            throw new Error("Respuesta inválida o bloqueada por la API. Razón: " + (responseData.promptFeedback?.blockReason || 'desconocida'));
         }
         
-        async function generateAllSections() {
-            const allButtons = document.querySelectorAll('.section-generator button');
-            allButtons.forEach(btn => btn.disabled = true);
-            for (const sectionKey of Object.keys(protocolData.secciones)) {
-                if (!isSectionGenerated(sectionKey)) {
-                    await generateSectionContent(sectionKey);
-                }
-            }
-            allButtons.forEach(btn => btn.disabled = false);
-            document.getElementById('gen-all').querySelector('button').textContent = 'Generar Todo';
+        const rawText = responseData.candidates[0].content.parts[0].text;
+        const generatedContent = extractJson(rawText);
+
+        if(!generatedContent || !generatedContent[sectionKey] || !generatedContent[sectionKey].markdownContent){
+            throw new Error("La respuesta del modelo no tuvo el formato JSON esperado. Respuesta: " + rawText);
         }
 
-        function isSectionGenerated(sectionKey) {
-            const section = protocolData.secciones[sectionKey];
-            return section.markdownContent || section.tablaRecomendaciones || section.flujogramas || section.items || section.referencias;
-        }
+        protocolData.secciones[sectionKey] = generatedContent[sectionKey];
+        
+        sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
+        
+        document.getElementById('protocolOutput').style.display = 'block';
+        renderProtocol(protocolData);
 
-        async function generateSectionContent(sectionKey) {
-            const sectionDiv = document.getElementById(`gen-${sectionKey}`);
-            const button = sectionDiv.querySelector('button');
-            button.disabled = true;
-            button.textContent = 'Generando...';
+    } catch (error) {
+        console.error(`Error generando la sección ${sectionKey}:`, error);
+        sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="error">✗ Error</span> <button onclick="generateSectionContent('${sectionKey}')">Reintentar</button>`;
+    }
+}
 
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (!apiKey) {
-                alert("Por favor, ingrese su API Key.");
-                button.disabled = false;
-                button.textContent = 'Generar';
-                return;
-            }
+function getSpecializedPrompt(sectionKey, protocolTitle) {
+    const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
+                     `**Tarea:** Genera el contenido para la sección "${sectionKey}" de un protocolo sobre "${protocolTitle}".\n` +
+                     `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave debe ser un objeto con dos claves: "titulo" y "markdownContent".\n`;
 
-            try {
-                const prompt = getSpecializedPrompt(sectionKey, protocolData.metadata.titulo);
-                const modelName = 'gemini-1.5-flash-latest';
-                const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        "generationConfig": { "temperature": 0.5, "maxOutputTokens": 8192 }
-                    })
-                });
+    let specificInstructions = '';
 
-                const responseData = await apiResponse.json();
-                if (!apiResponse.ok) throw new Error(responseData.error.message || `Error ${apiResponse.status}`);
+    switch (sectionKey) {
+        case 'justificacion':
+            specificInstructions = `En "markdownContent", escribe un texto detallado para la justificación, usando subtítulos (###) para "Carga Global y Local", "Relevancia en HECAM", y "Desafío de la Altitud".`;
+            break;
+        case 'objetivos':
+            specificInstructions = `En "markdownContent", crea dos listas con subtítulos (###): "Objetivos Generales" (2-3 puntos) y "Objetivos Específicos" (5-6 puntos detallados).`;
+            break;
+        case 'glosario':
+            specificInstructions = `En "markdownContent", crea una lista de definiciones para 10-15 términos clave sobre "${protocolTitle}". Formato: **Término:** Definición.`;
+            break;
+        case 'procedimiento':
+            specificInstructions = `En "markdownContent", detalla el procedimiento completo, usando subtítulos (###) para "Evaluación Inicial", "Manejo Terapéutico", "Monitorización" y "Criterios de Alta". Usa listas anidadas para los detalles (ej. para exámenes de laboratorio).`;
+            break;
+        case 'nivelesEvidencia':
+            specificInstructions = `En "markdownContent", crea una tabla en formato Markdown para las recomendaciones GRADE. La tabla debe tener las columnas: "Área", "Recomendación", "Nivel de Evidencia", "Fuerza de Recomendación". Genera 4-6 recomendaciones completas. Después, añade un subtítulo "### Interpretación GRADE" y explica los niveles.`;
+            break;
+        case 'algoritmosFlujogramas':
+            specificInstructions = `En "markdownContent", crea un subtítulo "### Algoritmo de Diagnóstico y Tratamiento". Luego, en un bloque de código Markdown (\`\`\`mermaid), escribe el código Mermaid.js para un diagrama de flujo simple pero completo sobre el manejo de "${protocolTitle}".`;
+            break;
+        case 'indicadores':
+            specificInstructions = `En "markdownContent", crea una tabla en formato Markdown con los indicadores de calidad. Columnas: "Nombre", "Definición", "Cálculo", "Meta", "Periodo", "Responsable". Genera 3-5 indicadores completos y realistas, sin usar 'N/A'.`;
+            break;
+        case 'bibliografia':
+            specificInstructions = `En "markdownContent", crea una lista numerada con 10-15 referencias bibliográficas recientes y relevantes en formato Vancouver.`;
+            break;
+        case 'anexos':
+             specificInstructions = `En "markdownContent", crea un subtítulo "### Anexo 1: Cronograma de Implementación" y luego una tabla en formato Markdown con 8 pasos para la implementación del protocolo. Columnas: "ID", "Tarea", "Comienzo", "Fin".`;
+             break;
+    }
+    
+    return `${promptBase}\n${specificInstructions}`;
+}
 
-                if (!responseData.candidates || !responseData.candidates[0].content) {
-                    throw new Error("Respuesta inválida o bloqueada por la API. Razón: " + (responseData.promptFeedback?.blockReason || 'desconocida'));
-                }
-                
-                const rawText = responseData.candidates[0].content.parts[0].text;
-                const generatedContent = extractJson(rawText);
+function extractJson(str) {
+    let firstOpen = str.indexOf('{'); if (firstOpen === -1) return null;
+    let openBraces = 0, jsonEnd = -1;
+    for (let i = firstOpen; i < str.length; i++) { if (str[i] === '{') openBraces++; else if (str[i] === '}') openBraces--; if (openBraces === 0) { jsonEnd = i + 1; break; } }
+    if (jsonEnd !== -1) { try { return JSON.parse(str.substring(firstOpen, jsonEnd)); } catch (e) { return null; } } return null;
+}
 
-                if(!generatedContent || !generatedContent[sectionKey]){
-                    throw new Error("La respuesta del modelo no tuvo el formato JSON esperado. Respuesta: " + rawText);
-                }
-
-                protocolData.secciones[sectionKey] = generatedContent[sectionKey];
-                
-                sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
-                
-                document.getElementById('protocolOutput').style.display = 'block';
-                renderProtocol(protocolData);
-
-            } catch (error) {
-                console.error(`Error generando la sección ${sectionKey}:`, error);
-                sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="error">✗ Error</span> <button onclick="generateSectionContent('${sectionKey}')">Reintentar</button>`;
-            }
-        }
-
-        function getSpecializedPrompt(sectionKey, protocolTitle) {
-            const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
-            const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
-                             `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
-                             `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON con una sola clave principal: "${sectionKey}".\n`;
+// --- VERSIÓN CORREGIDA DE renderProtocol ---
+function renderProtocol(data) {
+    const outputDiv = document.getElementById("protocolOutput");
+    const actionButtonsDiv = document.getElementById("actionButtons");
+    let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> HECAM-XX-PR-XXX</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;
+    const sectionKeys = ["justificacion", "objetivos", "glosario", "procedimiento", "nivelesEvidencia", "algoritmosFlujogramas", "indicadores", "bibliografia", "anexos"];
+    
+    sectionKeys.forEach(key => {
+        const section = protocolData.secciones[key];
+        html += `<section><h2>${section.titulo}</h2>`;
+        if (section.markdownContent) {
+            const mermaidRegex = /```mermaid\n([\s\S]*?)\n```/g;
+            let mermaidCodes = [];
             
-            let specificInstructions = '';
-            let exampleStructure = {};
-
-            switch (sectionKey) {
-                case 'justificacion': case 'objetivos': case 'glosario': case 'procedimiento':
-                    specificInstructions = `El valor de la clave "${sectionKey}" debe ser un objeto con "titulo" y "markdownContent". En "markdownContent", escribe el texto completo y detallado usando formato Markdown (### Título, **Negrita**, - Lista). Incluye todos los sub-puntos relevantes como se ve en el documento de Sepsis de ejemplo.`;
-                    exampleStructure = { [sectionKey]: htaExample.secciones.justificacion };
-                    break;
-                case 'nivelesEvidencia':
-                    specificInstructions = `El valor de la clave debe ser un objeto con "titulo", un array "tablaRecomendaciones" (con 4-6 objetos), y un objeto "interpretacion" con la explicación de GRADE.`;
-                    exampleStructure = { nivelesEvidencia: htaExample.secciones.nivelesEvidencia };
-                    break;
-                case 'algoritmosFlujogramas':
-                    specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "flujogramas". Genera un objeto de flujograma con "tituloFigura" y "descripcion_mermaid" (código simple en una sola línea como: \`${mermaidExample}\`).`;
-                    break;
-                case 'indicadores':
-                    specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "items" con 3-5 indicadores de calidad.`;
-                    break;
-                case 'bibliografia':
-                    specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "referencias" con 10-15 referencias en formato Vancouver.`;
-                    break;
-                case 'anexos':
-                     specificInstructions = `El valor de la clave debe ser un objeto con "titulo" y un array "items". Genera un cronograma Gantt con 8 pasos.`;
-                     break;
-            }
-            return `${promptBase}\n${specificInstructions}\n\n**EJEMPLO DE ESTRUCTURA REQUERIDA:**\n${JSON.stringify(exampleStructure, null, 2)}`;
-        }
-
-        function extractJson(str) {
-            let firstOpen = str.indexOf('{'); if (firstOpen === -1) return null;
-            let openBraces = 0, jsonEnd = -1;
-            for (let i = firstOpen; i < str.length; i++) { if (str[i] === '{') openBraces++; else if (str[i] === '}') openBraces--; if (openBraces === 0) { jsonEnd = i + 1; break; } }
-            if (jsonEnd !== -1) { try { return JSON.parse(str.substring(firstOpen, jsonEnd)); } catch (e) { return null; } } return null;
-        }
-
-        function renderProtocol(data) {
-            const outputDiv = document.getElementById("protocolOutput");
-            const actionButtonsDiv = document.getElementById("actionButtons");
-            let html = `<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo||"HECAM-XX-PR-XXX"}</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;
-            const sectionKeys = ["justificacion", "objetivos", "glosario", "procedimiento", "nivelesEvidencia", "algoritmosFlujogramas", "indicadores", "bibliografia", "anexos"];
-            sectionKeys.forEach(key => {
-                const section = data.secciones[key];
-                html += `<section><h2>${section.titulo || key.charAt(0).toUpperCase() + key.slice(1)}</h2>`;
-                if (!isSectionGenerated(key)) {
-                    html += '<p style="color: orange;"><em>Contenido aún no generado.</em></p>';
-                } else {
-                    if (section.markdownContent) { html += marked.parse(section.markdownContent); }
-                    if (Array.isArray(section.tablaRecomendaciones)) {
-                        html += "<table><thead><tr><th>Área</th><th>Recomendación</th><th>Nivel de Evidencia</th><th>Fuerza de Recomendación</th></tr></thead><tbody>";
-                        section.tablaRecomendaciones.forEach(rec => { html += `<tr><td>${rec.area || "N/A"}</td><td>${rec.recomendacion || "N/A"}</td><td>${rec.nivelEvidencia || "N/A"}</td><td>${rec.fuerzaRecomendacion || "N/A"}</td></tr>`; });
-                        html += "</tbody></table>";
-                    }
-                    if (section.interpretacion) {
-                        html += `<h3>${section.interpretacion.titulo || "Interpretación GRADE"}</h3>`;
-                        if (section.interpretacion.nivelEvidencia) {
-                            html += `<h4>${section.interpretacion.nivelEvidencia.titulo}</h4><ul>`;
-                            section.interpretacion.nivelEvidencia.items.forEach(item => { html += `<li><strong>${item.nivel}:</strong> ${item.descripcion}</li>`; });
-                            html += "</ul>";
-                        }
-                        if (section.interpretacion.fuerzaRecomendacion) {
-                            html += `<h4>${section.interpretacion.fuerzaRecomendacion.titulo}</h4><ul>`;
-                            section.interpretacion.fuerzaRecomendacion.items.forEach(item => { html += `<li><strong>${item.fuerza}:</strong> ${item.descripcion}</li>`; });
-                            html += "</ul>";
-                        }
-                    }
-                    if (Array.isArray(section.flujogramas)) { section.flujogramas.forEach((flujo) => { html += `<h4>${flujo.tituloFigura || "Flujograma"}</h4><div class="mermaid">${flujo.descripcion_mermaid}</div>`; }); }
-                    if (Array.isArray(section.items)) {
-                        if (key === "indicadores") {
-                            html += "<table><thead><tr><th>Nombre</th><th>Definicion</th><th>Calculo</th><th>Meta</th><th>Periodo</th><th>Responsable</th></tr></thead><tbody>";
-                            section.items.forEach(item => { html += `<tr><td>${item.nombre || "N/A"}</td><td>${item.definicion || "N/A"}</td><td>${item.calculo || "N/A"}</td><td>${item.meta || "N/A"}</td><td>${item.periodo || "N/A"}</td><td>${item.responsable || "N/A"}</td></tr>`; });
-                            html += "</tbody></table>";
-                        } else if (key === "anexos") {
-                            section.items.forEach(item => {
-                                if (item.tituloAnexo) html += `<h3>${item.tituloAnexo}</h3>`;
-                                if (item.tipo === "tabla_gantt" && Array.isArray(item.tareas)) {
-                                    html += "<table><thead><tr><th>ID</th><th>Tarea</th><th>Comienzo</th><th>Fin</th></tr></thead><tbody>";
-                                    item.tareas.forEach(task => { html += `<tr><td>${task.id}</td><td>${task.nombre}</td><td>${task.inicio}</td><td>${task.fin}</td></tr>`; });
-                                    html += "</tbody></table>";
-                                }
-                            });
-                        }
-                    }
-                    if (Array.isArray(section.referencias)) { html += "<h4>Referencias</h4><ol>"; section.referencias.forEach(ref => html += `<li>${ref}</li>`); html += "</ol>"; }
-                }
-                html += `</section>`;
+            // Reemplaza los bloques de mermaid con placeholders y guarda los códigos
+            const contentWithPlaceholders = section.markdownContent.replace(mermaidRegex, (match, code) => {
+                const mermaidId = `mermaid-${key}-${mermaidCodes.length}`;
+                mermaidCodes.push({ id: mermaidId, code: code.trim() });
+                return `<div class="mermaid" id="${mermaidId}"></div>`;
             });
-            outputDiv.innerHTML = html;
-            actionButtonsDiv.innerHTML = '<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>';
-            setTimeout(() => { try { window.mermaid && window.mermaid.run(); } catch (e) { console.error("Error al renderizar Mermaid:", e); } }, 100);
-        }
 
-        function copyHtml() { navigator.clipboard.writeText(document.getElementById('protocolOutput').innerHTML).then(() => alert('¡HTML del protocolo copiado!'), () => alert('Error al copiar')); }
-        function downloadHtml() {
-            const protocolHtml = document.getElementById('protocolOutput').innerHTML;
-            const protocolTitle = document.getElementById('protocolTitle').value.trim() || 'protocolo';
-            const fullHtml = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${protocolTitle}</title><style>body{font-family:Arial,sans-serif;line-height:1.6;margin:2cm}h1,h2,h3,h4{color:#005a9c}h2{border-bottom:1px solid #eee;padding-bottom:5px;margin-top:30px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background-color:#f2f2f2}.mermaid{display:none}</style></head><body>${protocolHtml}</body></html>`;
-            const blob = new Blob([fullHtml], { type: 'text/html' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${protocolTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Convierte el resto del Markdown a HTML
+            html += marked.parse(contentWithPlaceholders);
+
+            // Renderiza los diagramas de Mermaid después de que el HTML esté en su lugar
+            setTimeout(() => {
+                mermaidCodes.forEach(mc => {
+                    try {
+                        const diagramContainer = document.getElementById(mc.id);
+                        if (diagramContainer && window.mermaid) {
+                           mermaid.render(mc.id + '-svg', mc.code, (svgCode) => {
+                               diagramContainer.innerHTML = svgCode;
+                           });
+                        }
+                    } catch(e) {
+                        console.error("Error renderizando Mermaid:", e);
+                        const diagramContainer = document.getElementById(mc.id);
+                        if(diagramContainer) diagramContainer.innerHTML = `<p style="color:red">Error al renderizar el diagrama. Código recibido:<br><pre>${mc.code}</pre></p>`;
+                    }
+                });
+            }, 100);
+
+        } else {
+            html += '<p style="color: orange;"><em>Contenido aún no generado.</em></p>';
         }
-    </script>
-</body>
-</html>
+        html += `</section>`;
+    });
+
+    outputDiv.innerHTML = html;
+    actionButtonsDiv.innerHTML = '<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>';
+}
+
+function copyHtml() {
+    const protocolHtml = document.getElementById('protocolOutput').innerHTML;
+    navigator.clipboard.writeText(protocolHtml).then(() => {
+        alert('¡HTML del protocolo copiado al portapapeles!');
+    }).catch(() => alert('Error al copiar.'));
+}
+
+function downloadHtml() {
+    const protocolHtml = document.getElementById('protocolOutput').innerHTML;
+    const protocolTitle = document.getElementById('protocolTitle').value.trim() || 'protocolo';
+    const fullHtml = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${protocolTitle}</title><style>body{font-family:Arial,sans-serif;line-height:1.6;margin:2cm}h1,h2,h3,h4{color:#005a9c}h2{border-bottom:1px solid #eee;padding-bottom:5px;margin-top:30px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background-color:#f2f2f2}.mermaid{display:none}</style></head><body>${protocolHtml}</body></html>`;
+    const blob = new Blob([fullHtml], { type: 'text/html' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${protocolTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
