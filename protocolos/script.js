@@ -168,55 +168,67 @@ async function generateSectionContent(sectionKey) {
 
 /**
  * Devuelve un prompt detallado y específico para cada sección del protocolo.
- * @param {string} sectionKey - La clave de la sección.
+ * @param {string} sectionKey - La clave de la sección a generar.
  * @param {string} protocolTitle - El título del protocolo.
- * @param {object} htaExample - El JSON del ejemplo de HTA.
- * @param {object} nacExample - El JSON del ejemplo de NAC.
- * @returns {string} El prompt especializado.
+ * @param {object} htaExample - El JSON del ejemplo de HTA para guiar la estructura.
+ * @param {object} nacExample - El JSON del ejemplo de NAC para guiar la estructura.
+ * @returns {string} El prompt especializado para la API.
  */
 function getSpecializedPrompt(sectionKey, protocolTitle, htaExample, nacExample) {
-    const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
+    const mermaidExample = "graph TD; A[Sospecha Clínica] --> B{Evaluación Inicial y Criterios}; B -- Cumple --> C[Iniciar Tratamiento]; B -- No Cumple --> D[Reevaluar/Diagnóstico Alternativo];";
+    
+    // Base del prompt, común para todas las secciones.
     const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
                      `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
                      `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave será un objeto con el contenido de la sección. Sigue la estructura detallada en los ejemplos.\n`;
 
     let specificInstructions = '';
+    
+    // Instrucciones específicas para cada sección.
     switch (sectionKey) {
         case 'justificacion':
-            specificInstructions = `**Detalles para 'justificacion':** Incluye "problemaSaludPublica", "prevalencia" (con "institucional_hecam"), "poblacionObjetivo", "unidadesInvolucradas", y "resultadosEsperados". Menciona el desafío de la altitud de Quito (2850m) y cómo afecta a la fisiopatología de "${protocolTitle}".`;
+            specificInstructions = `**Detalles para 'justificacion':** El objeto debe contener "titulo" y "contenido". El "contenido" a su vez debe tener las claves: "problemaSaludPublica", "prevalencia" (con un sub-objeto "institucional_hecam"), "poblacionObjetivo", "unidadesInvolucradas", y "resultadosEsperados" (como un array de strings). Es crucial que incluyas un párrafo específico sobre el "Desafío de la Altitud" de Quito (2850m) y cómo podría influir en la fisiopatología de "${protocolTitle}".`;
             break;
+
         case 'objetivos':
-            specificInstructions = `**Detalles para 'objetivos':** Genera un "general" y un array de 4-5 "especificos" detallados para el manejo de "${protocolTitle}" en el HECAM.`;
+            specificInstructions = `**Detalles para 'objetivos':** El objeto debe contener "titulo", un "general" (string), y un "especificos" (array de 4-5 strings detallados) para el manejo de "${protocolTitle}" en el HECAM.`;
             break;
+
         case 'glosario':
-            specificInstructions = `**Detalles para 'glosario':** Genera un array "terminos" con 5-7 abreviaturas y sus definiciones, relevantes para "${protocolTitle}".`;
+            specificInstructions = `**Detalles para 'glosario':** El objeto debe contener "titulo" y un array "terminos". Cada elemento del array debe ser un objeto con "abreviatura" y "definicion". Genera entre 5 y 8 términos clave para "${protocolTitle}".`;
             break;
+
         case 'procedimiento':
-            specificInstructions = `**Detalles para 'procedimiento':** Genera un objeto "subsecciones" con al menos "evaluacionInicial", "diagnostico", y "planTerapeutico". Cada subsección debe ser detallada, incluyendo listas para "historiaClinica", "examenFisico", y "examenesComplementarios" (separando "obligatorios" y "opcionales"). En "planTerapeutico", incluye "intervencionesNoFarmacologicas" y un "tratamientoFarmacologico" detallado con un "algoritmoTerapeutico" en pasos.`;
+            specificInstructions = `**Detalles para 'procedimiento':** Esta es la sección principal. El objeto debe contener "titulo" y un objeto "subsecciones". Genera al menos 3-4 subsecciones clave como "evaluacionInicial", "diagnostico", "planTerapeutico", y "manejoComplicaciones". Cada subsección debe ser muy detallada, usando arrays de strings para listas como "historiaClinica", "examenFisico". En "examenesComplementarios", crea un objeto con dos arrays: "obligatorios" y "opcionales". En "planTerapeutico", incluye "intervencionesNoFarmacologicas" y un "tratamientoFarmacologico" detallado con un "algoritmoTerapeutico" que sea un array de objetos, donde cada objeto tenga "paso", "descripcion" y "medicamentos_cnmb".`;
             break;
+
         case 'nivelesEvidencia':
-            specificInstructions = `**Detalles para 'nivelesEvidencia':** Crea la tabla de recomendaciones GRADE con 4-6 recomendaciones clave y específicas para "${protocolTitle}". Incluye también la sección completa de "interpretacion" del marco GRADE.`;
+            specificInstructions = `**Detalles para 'nivelesEvidencia':** El objeto debe contener "titulo", un objeto "interpretacion" (con la explicación de GRADE), y un array "tablaRecomendaciones". Genera entre 4 y 6 recomendaciones clave y específicas para "${protocolTitle}", cada una como un objeto con "area", "recomendacion", "nivelEvidencia" (Alto, Moderado, Bajo), y "fuerzaRecomendacion" (Fuerte, Débil).`;
             break;
+
         case 'algoritmosFlujogramas':
-            specificInstructions = `**Detalles para 'algoritmosFlujogramas':** Crea un array "flujogramas". Genera al menos un "tituloFigura" y una "descripcion_mermaid" con código de diagrama de flujo simple y sintácticamente correcto, como este: \`${mermaidExample}\`.`;
+            specificInstructions = `**Detalles para 'algoritmosFlujogramas':** El objeto debe contener "titulo" y un array "flujogramas". Genera al menos un flujograma. Cada elemento del array debe ser un objeto con "tituloFigura" y "descripcion_mermaid". El código en "descripcion_mermaid" debe ser un string de una sola línea, sintácticamente correcto para Mermaid.js, y simple, como este ejemplo: \`${mermaidExample}\`.`;
             break;
+
         case 'indicadores':
-            specificInstructions = `**Detalles para 'indicadores':** Genera un array "items" con 3-5 indicadores de calidad (de proceso y de resultado) para monitorizar la adherencia y el impacto del protocolo de "${protocolTitle}".`;
+            specificInstructions = `**Detalles para 'indicadores':** El objeto debe contener "titulo" y un array "items". Genera entre 3 y 5 indicadores de calidad (mezclando de proceso y de resultado) para monitorizar la adherencia y el impacto del protocolo de "${protocolTitle}". Cada indicador debe ser un objeto con "nombre", "definicion", "calculo", "meta", "periodo", y "responsable".`;
             break;
+
         case 'bibliografia':
-            specificInstructions = `**Detalles para 'bibliografia':** Genera un array "referencias" con 10-15 referencias bibliográficas clave y recientes (últimos 5 años) en formato Vancouver sobre "${protocolTitle}".`;
+            specificInstructions = `**Detalles para 'bibliografia':** El objeto debe contener "titulo" y un array "referencias". Genera entre 10 y 15 referencias bibliográficas clave y recientes (de los últimos 5 años) sobre el manejo de "${protocolTitle}". Deben incluir guías de práctica clínica internacionales (ej. Surviving Sepsis Campaign, AHA/ACC, etc.) y estar formateadas en estilo Vancouver.`;
             break;
+
         case 'anexos':
-             specificInstructions = `**Detalles para 'anexos':** Crea un cronograma de implementación tipo Gantt con 8 pasos, similar a los ejemplos.`;
+             specificInstructions = `**Detalles para 'anexos':** El objeto debe contener "titulo" y un array "items". Por ahora, genera un solo ítem que sea el "Cronograma de Implementación". Este debe ser un objeto con "tituloAnexo", "tipo": "tabla_gantt", y un array "tareas" con 8 pasos (Elaboración, Revisión, Difusión, Implementación Piloto, Evaluación Intermedia, Implementación Continua, Evaluación Final, Actualización), cada uno con "id", "nombre", "inicio" y "fin" con fechas ficticias.`;
             break;
+            
         default:
-            specificInstructions = `Genera el contenido detallado para esta sección siguiendo la estructura de los ejemplos.`;
+            specificInstructions = `Genera el contenido detallado para la sección "${sectionKey}" siguiendo la estructura de los ejemplos proporcionados.`;
     }
     
-    // Proporciona ejemplos de las secciones más complejas para guiar al modelo
-    return `${promptBase}\n${specificInstructions}\n\n**EJEMPLOS DE ESTRUCTURA (NO COPIAR CONTENIDO, SOLO SEGUIR EL FORMATO):**\n${JSON.stringify({secciones: {justificacion: htaExample.secciones.justificacion, procedimiento: nacExample.secciones.procedimiento, nivelesEvidencia: htaExample.secciones.nivelesEvidencia}})}`;
+    // Proporciona ejemplos de las secciones más complejas para guiar al modelo.
+    return `${promptBase}\n${specificInstructions}\n\n**EJEMPLOS DE ESTRUCTURA (NO COPIAR CONTENIDO, SOLO SEGUIR EL FORMATO):**\n${JSON.stringify({secciones: {justificacion: htaExample.secciones.justificacion, procedimiento: nacExample.secciones.procedimiento, nivelesEvidencia: htaExample.secciones.nivelesEvidencia, anexos: htaExample.secciones.anexos}})}`;
 }
-
 
 // --- SECCIÓN 3: FUNCIONES DE UTILIDAD (RENDERIZADO, COPIA, DESCARGA) ---
 
