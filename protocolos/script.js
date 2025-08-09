@@ -38,17 +38,17 @@ function createBaseStructure(title) {
             fechaElaboracion: new Date().toISOString().slice(0, 10),
             protocoloCodigo: "HECAM-XX-PR-XXX"
         },
-        // Estructura simplificada, sin la clave "content"
+        // CORRECCIÓN: Ahora cada sección tiene su clave "titulo" desde el inicio.
         secciones: {
-            justificacion: { titulo: "1. Justificación y Alcance", problemaSaludPublica: null },
-            objetivos: { titulo: "2. Objetivos", general: null },
-            glosario: { titulo: "3. Glosario y Definiciones", terminos: null },
-            procedimiento: { titulo: "4. Procedimiento", subsecciones: null },
-            nivelesEvidencia: { titulo: "5. Niveles de Evidencia (GRADE)", tablaRecomendaciones: null },
-            algoritmosFlujogramas: { titulo: "6. Algoritmo de Actuación", flujogramas: null },
-            indicadores: { titulo: "7. Indicadores de Calidad", items: null },
-            bibliografia: { titulo: "8. Bibliografía", referencias: null },
-            anexos: { titulo: "9. Anexos", items: null }
+            justificacion: { titulo: "1. Justificación y Alcance" },
+            objetivos: { titulo: "2. Objetivos" },
+            glosario: { titulo: "3. Glosario y Definiciones" },
+            procedimiento: { titulo: "4. Procedimiento (Plan de Acción/Actuación)" },
+            nivelesEvidencia: { titulo: "5. Nivel de Evidencia y Grado de Recomendaciones (GRADE)" },
+            algoritmosFlujogramas: { titulo: "6. Algoritmo de Actuación" },
+            indicadores: { titulo: "7. Indicadores de Calidad" },
+            bibliografia: { titulo: "8. Bibliografía" },
+            anexos: { titulo: "9. Anexos" }
         }
     };
 }
