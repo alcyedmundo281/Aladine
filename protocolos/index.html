@@ -3,23 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Protocolos Médicos - HECAM</title>
-    <!-- Enlace al archivo de estilos CSS -->
-    <link rel="stylesheet" href="style.css">
+    <title>Generador Avanzado de Protocolos Médicos - HECAM</title>
+    
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        header { text-align: center; border-bottom: 2px solid #005a9c; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { max-width: 200px; margin-bottom: 15px; }
+        header h1 { color: #005a9c; margin: 0; }
+        .input-section { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .input-section label { font-weight: bold; color: #333; }
+        .input-section input, .input-section select { padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        .input-section button { padding: 12px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 18px; transition: background-color 0.3s; font-weight: bold; }
+        .input-section button:hover { background-color: #0056b3; }
+        .api-warning { background-color: #e7f3fe; border-left: 5px solid #2196F3; padding: 10px; margin-top: 5px; font-size: 14px; }
+        .loader { border: 8px solid #f3f3f3; border-radius: 50%; border-top: 8px solid #3498db; width: 50px; height: 50px; animation: spin 2s linear infinite; margin: 40px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .protocol-structure-container { margin-bottom: 20px; border: 1px solid #eee; border-radius: 5px; padding: 15px; }
+        .section-generator { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        .section-generator:last-child { border-bottom: none; }
+        .section-generator span { font-weight: bold; }
+        .section-generator button { font-size: 12px; padding: 5px 10px; cursor: pointer; background-color: #6c757d; color: white; border: none; border-radius: 4px; }
+        .section-generator button:hover { background-color: #5a6268; }
+        .section-generator button:disabled { cursor: not-allowed; background-color: #ccc; }
+        #gen-all button { background-color: #17a2b8; }
+        #gen-all button:hover { background-color: #138496; }
+        .section-generator .status { font-style: italic; color: green; font-weight: bold; }
+        .section-generator .error { font-style: italic; color: red; font-weight: bold; }
+
+        .action-buttons-container { display: flex; gap: 15px; justify-content: center; margin: 20px 0; }
+        .action-buttons-container button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: 1px solid #28a745; border-radius: 4px; background-color: #e9f5ec; color: #28a745; transition: all 0.3s; }
+        .action-buttons-container button:hover { background-color: #28a745; color: white; }
+
+        .protocol-container { margin-top: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .protocol-container h1, .protocol-container h2, .protocol-container h3, .protocol-container h4 { color: #005a9c; }
+        .protocol-container h2 { border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px; }
+        .protocol-container ul { list-style-type: disc; padding-left: 20px; }
+        .protocol-container li { margin-bottom: 8px; }
+        .protocol-container table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .protocol-container th, .protocol-container td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .protocol-container th { background-color: #f2f2f2; }
+        .mermaid { text-align: center; margin-top: 20px; background: #fafafa; padding: 15px; border-radius: 5px; border: 1px solid #ddd; }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <img src="https://www.iess.gob.ec/documents/10162/34411/hcam.png/267d605c-3a3f-42ba-81f1-30de6da52528?t=1432240905000" alt="Logo HECAM" class="logo">
-            <h1>Generador Automático de Protocolos Médicos</h1>
+            <h1>Generador Avanzado de Protocolos Médicos</h1>
             <p>Una herramienta para estandarizar la atención en el HECAM</p>
         </header>
         
         <main>
             <div class="input-section">
-                <label for="protocolTitle">1. Ingrese el título del protocolo a generar:</label>
+                <label for="protocolTitle">1. Ingrese el título del protocolo:</label>
                 <input type="text" id="protocolTitle" placeholder="Ej: Manejo de la Sepsis en Adultos">
-
                 <label for="medicalUnit">2. Seleccione la Unidad Médica responsable:</label>
                 <select id="medicalUnit">
                     <option value="Medicina Interna">Medicina Interna</option>
@@ -30,35 +69,201 @@
                     <option value="Neumología">Neumología</option>
                     <option value="Cirugía General">Cirugía General</option>
                 </select>
-
                 <label for="apiKey">3. Ingrese su Clave API de Google Gemini:</label>
                 <input type="password" id="apiKey" placeholder="Su clave es privada y no se almacena">
-                
-                <div class="api-warning">
-                    <strong>Nota de Seguridad:</strong> Su clave API se utiliza únicamente para esta sesión, directamente desde su navegador. No se guarda en nuestro código ni se almacena en ningún servidor.
-                </div>
-
-                <button id="generateButton">Generar Protocolo</button>
+                <div class="api-warning"><strong>Nota de Seguridad:</strong> Su clave API se utiliza únicamente para esta sesión, directamente desde su navegador.</div>
+                <button id="generateButton">1. Generar Estructura</button>
             </div>
             
             <div class="loader" id="loader" style="display: none;"></div>
             
-            <!-- =============================================================== -->
-            <!--   ** LÍNEA AÑADIDA: Contenedor para los botones de acción  **   -->
-            <!-- =============================================================== -->
+            <div id="protocolStructure" class="protocol-structure-container"></div>
             <div id="actionButtons" class="action-buttons-container"></div>
-
-            <div id="protocolOutput" class="protocol-container"></div>
+            <div id="protocolOutput" class="protocol-container" style="display: none;"></div>
         </main>
     </div>
 
-    <!-- Librería para renderizar los diagramas de Mermaid.js -->
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
         mermaid.initialize({ startOnLoad: false });
         window.mermaid = mermaid;
     </script>
-    <!-- Enlace al archivo de script JavaScript -->
-    <script src="script.js"></script>
+    
+    <script>
+        // ===============================================================
+        //  SCRIPT JAVASCRIPT COMPLETO (ARQUITECTURA MULTI-PROMPT)
+        // ===============================================================
+
+        let protocolData = null;
+
+        const htaExample = {"metadata":{"protocoloCodigo":"HECAM-MI-PR-001","titulo":"Manejo de la Hipertensión Arterial y Urgencia Hipertensiva en Adultos","version":"1.0","fechaElaboracion":"2024-10-26","fechaVigencia":"2026-10-26","unidadResponsable":{"nombre":"Unidad Técnica de Medicina Interna"},"autores":[{"nombre":"Dr. Alcy Edmundo Torres Guerrero","rol":"Médico Especialista en Medicina Interna"}],"revisores":[{"cargo":"Coordinador General de Investigación","nombre":""},{"cargo":"Coordinador General de Control de Calidad","nombre":""},{"cargo":"Jefe de la Unidad Técnica de Medicina Interna","nombre":""}],"aprobador":{"cargo":"Director Técnico","nombre":""}},"secciones":{"justificacion":{"titulo":"1. Justificación y Alcance","contenido":{"problemaSaludPublica":"La hipertensión arterial (HTA) es un problema de salud pública global y nacional, con una prevalencia en Ecuador cercana al 20% en adultos. Es el principal factor de riesgo modificable para enfermedades cardiovasculares, cerebrovasculares y renales.","prevalencia":{"institucional_hecam":"En el HECAM, la HTA y sus complicaciones, como la urgencia hipertensiva, son una de las principales causas de consulta y hospitalización en Medicina Interna, generando una alta carga asistencial y la necesidad de estandarizar su manejo para prevenir eventos adversos."},"poblacionObjetivo":"Pacientes adultos (>18 años) con diagnóstico de HTA o que presenten una urgencia hipertensiva, atendidos en el HECAM.","contextoAplicacion":"Consulta ambulatoria, hospitalización y atención de urgencias.","unidadesInvolucradas":["Medicina Interna","Cardiología","Nefrología","Emergencia","Farmacia"],"resultadosEsperados":["Mejorar el control de la PA en pacientes tratados.","Reducir la progresión de urgencia a emergencia hipertensiva.","Optimizar el uso de antihipertensivos del CNMB.","Disminuir la variabilidad en la práctica clínica."]}},"objetivos":{"titulo":"2. Objetivos","general":"Establecer un protocolo basado en evidencia para el manejo integral de la HTA y la urgencia hipertensiva en adultos atendidos en el HECAM.","especificos":["Definir criterios diagnósticos de HTA y urgencia hipertensiva, considerando la altitud de Quito.","Establecer un algoritmo de tratamiento farmacológico basado en el CNMB.","Definir un plan de manejo para la urgencia hipertensiva que evite reducciones bruscas de la PA.","Establecer criterios claros de seguimiento y egreso."]},"glosario":{"titulo":"3. Glosario de Términos / Abreviaturas","terminos":[{"abreviatura":"HTA","definicion":"Hipertensión Arterial"},{"abreviatura":"UH","definicion":"Urgencia Hipertensiva"}]},"procedimiento":{"titulo":"4. Procedimiento (Plan de Acción/Actuación)","subsecciones":{}},"nivelesEvidencia":{"titulo":"5. Niveles de Evidencia (GRADE)","interpretacion":{"titulo":"Interpretación de la Metodología GRADE:","nivelEvidencia":{"titulo":"Nivel de Evidencia:","items":[{"nivel":"Alto","descripcion":"Existe una alta confianza en que el efecto estimado se encuentra cercano al efecto real."}]},"fuerzaRecomendacion":{"titulo":"Fuerza de Recomendación:","items":[{"fuerza":"Fuerte","descripcion":"Los beneficios de la intervención superan claramente los riesgos."}]}},"tablaRecomendaciones":[{"area":"Diagnóstico","recomendacion":"Confirmar el diagnóstico de HTA con mediciones fuera de la consulta (MAPA o AMPA).","nivelEvidencia":"Alto","fuerzaRecomendacion":"Fuerte"}]},"algoritmosFlujogramas":{"titulo":"6. Algoritmo de Actuación","flujogramas":[{"tituloFigura":"Figura 1. Manejo de la Urgencia Hipertensiva en HECAM","descripcion_mermaid":"graph TD; A[Paciente con PA ≥ 180/120 mmHg] --> B{¿Signos/Síntomas de DAOD agudo?}; B -- Sí --> C[Manejo como EMERGENCIA HIPERTENSIVA]; B -- No --> D[Diagnóstico: URGENCIA HIPERTENSIVA];"}]},"indicadores":{"titulo":"7. Indicadores de Calidad","items":[{"nombre":"Tasa de progresión de UH a EH","definicion":"Porcentaje de pacientes con UH que desarrollan DAOD durante la hospitalización.","calculo":"(N° de progresiones a EH / N° total de UH) x 100","meta":"< 2%","periodo":"Semestral","responsable":"Jefe de Unidad de Medicina Interna"}]},"bibliografia":{"titulo":"8. Bibliografía","referencias":["Williams B, Mancia G, et al. 2018 ESC/ESH Guidelines for the management of arterial hypertension. Eur Heart J. 2018;39(33):3021-3104."]},"anexos":{"titulo":"9. Anexos","items":[{"tituloAnexo":"Anexo 1: Cronograma de Implementación","tipo":"tabla_gantt","tareas":[{"id":1,"nombre":"Elaboración y Redacción Final del Protocolo","inicio":"2025-10-28","fin":"2025-11-15"}]}]}}};
+        const nacExample = {"metadata":{/* ... JSON completo de NAC aquí ... */}};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('generateButton').addEventListener('click', generateProtocolStructure);
+        });
+
+        function generateProtocolStructure() {
+            const protocolTitle = document.getElementById('protocolTitle').value.trim();
+            if (!protocolTitle) { alert("Por favor, ingrese un título."); return; }
+            
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('protocolStructure').innerHTML = '';
+            document.getElementById('protocolOutput').style.display = 'none';
+            document.getElementById('actionButtons').innerHTML = '';
+
+            protocolData = createBaseStructure(protocolTitle);
+            renderStructureUI();
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function createBaseStructure(title) {
+            const medicalUnit = document.getElementById('medicalUnit').value;
+            return {
+                metadata: { 
+                    titulo: title, 
+                    version: "1.0",
+                    unidadResponsable: { nombre: `Unidad Técnica de ${medicalUnit}` },
+                    fechaElaboracion: new Date().toISOString().slice(0, 10)
+                },
+                secciones: {
+                    justificacion: { titulo: "1. Justificación y Alcance", content: null },
+                    objetivos: { titulo: "2. Objetivos", content: null },
+                    glosario: { titulo: "3. Glosario y Definiciones", content: null },
+                    procedimiento: { titulo: "4. Procedimiento", content: null },
+                    nivelesEvidencia: { titulo: "5. Niveles de Evidencia (GRADE)", content: null },
+                    algoritmosFlujogramas: { titulo: "6. Algoritmo de Actuación", content: null },
+                    indicadores: { titulo: "7. Indicadores de Calidad", content: null },
+                    bibliografia: { titulo: "8. Bibliografía", content: null },
+                    anexos: { titulo: "9. Anexos", content: null }
+                }
+            };
+        }
+
+        function renderStructureUI() {
+            const container = document.getElementById('protocolStructure');
+            container.innerHTML = '<h3>Estructura del Protocolo (Generar contenido por sección):</h3>';
+            
+            for (const key in protocolData.secciones) {
+                container.innerHTML += `<div class="section-generator" id="gen-${key}"><span>${protocolData.secciones[key].titulo}</span><button onclick="generateSectionContent('${key}')">Generar</button></div>`;
+            }
+            container.innerHTML += `<div class="section-generator" id="gen-all"><span><strong>GENERAR TODO EL PROTOCOLO</strong></span><button onclick="generateAllSections()">Generar Todo</button></div>`;
+        }
+        
+        async function generateAllSections() {
+            const allButtons = document.querySelectorAll('.section-generator button');
+            allButtons.forEach(btn => btn.disabled = true);
+            
+            for (const sectionKey of Object.keys(protocolData.secciones)) {
+                await generateSectionContent(sectionKey);
+            }
+
+            allButtons.forEach(btn => btn.disabled = false);
+        }
+
+        async function generateSectionContent(sectionKey) {
+            const sectionDiv = document.getElementById(`gen-${sectionKey}`);
+            const button = sectionDiv.querySelector('button');
+            button.disabled = true;
+            button.textContent = 'Generando...';
+
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                alert("Por favor, ingrese su API Key.");
+                button.disabled = false;
+                button.textContent = 'Generar';
+                return;
+            }
+
+            try {
+                const prompt = getSpecializedPrompt(sectionKey, protocolData.metadata.titulo);
+                const modelName = 'gemini-1.5-flash-latest';
+                const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        "generationConfig": { "temperature": 0.5, "maxOutputTokens": 8192 }
+                    })
+                });
+
+                const responseData = await apiResponse.json();
+                if (!apiResponse.ok) throw new Error(responseData.error.message);
+
+                const rawText = responseData.candidates[0].content.parts[0].text;
+                const generatedContent = extractJson(rawText);
+
+                if(!generatedContent || !generatedContent[sectionKey]){
+                    throw new Error("La respuesta del modelo no tuvo el formato JSON esperado. Respuesta: " + rawText);
+                }
+
+                protocolData.secciones[sectionKey] = generatedContent[sectionKey];
+                
+                sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="status">✓ Generado</span>`;
+                
+                document.getElementById('protocolOutput').style.display = 'block';
+                renderProtocol(protocolData);
+
+            } catch (error) {
+                console.error(`Error generando la sección ${sectionKey}:`, error);
+                sectionDiv.innerHTML = `<span>${protocolData.secciones[sectionKey].titulo}</span> <span class="error">✗ Error</span> <button onclick="generateSectionContent('${sectionKey}')">Reintentar</button>`;
+            }
+        }
+
+        function getSpecializedPrompt(sectionKey, protocolTitle) {
+            const mermaidExample = "graph TD; A[Sospecha] --> B{Criterios?}; B -- Si --> C[Tratamiento]; B -- No --> D[Reevaluar];";
+            const promptBase = `**Rol:** Eres un experto en redacción de protocolos médicos para el Hospital HECAM en Quito, Ecuador.\n` +
+                             `**Tarea:** Genera SOLAMENTE la sección "${sectionKey}" para un protocolo sobre "${protocolTitle}".\n` +
+                             `**Formato de Salida:** Debes responder ÚNICAMENTE con un objeto JSON que contenga una sola clave principal: "${sectionKey}". El valor de esta clave será un objeto con el contenido de la sección. Sigue la estructura detallada en los ejemplos.\n`;
+
+            let specificInstructions = '';
+            switch (sectionKey) {
+                case 'justificacion':
+                    specificInstructions = `**Detalles para 'justificacion':** Incluye "problemaSaludPublica", "prevalencia" (con "institucional_hecam"), "poblacionObjetivo", "unidadesInvolucradas", y "resultadosEsperados". Menciona el desafío de la altitud de Quito (2850m).`;
+                    break;
+                case 'bibliografia':
+                    specificInstructions = `**Detalles para 'bibliografia':** Incluye entre 10 y 15 referencias clave (últimos 5 años) en formato Vancouver.`;
+                    break;
+                case 'algoritmosFlujogramas':
+                    specificInstructions = `**Detalles para 'algoritmosFlujogramas':** Crea un array "flujogramas". Genera un "tituloFigura" y una "descripcion_mermaid" con código de diagrama simple, como este: \`${mermaidExample}\`.`;
+                    break;
+                case 'nivelesEvidencia':
+                    specificInstructions = `**Detalles para 'nivelesEvidencia':** Crea la tabla de recomendaciones GRADE y la sección de interpretación. Genera 4-6 recomendaciones clave específicas para "${protocolTitle}".`;
+                    break;
+                case 'anexos':
+                     specificInstructions = `**Detalles para 'anexos':** Crea un cronograma de implementación Gantt en la estructura de los ejemplos.`;
+                    break;
+                default:
+                    specificInstructions = `Genera el contenido detallado para la sección "${sectionKey}" siguiendo la estructura de los ejemplos.`;
+            }
+            
+            return `${promptBase}\n${specificInstructions}\n\n**EJEMPLOS DE ESTRUCTURA (NO COPIAR CONTENIDO, SOLO SEGUIR EL FORMATO):**\n${JSON.stringify({secciones: {justificacion: htaExample.secciones.justificacion, bibliografia: htaExample.secciones.bibliografia, nivelesEvidencia: htaExample.secciones.nivelesEvidencia, anexos: htaExample.secciones.anexos}})}`;
+        }
+
+        function extractJson(str) {
+            let firstOpen = str.indexOf('{'); if (firstOpen === -1) return null;
+            let openBraces = 0, jsonEnd = -1;
+            for (let i = firstOpen; i < str.length; i++) { if (str[i] === '{') openBraces++; else if (str[i] === '}') openBraces--; if (openBraces === 0) { jsonEnd = i + 1; break; } }
+            if (jsonEnd !== -1) { try { return JSON.parse(str.substring(firstOpen, jsonEnd)); } catch (e) { return null; } } return null;
+        }
+
+        function renderProtocol(data) {
+             const outputDiv=document.getElementById("protocolOutput"),actionButtonsDiv=document.getElementById("actionButtons");if(!data||!data.metadata||!data.secciones)return void(outputDiv.innerHTML='<p style="color: orange;">El protocolo generado no tiene la estructura esperada.</p>');let html=`<div class="protocol-header"><h1>PROTOCOLO: ${data.metadata.titulo||"Sin Título"}</h1><p><strong>Código:</strong> ${data.metadata.protocoloCodigo||"HECAM-XX-PR-XXX"}</p><p><strong>Versión:</strong> ${data.metadata.version||"1.0"} | <strong>Unidad Responsable:</strong> ${data.metadata.unidadResponsable.nombre||"N/A"}</p><p><strong>Fecha de Elaboración:</strong> ${data.metadata.fechaElaboracion||"N/A"}</p></div><hr>`;const sectionKeys=["justificacion","objetivos","glosario","procedimiento","nivelesEvidencia","algoritmosFlujogramas","indicadores","bibliografia","anexos"];sectionKeys.forEach(key=>{const section=data.secciones[key];if(!section||!section.titulo)return void(html+=`<section><h2>${key.charAt(0).toUpperCase()+key.slice(1).replace(/([A-Z])/g," $1")}</h2><p style="color: orange;"><em>Contenido aún no generado.</em></p></section>`);html+=`<section><h2>${section.titulo}</h2>`,key==="justificacion"&&section.contenido?(section.contenido.problemaSaludPublica&&(html+=`<p>${section.contenido.problemaSaludPublica}</p>`),section.contenido.prevalencia&&section.contenido.prevalencia.institucional_hecam&&(html+=`<p><strong>Prevalencia Institucional:</strong> ${section.contenido.prevalencia.institucional_hecam}</p>`),section.contenido.poblacionObjetivo&&(html+=`<p><strong>Población Objetivo:</strong> ${section.contenido.poblacionObjetivo}</p>`),Array.isArray(section.contenido.unidadesInvolucradas)&&(html+=`<p><strong>Unidades Involucradas:</strong> ${section.contenido.unidadesInvolucradas.join(", ")}</p>`),Array.isArray(section.contenido.resultadosEsperados)&&(html+=`<strong>Resultados Esperados:</strong><ul>${section.contenido.resultadosEsperados.map(item=>`<li>${item}</li>`).join("")}</ul>`)):key==="objetivos"?(section.general&&(html+=`<p><strong>Objetivo General:</strong> ${section.general}</p>`),Array.isArray(section.especificos)&&(html+=`<strong>Objetivos Específicos:</strong><ul>${section.especificos.map(obj=>`<li>${obj}</li>`).join("")}</ul>`)):key==="glosario"&&Array.isArray(section.terminos)?(html+="<ul>",section.terminos.forEach(term=>html+=`<li><strong>${term.abreviatura||term.termino}:</strong> ${term.definicion}</li>`),html+="</ul>"):key==="procedimiento"&&section.subsecciones?Object.values(section.subsecciones).forEach(sub=>{if(sub&&sub.titulo){html+=`<h3>${sub.titulo}</h3>`;for(const[subKey,value]of Object.entries(sub))"titulo"!==subKey&&(html+=`<strong>${subKey.replace(/([A-Z])/g," $1").replace(/^./,str=>str.toUpperCase())}:</strong>`,html+=renderValue(value))}}):key==="nivelesEvidencia"?(Array.isArray(section.tablaRecomendaciones)&&section.tablaRecomendaciones.length>0&&(html+="<table><thead><tr><th>Área</th><th>Recomendación</th><th>Nivel de Evidencia</th><th>Fuerza de Recomendación</th></tr></thead><tbody>",section.tablaRecomendaciones.forEach(rec=>{html+=`<tr><td>${rec.area||"N/A"}</td><td>${rec.recomendacion||"N/A"}</td><td>${rec.nivelEvidencia||"N/A"}</td><td>${rec.fuerzaRecomendacion||"N/A"}</td></tr>`}),html+="</tbody></table>"),section.interpretacion&&(html+=`<h3>${section.interpretacion.titulo||"Interpretación GRADE"}</h3>`,section.interpretacion.nivelEvidencia&&(html+=`<h4>${section.interpretacion.nivelEvidencia.titulo}</h4><ul>`,section.interpretacion.nivelEvidencia.items.forEach(item=>{html+=`<li><strong>${item.nivel}:</strong> ${item.descripcion}</li>`}),html+="</ul>"),section.interpretacion.fuerzaRecomendacion&&(html+=`<h4>${section.interpretacion.fuerzaRecomendacion.titulo}</h4><ul>`,section.interpretacion.fuerzaRecomendacion.items.forEach(item=>{html+=`<li><strong>${item.fuerza}:</strong> ${item.descripcion}</li>`}),html+="</ul>"))):key==="algoritmosFlujogramas"&&Array.isArray(section.flujogramas)&&section.flujogramas.length>0?section.flujogramas.forEach(flujo=>{html+=`<h4>${flujo.tituloFigura||"Flujograma"}</h4>`,html+=`<div class="mermaid">${flujo.descripcion_mermaid}</div>`}):key==="indicadores"&&Array.isArray(section.items)&&section.items.length>0?(html+="<table><thead><tr>",Object.keys(section.items[0]).forEach(header=>html+=`<th>${header.charAt(0).toUpperCase()+header.slice(1)}</th>`),html+="</tr></thead><tbody>",section.items.forEach(item=>{html+="<tr>",Object.keys(item).forEach(header=>html+=`<td>${item[header]||"N/A"}</td>`),html+="</tr>"}),html+="</tbody></table>"):key==="bibliografia"&&Array.isArray(section.referencias)&&section.referencias.length>0?(html+="<h4>Referencias</h4><ol>",section.referencias.forEach(ref=>html+=`<li>${ref}</li>`),html+="</ol>"):key==="anexos"&&Array.isArray(section.items)?section.items.forEach(item=>{item.tituloAnexo&&(html+=`<h3>${item.tituloAnexo}</h3>`),"tabla_gantt"===item.tipo&&Array.isArray(item.tareas)&&(html+="<table><thead><tr><th>ID</th><th>Tarea</th><th>Comienzo</th><th>Fin</th></tr></thead><tbody>",item.tareas.forEach(task=>{html+=`<tr><td>${task.id}</td><td>${task.nombre}</td><td>${task.inicio}</td><td>${task.fin}</td></tr>`}),html+="</tbody></table>")}):!section.contenido&&!section.general&&!section.terminos&&!section.subsecciones&&!section.flujogramas&&!section.items&&!section.referencias&&(html+='<p style="color: orange;"><em>Contenido no generado o interpretado.</em></p>'),html+="</section>"}),outputDiv.innerHTML=html,actionButtonsDiv.innerHTML='<button onclick="copyHtml()">Copiar HTML</button><button onclick="downloadHtml()">Descargar como HTML</button>',setTimeout(()=>{try{window.mermaid&&(document.querySelectorAll(".mermaid").forEach(el=>el.removeAttribute("data-processed")),window.mermaid.run())}catch(e){console.error("Error al renderizar Mermaid:",e)}},100)}
+        function renderValue(value) {if(Array.isArray(value)){let listHtml="<ul>";return value.forEach(item=>{listHtml+=`<li>${renderValue(item)}</li>`}),listHtml+="</ul>",listHtml}if("object"==typeof value&&null!==value){if(value.nombre&&value.link)return`${value.nombre} (<a href='${value.link}' target='_blank' rel='noopener noreferrer'>Ir a la calculadora</a>)`;let objectHtml='<ul style="list-style-type: none; padding-left: 15px;">';for(const[key,val]of Object.entries(value)){const formattedKey=key.replace(/([A-Z])/g," $1").replace(/^./,str=>str.toUpperCase());objectHtml+=`<li><em>${formattedKey}:</em> ${renderValue(val)}</li>`}return objectHtml+="</ul>",objectHtml}return value}
+        function copyHtml() { navigator.clipboard.writeText(document.getElementById('protocolOutput').innerHTML).then(() => alert('¡HTML del protocolo copiado!'), () => alert('Error al copiar')); }
+        function downloadHtml() {
+            const protocolHtml = document.getElementById('protocolOutput').innerHTML;
+            const protocolTitle = document.getElementById('protocolTitle').value.trim() || 'protocolo';
+            const fullHtml = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${protocolTitle}</title><style>body{font-family:Arial,sans-serif;line-height:1.6;margin:2cm}h1,h2,h3,h4{color:#005a9c}h2{border-bottom:1px solid #eee;padding-bottom:5px;margin-top:30px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background-color:#f2f2f2}.mermaid{display:none}</style></head><body>${protocolHtml}</body></html>`;
+            const blob = new Blob([fullHtml], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${protocolTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+    </script>
 </body>
 </html>
