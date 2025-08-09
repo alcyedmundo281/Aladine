@@ -1,43 +1,148 @@
 {
-  "metadata": { "..."},
+  "metadata": {
+    "protocoloCodigo": "HECAM-MI-PR-001",
+    "titulo": "Manejo de la Hipertensión Arterial y Urgencia Hipertensiva en Adultos",
+    "version": "1.0",
+    "fechaElaboracion": "2024-10-26",
+    "fechaVigencia": "2026-10-26",
+    "unidadResponsable": {
+      "nombre": "Unidad Técnica de Medicina Interna"
+    },
+    "autores": [
+      {
+        "nombre": "Dr. Alcy Edmundo Torres Guerrero",
+        "rol": "Médico Especialista en Medicina Interna"
+      }
+    ],
+    "revisores": [
+      {"cargo": "Coordinador General de Investigación", "nombre": ""},
+      {"cargo": "Coordinador General de Control de Calidad", "nombre": ""},
+      {"cargo": "Jefe de la Unidad Técnica de Medicina Interna", "nombre": ""}
+    ],
+    "aprobador": {"cargo": "Director Técnico", "nombre": ""}
+  },
   "secciones": {
-    "justificacion": { "..."},
-    "objetivos": { "..."},
-    "glosario": { "..."},
-    "procedimiento": { "..."},
-    "algoritmosFlujogramas": { "..."},
-    "indicadores": { "..."},
-    "bibliografia": { "..."},
-    
+    "justificacion": {
+      "titulo": "1. Justificación y Alcance",
+      "contenido": {
+        "problemaSaludPublica": "La hipertensión arterial (HTA) es un problema de salud pública global y nacional, con una prevalencia en Ecuador cercana al 20% en adultos. Es el principal factor de riesgo modificable para enfermedades cardiovasculares, cerebrovasculares y renales.",
+        "prevalencia": {
+          "institucional_hecam": "En el HECAM, la HTA y sus complicaciones, como la urgencia hipertensiva, son una de las principales causas de consulta y hospitalización en Medicina Interna, generando una alta carga asistencial y la necesidad de estandarizar su manejo para prevenir eventos adversos."
+        },
+        "poblacionObjetivo": "Pacientes adultos (>18 años) con diagnóstico de HTA o que presenten una urgencia hipertensiva, atendidos en el HECAM.",
+        "contextoAplicacion": "Consulta ambulatoria, hospitalización y atención de urgencias.",
+        "unidadesInvolucradas": ["Medicina Interna", "Cardiología", "Nefrología", "Emergencia", "Farmacia"],
+        "resultadosEsperados": ["Mejorar el control de la PA en pacientes tratados.", "Reducir la progresión de urgencia a emergencia hipertensiva.", "Optimizar el uso de antihipertensivos del CNMB.", "Disminuir la variabilidad en la práctica clínica."]
+      }
+    },
+    "objetivos": {
+      "titulo": "2. Objetivos",
+      "general": "Establecer un protocolo basado en evidencia para el manejo integral de la HTA y la urgencia hipertensiva en adultos atendidos en el HECAM.",
+      "especificos": ["Definir criterios diagnósticos de HTA y urgencia hipertensiva, considerando la altitud de Quito.", "Establecer un algoritmo de tratamiento farmacológico basado en el CNMB.", "Definir un plan de manejo para la urgencia hipertensiva que evite reducciones bruscas de la PA.", "Establecer criterios claros de seguimiento y egreso."]
+    },
+    "glosario": {
+      "titulo": "3. Glosario y Definiciones",
+      "terminos": [
+        {"abreviatura": "HTA", "definicion": "Hipertensión Arterial"},
+        {"abreviatura": "UH", "definicion": "Urgencia Hipertensiva"},
+        {"abreviatura": "DAOD", "definicion": "Daño Agudo de Órgano Diana"},
+        {"abreviatura": "CNMB", "definicion": "Cuadro Nacional de Medicamentos Básicos"},
+        {"abreviatura": "IECA", "definicion": "Inhibidor de la Enzima Convertidora de Angiotensina"},
+        {"abreviatura": "ARA II", "definicion": "Antagonista del Receptor de Angiotensina II"},
+        {"abreviatura": "CCB", "definicion": "Bloqueador de Canales de Calcio (Calcioantagonista)"},
+        {"abreviatura": "PAM", "definicion": "Presión Arterial Media"}
+      ]
+    },
+    "procedimiento": {
+      "titulo": "4. Procedimiento (Plan de Acción/Actuación)",
+      "subsecciones": {
+        "evaluacionInicial": {
+          "titulo": "4.1. Evaluación Inicial del Paciente con HTA severa",
+          "historiaClinica": ["Antecedentes de HTA, tratamiento y adherencia.", "Comorbilidades (ERC, DM, ECV).", "Uso de fármacos que elevan la PA.", "Búsqueda activa de síntomas de DAOD (dolor torácico, disnea, déficit neurológico)."],
+          "examenFisico": ["Medición de PA en ambos brazos.", "Examen neurológico completo.", "Auscultación cardiopulmonar.", "Fondo de ojo para descartar papiledema."],
+          "examenesComplementarios": {
+            "obligatorios": ["ECG de 12 derivaciones.", "Creatinina sérica y electrolitos.", "Biometría hemática.", "Examen de orina."],
+            "opcionales": ["Troponinas (si hay dolor torácico).", "Radiografía de tórax (si hay disnea).", "TAC de cráneo (si hay déficit neurológico)."]
+          }
+        },
+        "diagnostico": {
+          "titulo": "4.2. Diagnóstico Diferencial: Urgencia vs. Emergencia Hipertensiva",
+          "criteriosDiagnosticos": ["Urgencia Hipertensiva (UH): PAS ≥ 180 mmHg y/o PAD ≥ 120 mmHg SIN evidencia de DAOD agudo.", "Emergencia Hipertensiva (EH): Cifras tensionales elevadas CON evidencia de DAOD agudo (EVC, SCA, EAP, disección aórtica, eclampsia, IRA)."],
+          "estratificacionRiesgo": {
+            "descripcion": "En pacientes con HTA crónica, estratificar el riesgo cardiovascular a 10 años.",
+            "calculadorasRecomendadas": [{"nombre": "Calculadora de Riesgo Cardiovascular PREVENT™ de la AHA", "link": "https://professional.heart.org/en/guidelines-and-statements/prevent-calculator"}]
+          }
+        },
+        "planTerapeutico": {
+          "titulo": "4.3. Plan Terapéutico de la Urgencia Hipertensiva",
+          "intervencionesNoFarmacologicas": ["Proporcionar un ambiente tranquilo.", "Reposo en cama con cabecera elevada.", "Identificar y tratar causas desencadenantes (dolor, ansiedad)."],
+          "tratamientoFarmacologico": {
+            "principiosGenerales": "El objetivo es reducir la PA gradualmente en 24-48 horas. La meta inicial es ≤160/100 mmHg. Evitar reducciones de la PAM >25% en las primeras horas para no causar hipoperfusión.",
+            "algoritmoTerapeutico": [
+              {"paso": "Pacientes con tratamiento previo", "descripcion": "Reinstaurar su medicación oral si hubo mala adherencia. Considerar aumentar la dosis o añadir un segundo fármaco.", "medicamentos_cnmb": [{"nombre": "Reinstaurar Enalapril/Losartán/Amlodipino", "dosis_tipica": "Según esquema previo"}]},
+              {"paso": "Pacientes sin tratamiento previo", "descripcion": "Iniciar tratamiento oral con un fármaco de acción relativamente rápida pero controlada.", "medicamentos_cnmb": [{"nombre": "Captopril", "dosis_tipica": "6.25-25 mg VO"}, {"nombre": "Labetalol", "dosis_tipica": "100-200 mg VO"}]},
+              {"paso": "Fármacos a Evitar", "descripcion": "Nifedipino sublingual está contraindicado por el riesgo de caídas bruscas e incontroladas de la PA."}
+            ]
+          }
+        }
+      }
+    },
     "nivelesEvidencia": {
-      "titulo": "4.6. Nivel de evidencia y grado de recomendaciones",
+      "titulo": "5. Nivel de Evidencia y Grado de Recomendaciones (GRADE)",
       "interpretacion": {
         "titulo": "Interpretación de la Metodología GRADE:",
         "nivelEvidencia": {
           "titulo": "Nivel de Evidencia:",
           "items": [
             {"nivel": "Alto", "descripcion": "Existe una alta confianza en que el efecto estimado se encuentra cercano al efecto real."},
-            {"nivel": "Moderado", "descripcion": "Existe una confianza moderada en el efecto estimado. Es probable que se encuentre cercano al efecto real, pero existe la posibilidad de que sea diferente."},
-            {"nivel": "Bajo", "descripcion": "La confianza en el efecto estimado es limitada. Es posible que el efecto real sea sustancialmente diferente."},
-            {"nivel": "Muy Bajo", "descripcion": "Existe muy poca confianza en el efecto estimado. Es muy probable que el efecto real sea sustancialmente diferente."}
+            {"nivel": "Moderado", "descripcion": "Existe una confianza moderada en el efecto estimado, pero existe la posibilidad de que sea diferente."},
+            {"nivel": "Bajo", "descripcion": "La confianza en el efecto estimado es limitada. El efecto real puede ser sustancialmente diferente."},
+            {"nivel": "Muy Bajo", "descripcion": "Existe muy poca confianza en el efecto estimado."}
           ]
         },
         "fuerzaRecomendacion": {
           "titulo": "Fuerza de Recomendación:",
           "items": [
-            {"fuerza": "Fuerte", "descripcion": "Los beneficios de la intervención superan claramente los riesgos (o viceversa). La mayoría de los pacientes deben recibir la intervención."},
-            {"fuerza": "Débil", "descripcion": "Los beneficios y riesgos de la intervención están balanceados, o existe incertidumbre. Se requiere considerar los valores y preferencias de cada paciente."}
+            {"fuerza": "Fuerte", "descripcion": "Los beneficios de la intervención superan claramente los riesgos. La mayoría de los pacientes deben recibir la intervención."},
+            {"fuerza": "Débil", "descripcion": "Los beneficios y riesgos están balanceados o existe incertidumbre. Se requiere considerar los valores y preferencias del paciente."}
           ]
         }
       },
       "tablaRecomendaciones": [
         {"area": "Diagnóstico", "recomendacion": "Confirmar el diagnóstico de HTA con mediciones fuera de la consulta (MAPA o AMPA).", "nivelEvidencia": "Alto", "fuerzaRecomendacion": "Fuerte"},
+        {"area": "Manejo Urgencia Hipertensiva", "recomendacion": "Reducir la PA gradualmente en 24-48h con fármacos orales. Evitar el uso de nifedipino sublingual.", "nivelEvidencia": "Moderado", "fuerzaRecomendacion": "Fuerte"},
         {"area": "Tratamiento Farmacológico", "recomendacion": "Iniciar terapia con IECA o ARA II en pacientes con diabetes o enfermedad renal crónica con proteinuria.", "nivelEvidencia": "Alto", "fuerzaRecomendacion": "Fuerte"},
-        {"area": "Manejo en Altitud (HECAM)", "recomendacion": "Considerar que los umbrales de PA para diagnóstico pueden ser ligeramente diferentes en la altitud de Quito, aunque no hay consenso claro.", "nivelEvidencia": "Bajo", "fuerzaRecomendacion": "Débil"}
+        {"area": "Manejo en Altitud (HECAM)", "recomendacion": "Aunque no hay guías específicas, ser cauteloso con la reducción de PA en pacientes con hipoxia crónica adaptativa.", "nivelEvidencia": "Bajo", "fuerzaRecomendacion": "Débil"}
       ]
     },
+    "algoritmosFlujogramas": {
+      "titulo": "6. Algoritmo de Actuación",
+      "flujogramas": [
+        {
+          "tituloFigura": "Figura 1. Manejo de la Urgencia Hipertensiva en HECAM",
+          "descripcion_mermaid": "graph TD; A[Paciente con PA ≥ 180/120 mmHg] --> B{¿Signos/Síntomas de DAOD agudo?}; B -- Sí --> C[Manejo como EMERGENCIA HIPERTENSIVA]; B -- No --> D[Diagnóstico: URGENCIA HIPERTENSIVA]; D --> E[Ambiente tranquilo, reposo]; E --> F{¿Tto. previo?}; F -- Sí --> G[Reinstaurar/ajustar medicación oral]; F -- No --> H[Iniciar fármaco oral (ej. Captopril)]; G & H --> I[Monitorizar PA]; I --> J{¿PA desciende gradualmente?}; J -- Sí --> K[Ajustar tto. crónico y planificar alta]; J -- No --> L[Reevaluar];"
+        }
+      ]
+    },
+    "indicadores": {
+      "titulo": "7. Indicadores de Calidad",
+      "items": [
+        {"nombre": "Tasa de progresión de UH a EH", "definicion": "Porcentaje de pacientes con UH que desarrollan DAOD durante la hospitalización.", "calculo": "(N° de progresiones a EH / N° total de UH) x 100", "meta": "< 2%", "periodo": "Semestral", "responsable": "Jefe de Unidad de Medicina Interna"},
+        {"nombre": "Uso de Nifedipino sublingual en UH", "definicion": "Porcentaje de pacientes con UH que reciben nifedipino sublingual.", "calculo": "(N° de pacientes con nifedipino SL / N° total de UH) x 100", "meta": "0%", "periodo": "Trimestral", "responsable": "Comité de Farmacia"},
+        {"nombre": "Tiempo para alcanzar PA objetivo en UH", "definicion": "Tiempo promedio en horas para alcanzar una PA ≤160/100 mmHg.", "calculo": "Promedio de horas", "meta": "< 24 horas", "periodo": "Trimestral", "responsable": "Médico tratante"}
+      ]
+    },
+    "bibliografia": {
+      "titulo": "8. Bibliografía",
+      "referencias": [
+          "Williams B, Mancia G, et al. 2018 ESC/ESH Guidelines for the management of arterial hypertension. Eur Heart J. 2018;39(33):3021-3104.", 
+          "Whelton PK, Carey RM, et al. 2017 ACC/AHA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults. J Am Coll Cardiol. 2018;71(19):e127-e248.", 
+          "Unger T, Borghi C, et al. 2020 International Society of Hypertension Global Hypertension Practice Guidelines. Hypertension. 2020;75(6):1334-1357.", 
+          "Varon J, Elliot W. Management of severe asymptomatic hypertension (hypertensive urgencies) in adults. UpToDate. 2023."
+        ]
+    },
     "anexos": {
-        "titulo": "Anexos",
+        "titulo": "9. Anexos",
         "items": [
             {
                 "tituloAnexo": "Anexo 1: Cronograma de Implementación",
