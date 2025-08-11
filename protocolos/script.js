@@ -514,13 +514,12 @@ function renderProtocol(data) {
             });
             html += marked.parse(contentWithPlaceholders);
             setTimeout(() => {
-                mermaidCodes.forEach(mc => {
+                mermaidCodes.forEach(async mc => {
                     try {
                         const diagramContainer = document.getElementById(mc.id);
                         if (diagramContainer && window.mermaid) {
-                            mermaid.render(mc.id + '-svg', mc.code, (svgCode) => {
-                                if (diagramContainer) diagramContainer.innerHTML = svgCode;
-                            });
+                            const { svg } = await mermaid.render(mc.id + '-svg', mc.code);
+                            diagramContainer.innerHTML = svg;
                         }
                     } catch(e) {
                         console.error("Error al renderizar Mermaid:", e);
@@ -553,7 +552,7 @@ function downloadHtml() {
     const protocolTitle = document.getElementById('protocolTitle').value.trim() || 'protocolo';
     const fullHtml = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${protocolTitle}</title>` +
         `<style>body{font-family:Arial,sans-serif;line-height:1.6;margin:2cm}h1,h2,h3,h4{color:#005a9c}h2{border-bottom:1px solid #eee;padding-bottom:5px;margin-top:30px}` +
-        `table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background-color:#f2f2f2}.mermaid{display:none}</style>` +
+        `table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background-color:#f2f2f2}</style>` +
         `</head><body>${protocolHtml}</body></html>`;
     const blob = new Blob([fullHtml], { type: 'text/html' });
     const link = document.createElement('a');
