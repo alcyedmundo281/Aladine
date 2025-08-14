@@ -1,16 +1,15 @@
 import os
 import requests
 import json
+from pathlib import Path
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# --- Corrected Path Logic ---
-# Get the absolute path of the directory where the script is located
-script_dir = os.path.dirname(os.path.abspath(__file__))
-# Construct the path to the .env file in the parent directory
-dotenv_path = os.path.join(script_dir, '..', '.env')
-load_dotenv(dotenv_path=dotenv_path)
+# Resolve project paths relative to this file so the app runs from any working directory
+API_DIR = Path(__file__).resolve().parent
+load_dotenv(API_DIR.parent / '.env')
+TEMPLATES_DIR = API_DIR.parent / 'report_templates'
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -38,9 +37,8 @@ def get_prompt_for_section(section, dci, indication, evidence):
     if not section_data:
         raise ValueError(f"Invalid section number: {section}")
 
-    # --- Corrected Path Logic ---
-    # Construct the absolute path to the template file
-    template_path = os.path.join(script_dir, '..', 'report_templates', section_data['file'])
+    # Resolve the JSON template path
+    template_path = TEMPLATES_DIR / section_data['file']
 
     try:
         with open(template_path, 'r') as f:
