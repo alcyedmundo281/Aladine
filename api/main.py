@@ -5,8 +5,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Load environment variables from .env file in the parent directory
-load_dotenv(dotenv_path='../.env')
+# Get the absolute path to the directory containing this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Construct the path to the project root directory (one level up)
+project_root = os.path.abspath(os.path.join(script_dir, '..'))
+
+# Load environment variables from .env file in the project root
+load_dotenv(dotenv_path=os.path.join(project_root, '.env'))
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -33,7 +38,8 @@ def get_prompt_for_section(section, dci, indication, evidence):
     if not section_data:
         raise ValueError(f"Invalid section number: {section}")
 
-    template_path = os.path.join('../report_templates', section_data['file'])
+    # Construct the absolute path to the template file
+    template_path = os.path.join(project_root, 'report_templates', section_data['file'])
     
     try:
         with open(template_path, 'r') as f:
@@ -41,7 +47,10 @@ def get_prompt_for_section(section, dci, indication, evidence):
     except FileNotFoundError:
         raise ValueError(f"Template file not found: {template_path}")
 
-    json_template = json_template.replace('${dci}', dci).replace('${indication}', indication).replace('${comparator}', evidence.get('pico', {}).get('c', 'el comparador'))
+    # Substitute variables in the template
+    json_template = json_template.replace('${dci}', dci)
+    json_template = json_template.replace('${indication}', indication)
+    json_template = json_template.replace('${comparator}', evidence.get('pico', {}).get('c', 'el comparador'))
 
     return f"{base_prompt}\n{rules}\n{section_data['ctx']}\n\nGenera un JSON con la siguiente estructura y contenido:\n{json_template}"
 
@@ -49,12 +58,20 @@ def get_prompt_for_section(section, dci, indication, evidence):
 def generate_section():
     try:
         data = request.get_json()
-        if not data: return jsonify({"error": "Invalid JSON"}), 400
-        section, dci, indication, evidence = data.get('section'), data.get('dci'), data.get('indication'), data.get('evidence', {})
-        if not all([section, dci, indication]): return jsonify({"error": "Missing required fields"}), 400
-        
+        if not data:
+            return jsonify({"error": "Invalid JSON"}), 400
+
+        section = data.get('section')
+        dci = data.get('dci')
+        indication = data.get('indication')
+        evidence = data.get('evidence', {})
+
+        if not all([section, dci, indication]):
+            return jsonify({"error": "Missing required fields"}), 400
+
         api_key = os.getenv('GOOGLE_API_KEY')
-        if not api_key or api_key == "YOUR_API_KEY_HERE": return jsonify({"error": "API key not configured on server."}), 500
+        if not api_key or api_key == "YOUR_API_KEY_HERE":
+            return jsonify({"error": "API key not configured on server."}), 500
 
         prompt = get_prompt_for_section(section, dci, indication, evidence)
         api_url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={api_key}'
