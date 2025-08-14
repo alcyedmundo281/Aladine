@@ -1,0 +1,9 @@
+{
+    "pico": {
+        "p": "Población para: ${indication}",
+        "i": "${dci}",
+        "c": "",
+        "o": ""
+    },
+    "search_strategy": []
+}
