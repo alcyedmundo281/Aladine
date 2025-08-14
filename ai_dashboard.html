@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold mb-4">Panel de IA</h1>
+    <p class="mb-2">El contenido del artículo se cargará abajo. Pregunta lo que necesites.</p>
+    <textarea id="article-context" class="w-full h-48 p-2 mb-4 border rounded" placeholder="Contexto del artículo"></textarea>
+    <textarea id="question-input" class="w-full h-24 p-2 mb-4 border rounded" placeholder="Escribe tu pregunta aquí..."></textarea>
+    <button id="ask-button" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Preguntar a la IA</button>
+    <div id="ai-response" class="whitespace-pre-wrap bg-white p-4 mt-4 border rounded"></div>
+  </div>
+
+  <script>
+    function getQueryParam(name) {
+      return new URLSearchParams(window.location.search).has(name);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const contextBox = document.getElementById('article-context');
+      let systemInstruction = 'You are a helpful assistant.';
+
+      if (getQueryParam('context')) {
+        const articleText = sessionStorage.getItem('articleContext');
+        if (articleText) {
+          contextBox.value = articleText;
+        }
+        systemInstruction = "You are an expert assistant. The following text is from an article. Please answer the user's questions about it.";
+      }
+
+      const askButton = document.getElementById('ask-button');
+      const responseBox = document.getElementById('ai-response');
+
+      askButton.addEventListener('click', async () => {
+        const apiKey = localStorage.getItem('openai_api_key');
+        if (!apiKey) {
+          responseBox.textContent = 'No API key found. Add your OpenAI API key to localStorage under "openai_api_key".';
+          return;
+        }
+
+        const question = document.getElementById('question-input').value;
+        const context = contextBox.value;
+
+        try {
+          const res = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: 'gpt-4o-mini',
+              messages: [
+                { role: 'system', content: systemInstruction },
+                { role: 'user', content: `Contexto:\n${context}\n\nPregunta:\n${question}` }
+              ]
+            })
+          });
+
+          const data = await res.json();
+          responseBox.textContent = data.choices?.[0]?.message?.content || 'Sin respuesta.';
+        } catch (err) {
+          responseBox.textContent = 'Error: ' + err.message;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastroenterología</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <main class="max-w-5xl mx-auto p-8">
+        <h1 class="text-3xl font-bold text-center text-indigo-800 mb-8">Módulos de Gastroenterología</h1>
+        <div class="grid gap-6 md:grid-cols-2">
+            <a href="Gastroenteropatias_por_AINES.html" class="card-hover block bg-white rounded-lg p-6 shadow">
+                <h2 class="text-xl font-semibold mb-2">Gastropatías por AINES</h2>
+                <p class="text-sm text-slate-600">Revisión sobre el impacto de los antiinflamatorios no esteroideos.</p>
+            </a>
+            <a href="gastroenterologia/manejo-multidisciplinario.html" class="card-hover block bg-white rounded-lg p-6 shadow">
+                <h2 class="text-xl font-semibold mb-2">Manejo Multidisciplinario en GI</h2>
+                <p class="text-sm text-slate-600">Enfoque integral para casos complejos de gastroenterología.</p>
+            </a>
+        </div>
+    </main>
+</body>
+</html>
