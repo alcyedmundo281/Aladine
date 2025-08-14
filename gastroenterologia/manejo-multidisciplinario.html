@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Manejo Multidisciplinario en Gastroenterología</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #005A9C; /* Azul oscuro */
+            --secondary-color: #003366; /* Azul más oscuro para títulos */
+            --background-color: #f0f4f8;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --accent-color: #e3f2fd;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --surgery-color: #f44336;
+            --radiology-color: #9c27b0;
+            --nutrition-color: #4caf50;
+            --gastro-color: #2196f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Layout Principal --- */
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        aside#side-nav {
+            width: 280px;
+            background-color: var(--card-bg);
+            padding: 25px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        main#content-area {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        #content-wrapper {
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+        }
+
+        /* --- Panel de Navegación --- */
+        #side-nav h1 {
+            color: var(--primary-color);
+            font-size: 1.4em;
+            margin: 0 0 30px 0;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 15px;
+        }
+        #side-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #side-nav li a {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #side-nav li a .fa-solid {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+        #side-nav li a:hover {
+            background-color: var(--accent-color);
+        }
+        #side-nav li a.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 90, 156, 0.2);
+        }
+
+        /* --- Estilos Generales de Componentes --- */
+        .component-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Estilos de la Presentación --- */
+        #presentation-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .slide {
+            background-color: var(--card-bg);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            flex-grow: 1;
+            padding: 30px 40px;
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            overflow-y: auto;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide h2, .slide h3 { color: var(--secondary-color); margin-bottom: 20px; width: 100%; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+        .slide h2 { font-size: 1.8em; }
+        .slide h3 { font-size: 1.4em; color: var(--primary-color); border-bottom: 1px solid #ccc; }
+        .slide p, .slide ul, .slide li { font-size: 1.1em; line-height: 1.6; }
+        .slide ul { list-style-type: none; padding-left: 20px; }
+        .slide li::before { content: '✓'; color: var(--primary-color); font-weight: bold; display: inline-block; width: 1.2em; margin-left: -1.2em; }
+        .title-slide { justify-content: center; align-items: center; text-align: center; }
+        .title-slide h1 { font-size: 2.2em; border-bottom: none; }
+        .navigation { width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 20px; }
+        .nav-button { background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; font-size: 1em; border-radius: 5px; cursor: pointer; margin: 0 10px; transition: background-color 0.3s; }
+        .nav-button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #slide-counter { font-size: 1.1em; color: var(--text-color); font-weight: bold; }
+
+        /* --- Estilos de la Herramienta de Decisión --- */
+        .decision-tool-card { background-color: var(--card-bg); border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .decision-tool-card h2 { color: var(--secondary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+        .scenario-option label { display: block; background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 8px; cursor: pointer; transition: border-color 0.3s, background-color 0.3s; margin-bottom: 10px; }
+        .scenario-option input[type="radio"] { display: none; }
+        .scenario-option input[type="radio"]:checked + label { border-color: var(--primary-color); background-color: var(--accent-color); font-weight: bold; }
+        #decision-result { margin-top: 25px; padding: 20px; border-radius: 8px; border-left: 5px solid; display: none; }
+        #decision-result.gastro { border-color: var(--gastro-color); }
+        #decision-result.surgery { border-color: var(--surgery-color); }
+        #decision-result.radiology { border-color: var(--radiology-color); }
+        #decision-result.nutrition { border-color: var(--nutrition-color); }
+        #decision-result h3 { margin-top: 0; }
+        
+        /* --- Estilos de la Autoevaluación --- */
+        .quiz-card { background-color: var(--card-bg); border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #question-container p { font-size: 1.2em; font-weight: 500; }
+        .quiz-options { list-style: none; padding: 0; }
+        .quiz-options li { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 8px; cursor: pointer; margin-bottom: 10px; transition: background-color 0.3s; }
+        .quiz-options li.correct { background-color: #d4edda; border-color: var(--success-color); }
+        .quiz-options li.incorrect { background-color: #f8d7da; border-color: var(--danger-color); }
+        #feedback-text { margin-top: 15px; padding: 10px; border-radius: 5px; font-size: 1.1em; }
+
+        @media (max-width: 900px) {
+            #app-container { flex-direction: column; }
+            aside#side-nav { width: 100%; height: auto; flex-direction: row; overflow-x: auto; padding: 10px; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+            #side-nav h1 { display: none; }
+            #side-nav ul { display: flex; flex-wrap: nowrap; }
+            #side-nav li a { flex-direction: column; text-align: center; font-size: 0.8em; padding: 10px; white-space: nowrap; }
+            #side-nav li a .fa-solid { margin-right: 0; margin-bottom: 5px; }
+            main#content-area { padding: 15px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <aside id="side-nav">
+            <h1>Manejo Multidisciplinario en GI</h1>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-template="presentation-template"><i class="fa-solid fa-book-open"></i> Base de Conocimiento</a></li>
+                    <li><a href="#" class="nav-link" data-template="decision-tool-template"><i class="fa-solid fa-users-gear"></i> Herramienta de Decisión</a></li>
+                    <li><a href="#" class="nav-link" data-template="quiz-template"><i class="fa-solid fa-vial-circle-check"></i> Autoevaluación</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main id="content-area">
+             <div id="content-wrapper"></div>
+        </main>
+    </div>
+
+    <!-- ########## TEMPLATES ########## -->
+
+    <template id="presentation-template">
+        <div class="component-container">
+            <div id="presentation-container"></div>
+            <div class="navigation">
+                <button id="prev-btn" class="nav-button">Anterior</button>
+                <span id="slide-counter"></span>
+                <button id="next-btn" class="nav-button">Siguiente</button>
+            </div>
+        </div>
+    </template>
+    
+    <template id="decision-tool-template">
+        <div class="component-container">
+            <div class="decision-tool-card">
+                <h2>Herramienta de Decisión Multidisciplinaria</h2>
+                <p>Seleccione un escenario clínico complejo para identificar los especialistas clave y la decisión central a tomar.</p>
+                <div id="decision-scenarios">
+                    <div class="scenario-option">
+                        <input type="radio" id="scenario1" name="clinical_scenario" value="surgery">
+                        <label for="scenario1">Paciente con Colitis Ulcerosa grave que no responde a corticoides IV en 3-5 días.</label>
+                    </div>
+                    <div class="scenario-option">
+                        <input type="radio" id="scenario2" name="clinical_scenario" value="gastro">
+                        <label for="scenario2">Pólipo de colon resecado que resulta ser un adenocarcinoma T1 con invasión linfovascular.</label>
+                    </div>
+                    <div class="scenario-option">
+                        <input type="radio" id="scenario3" name="clinical_scenario" value="radiology">
+                        <label for="scenario3">Paciente cirrótico con hemorragia por várices que no se controla tras dos intentos de endoscopia.</label>
+                    </div>
+                    <div class="scenario-option">
+                        <input type="radio" id="scenario4" name="clinical_scenario" value="nutrition">
+                        <label for="scenario4">Paciente con Enfermedad de Crohn activa, desnutrición severa y sarcopenia.</label>
+                    </div>
+                </div>
+                <button id="analyze-btn" class="nav-button" style="margin-top: 20px;">Analizar Escenario</button>
+                <div id="decision-result">
+                    <h3 id="result-title"></h3>
+                    <p id="result-rationale"></p>
+                    <h4>Especialistas Clave:</h4>
+                    <p id="result-specialists"></p>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <template id="quiz-template">
+        <div class="component-container">
+            <div class="quiz-card">
+                <h2>Autoevaluación de Casos Clínicos</h2>
+                <div id="quiz-container">
+                    <div id="question-container">
+                        <p id="question-text"></p>
+                        <ul class="quiz-options" id="quiz-options"></ul>
+                    </div>
+                    <div id="feedback-text"></div>
+                    <button id="next-question-btn" class="nav-button" style="display:none; margin-top: 15px;">Siguiente Pregunta</button>
+                </div>
+                <div id="quiz-result-container" style="display:none; text-align: center;">
+                    <h3>¡Evaluación Completada!</h3>
+                    <p id="score-text"></p>
+                    <button id="restart-quiz-btn" class="nav-button">Repetir Evaluación</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const contentWrapper = document.getElementById('content-wrapper');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const templates = {
+            'presentation-template': initPresentation,
+            'decision-tool-template': initDecisionTool,
+            'quiz-template': initQuiz
+        };
+
+        function loadContent(templateId) {
+            contentWrapper.innerHTML = '';
+            const template = document.getElementById(templateId);
+            if (template) {
+                contentWrapper.appendChild(template.content.cloneNode(true));
+                if (templates[templateId]) templates[templateId]();
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                loadContent(link.dataset.template);
+            });
+        });
+
+        loadContent('presentation-template'); // Carga inicial
+    });
+
+    // --- LÓGICA DE LA PRESENTACIÓN ---
+    function initPresentation() {
+        const container = document.getElementById('presentation-container');
+        if (!container) return;
+
+        const slidesContent = [
+            `<div class="slide title-slide"><h1>Manejo Multidisciplinario en Gastroenterología</h1><p>Un enfoque integral para casos complejos</p></div>`,
+            `<div class="slide"><h2>Enfermedad Inflamatoria Intestinal (EII)</h2><h3>El Equipo Multidisciplinario (EM)</h3><ul><li>El manejo de la EII compleja (refractaria o con complicaciones) requiere un abordaje integral.</li><li>El EM está compuesto por: <strong>Gastroenterólogo, Cirujano Colorrectal, Nutricionista, Radiólogo y Psicólogo</strong>.</li><li>Este enfoque permite evaluar al paciente de forma holística y personalizar el tratamiento. [1, 2]</li></ul></div>`,
+            `<div class="slide"><h2>Roles del Equipo en EII</h2><ul><li><strong>Gastroenterología:</strong> Lidera el manejo médico, ajusta terapias (biológicos, etc.) y coordina al equipo.</li><li><strong>Cirugía:</strong> Trata complicaciones como estenosis, fístulas o abscesos. Realiza colectomías en CU fulminante.</li><li><strong>Nutrición:</strong> Pilar fundamental. Corrige la desnutrición, déficits y puede usar terapia nutricional para inducir remisión.</li><li><strong>Radiología:</strong> Diagnóstico (Entero-RM) y tratamiento (drenaje de abscesos).</li><li><strong>Oncología:</strong> Vigilancia de cáncer colorrectal en colitis de larga data.</li></ul></div>`,
+            `<div class="slide"><h2>Algoritmo en EII: Colitis Ulcerosa Aguda Grave</h2><h3>Decisión Conjunta Crítica</h3><ul><li><strong>Paso 1 (Gastroenterólogo):</strong> Iniciar corticosteroides IV.</li><li><strong>Paso 2 (Gastroenterólogo):</strong> Si no hay respuesta en 3-5 días, añadir terapia de rescate (ej. Infliximab).</li><li><strong>Paso 3 (Cirujano):</strong> Si falla la terapia de rescate, proceder a <strong>colectomía de urgencia</strong>.</li><li>El cirujano debe ser alertado desde el inicio para una intervención oportuna. [5]</li></ul></div>`,
+            `<div class="slide"><h2>Cáncer Gastrointestinal Temprano</h2><h3>Endoscopia vs. Cirugía</h3><ul><li>El objetivo es la curación con la <strong>menor invasividad</strong> posible.</li><li>Los <strong>Comités de Tumores (Tumor Boards)</strong> son esenciales para tomar la mejor decisión.</li><li>Técnicas endoscópicas como la <strong>Resección Mucosal (EMR)</strong> y la <strong>Disección Submucosa (DES/ESD)</strong> pueden ser curativas en casos seleccionados, preservando el órgano. [18, 19]</li></ul></div>`,
+            `<div class="slide"><h2>Roles del Equipo en Cáncer GI Temprano</h2><ul><li><strong>Gastroenterólogo (Endoscopista Avanzado):</strong> Detecta y reseca lesiones tempranas (EMR/DES).</li><li><strong>Patólogo:</strong> Analiza la pieza resecada. Su informe (márgenes, profundidad, invasión) es <strong>clave</strong> para decidir si el tratamiento fue suficiente.</li><li><strong>Cirujano Oncológico:</strong> Realiza la cirugía (gastrectomía, colectomía) si la resección endoscópica no fue curativa o no es factible.</li><li><strong>Radiólogo:</strong> Estadifica con Entero-TC o RM de recto para evaluar la profundidad de la invasión.</li></ul></div>`,
+            `<div class="slide"><h2>Cirrosis Hepática Avanzada</h2><h3>Manejo de Complicaciones</h3><ul><li>La cirrosis descompensada requiere un equipo que incluye: <strong>Hepatólogo, Intensivista, Radiólogo Intervencionista, Nutricionista y Cirujano de Trasplante</strong>.</li><li>La primera descompensación (ascitis, hemorragia, encefalopatía) es una indicación para evaluar un <strong>trasplante hepático</strong>. [23]</li></ul></div>`,
+            `<div class="slide"><h2>Algoritmo en Cirrosis: Hemorragia Variceal</h2><h3>Actuación Coordinada</h3><ul><li><strong>1. UCI/Gastroenterología:</strong> Reanimación, fármacos vasoactivos (octreótide) y antibióticos.</li><li><strong>2. Endoscopia (Urgente <12h):</strong> Ligadura de várices o escleroterapia para controlar el sangrado.</li><li><strong>3. Radiología Intervencionista:</strong> Si la endoscopia falla, se realiza un <strong>TIPS (shunt portosistémico)</strong> para reducir la presión portal.</li><li><strong>4. Equipo de Trasplante:</strong> Se notifica, ya que el sangrado es un evento que empeora el pronóstico y acelera la necesidad de trasplante.</li></ul></div>`,
+            `<div class="slide"><h2>El Rol Crucial de la Nutrición en Cirrosis</h2><ul><li>La desnutrición y sarcopenia empeoran el pronóstico.</li><li><strong>¡No restringir proteínas en encefalopatía hepática!</strong> Las guías recomiendan 1.2–1.5 g/kg/día. [24]</li><li>Se indican meriendas nocturnas para evitar el catabolismo del ayuno. [25]</li><li>El nutricionista es clave para optimizar la ingesta calórica y proteica y manejar la restricción de sodio en la ascitis.</li></ul></div>`,
+            `<div class="slide title-slide"><h2>Conclusión</h2><p>El manejo exitoso de las patologías gastrointestinales complejas no depende de un solo especialista, sino de la <strong>colaboración, comunicación y toma de decisiones conjuntas</strong> de un equipo multidisciplinario bien coordinado.</p></div>`
+        ];
+
+        container.innerHTML = slidesContent.join('');
+        const slides = container.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach((s, i) => s.classList.toggle('active', i === index));
+            slideCounter.textContent = `${index + 1} / ${totalSlides}`;
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === totalSlides - 1;
+        }
+
+        nextBtn.addEventListener('click', () => { if (currentSlideIndex < totalSlides - 1) showSlide(++currentSlideIndex); });
+        prevBtn.addEventListener('click', () => { if (currentSlideIndex > 0) showSlide(--currentSlideIndex); });
+        showSlide(0);
+    }
+    
+    // --- LÓGICA DE LA HERRAMIENTA DE DECISIÓN ---
+    function initDecisionTool() {
+        const analyzeBtn = document.getElementById('analyze-btn');
+        if (!analyzeBtn) return;
+        
+        const resultDiv = document.getElementById('decision-result');
+        const resultTitle = document.getElementById('result-title');
+        const resultRationale = document.getElementById('result-rationale');
+        const resultSpecialists = document.getElementById('result-specialists');
+
+        const decisions = {
+            surgery: {
+                title: "Decisión: Terapia de Rescate vs. Cirugía Urgente",
+                rationale: "El algoritmo indica proceder a colectomía de urgencia si la terapia de rescate con biológicos falla. La comunicación fluida entre gastroenterología y cirugía es vital para no retrasar la intervención.",
+                specialists: "Gastroenterólogo, Cirujano Colorrectal, Intensivista.",
+                class: "surgery"
+            },
+            gastro: {
+                title: "Decisión: Seguimiento vs. Cirugía Oncológica",
+                rationale: "La invasión linfovascular es un factor de alto riesgo para metástasis ganglionar. Aunque la lesión fue resecada, se requiere una colectomía oncológica para evaluar los ganglios y asegurar la curación.",
+                specialists: "Gastroenterólogo Endoscopista, Cirujano Colorrectal, Patólogo.",
+                class: "gastro"
+            },
+            radiology: {
+                title: "Decisión: Colocación de TIPS de Rescate",
+                rationale: "El fallo del control endoscópico es una indicación de primera línea para un TIPS (shunt portosistémico intrahepático transyugular), realizado por radiología intervencionista para descomprimir el sistema portal.",
+                specialists: "Hepatólogo/Gastroenterólogo, Radiólogo Intervencionista, Intensivista.",
+                class: "radiology"
+            },
+            nutrition: {
+                title: "Decisión: Implementar Soporte Nutricional Agresivo",
+                rationale: "La desnutrición es un factor de mal pronóstico. Se debe priorizar la optimización del estado nutricional, incluso considerando terapia nutricional enteral exclusiva, que puede inducir remisión.",
+                specialists: "Nutricionista, Gastroenterólogo.",
+                class: "nutrition"
+            }
+        };
+
+        analyzeBtn.addEventListener('click', () => {
+            const selected = document.querySelector('input[name="clinical_scenario"]:checked');
+            if (selected) {
+                const decision = decisions[selected.value];
+                resultTitle.textContent = decision.title;
+                resultRationale.textContent = decision.rationale;
+                resultSpecialists.textContent = decision.specialists;
+                resultDiv.className = decision.class;
+                resultDiv.style.display = 'block';
+            } else {
+                resultTitle.textContent = "Por favor, seleccione un escenario.";
+                resultRationale.textContent = "";
+                resultSpecialists.textContent = "";
+                resultDiv.style.display = 'block';
+                resultDiv.className = '';
+            }
+        });
+    }
+
+    // --- LÓGICA DE LA AUTOEVALUACIÓN ---
+    function initQuiz() {
+        if (!document.getElementById('quiz-container')) return;
+
+        const quizQuestions = [
+            {
+                question: "En un paciente con Colitis Ulcerosa aguda grave, ¿cuál es el manejo multidisciplinario correcto si no responde a corticoides IV?",
+                options: ["Continuar corticoides por 10 días más", "Referir directamente a cirugía", "Iniciar terapia de rescate (ej. infliximab) y alertar al cirujano", "Dar de alta con corticoides orales"],
+                answer: "Iniciar terapia de rescate (ej. infliximab) y alertar al cirujano",
+                feedback: "Correcto. El algoritmo indica terapia de rescate como segunda línea, pero el cirujano debe estar al tanto para una colectomía oportuna si esta también falla."
+            },
+            {
+                question: "Un cáncer gástrico temprano es resecado por Disección Submucosa Endoscópica (DES). El informe de patología es crucial. ¿En qué caso se consideraría curativa la DES sin necesidad de cirugía?",
+                options: ["Invasión submucosa profunda y márgenes positivos", "Tumor poco diferenciado", "Tumor intramucoso, bien diferenciado y con márgenes libres", "Presencia de invasión linfovascular"],
+                answer: "Tumor intramucoso, bien diferenciado y con márgenes libres",
+                feedback: "Correcto. Estos son criterios de buen pronóstico que indican un riesgo muy bajo de metástasis ganglionar, haciendo que la resección endoscópica sea suficiente."
+            },
+            {
+                question: "Un paciente cirrótico con hemorragia variceal refractaria al tratamiento endoscópico es derivado para un TIPS. ¿Qué especialidad realiza este procedimiento?",
+                options: ["Cirugía de Trasplante", "Radiología Intervencionista", "Gastroenterología", "Nefrología"],
+                answer: "Radiología Intervencionista",
+                feedback: "Correcto. El TIPS es un procedimiento mínimamente invasivo realizado por radiología intervencionista para crear un shunt y reducir la presión portal."
+            },
+            {
+                question: "Según las guías modernas, ¿cuál es la recomendación nutricional clave para un paciente con cirrosis y encefalopatía hepática?",
+                options: ["Restringir severamente la ingesta de proteínas", "Asegurar un aporte proteico adecuado (1.2-1.5 g/kg/día) y fraccionar comidas", "Dieta líquida exclusiva", "Ayuno total hasta que la encefalopatía resuelva"],
+                answer: "Asegurar un aporte proteico adecuado (1.2-1.5 g/kg/día) y fraccionar comidas",
+                feedback: "Correcto. Contrario a la creencia antigua, la restricción de proteínas empeora la desnutrición y el pronóstico. Se debe mantener un aporte proteico adecuado."
+            },
+             {
+                question: "El concepto de 'Tumor Board' o comité de tumores en cáncer GI temprano es fundamental para:",
+                options: ["Acelerar el alta del paciente", "Tomar una decisión consensuada entre múltiples especialistas sobre la mejor estrategia (endoscopia vs. cirugía)", "Decidir únicamente la quimioterapia", "Realizar siempre el tratamiento más invasivo para asegurar la curación"],
+                answer: "Tomar una decisión consensuada entre múltiples especialistas sobre la mejor estrategia (endoscopia vs. cirugía)",
+                feedback: "Correcto. El objetivo del comité es integrar la visión de todos los especialistas para personalizar el tratamiento, buscando la máxima eficacia con la mínima morbilidad."
+            }
+        ];
+
+        let currentQuestionIndex = 0, score = 0;
+        const qText = document.getElementById('question-text');
+        const qOptions = document.getElementById('quiz-options');
+        const fText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-question-btn');
+        const resultContainer = document.getElementById('quiz-result-container');
+        const scoreText = document.getElementById('score-text');
+        const restartBtn = document.getElementById('restart-quiz-btn');
+
+        function showQuestion(index) {
+            const q = quizQuestions[index];
+            qText.textContent = q.question;
+            qOptions.innerHTML = '';
+            fText.style.display = 'none';
+            nextBtn.style.display = 'none';
+
+            q.options.forEach(opt => {
+                const li = document.createElement('li');
+                li.textContent = opt;
+                li.addEventListener('click', () => selectAnswer(li, opt, q.answer, q.feedback));
+                qOptions.appendChild(li);
+            });
+        }
+
+        function selectAnswer(li, selected, correct, feedback) {
+            qOptions.querySelectorAll('li').forEach(o => o.style.pointerEvents = 'none');
+            if (selected === correct) {
+                li.classList.add('correct');
+                fText.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${feedback}`;
+                fText.style.color = 'var(--success-color)';
+                score++;
+            } else {
+                li.classList.add('incorrect');
+                fText.innerHTML = `<i class="fa-solid fa-times-circle"></i> Incorrecto. La respuesta correcta es <strong>${correct}</strong>. ${feedback}`;
+                fText.style.color = 'var(--danger-color)';
+                qOptions.querySelectorAll('li').forEach(o => { if (o.textContent === correct) o.classList.add('correct'); });
+            }
+            fText.style.display = 'block';
+            nextBtn.style.display = 'inline-block';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            (currentQuestionIndex < quizQuestions.length) ? showQuestion(currentQuestionIndex) : showResults();
+        });
+        
+        restartBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('quiz-container').style.display = 'block';
+            resultContainer.style.display = 'none';
+            showQuestion(0);
+        });
+
+        function showResults() {
+            document.getElementById('quiz-container').style.display = 'none';
+            resultContainer.style.display = 'block';
+            scoreText.textContent = `Obtuviste ${score} de ${quizQuestions.length} respuestas correctas.`;
+        }
+        showQuestion(0);
+    }
+    </script>
+
+</body>
+</html>
