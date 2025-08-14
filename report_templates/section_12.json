@@ -1,0 +1,19 @@
+{
+    "drug_id": {
+        "atc_code": "",
+        "dci": "${dci}",
+        "pharma_form_cnmb": "",
+        "pharma_form_arcsa": "",
+        "concentration": "",
+        "admin_route": "",
+        "commercial_presentation": "",
+        "sanitary_info": ""
+    },
+    "therapeutic_indication": {
+        "indication_requested": "${indication}",
+        "mechanism_of_action": "",
+        "dosage_guideline": "",
+        "alternatives_cnmb": "",
+        "alternatives_not_cnmb": ""
+    }
+}
