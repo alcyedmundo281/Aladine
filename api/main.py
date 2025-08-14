@@ -5,8 +5,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Load environment variables from .env file in the parent directory
-load_dotenv(dotenv_path='../.env')
+# Get the absolute path to the directory containing this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Construct the path to the project root directory (one level up)
+project_root = os.path.abspath(os.path.join(script_dir, '..'))
+
+# Load environment variables from .env file in the project root
+load_dotenv(dotenv_path=os.path.join(project_root, '.env'))
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -34,7 +39,8 @@ def get_prompt_for_section(section, dci, indication, evidence):
     if not section_data:
         raise ValueError(f"Invalid section number: {section}")
 
-    template_path = os.path.join('../report_templates', section_data['file'])
+    # Construct the absolute path to the template file
+    template_path = os.path.join(project_root, 'report_templates', section_data['file'])
     
     try:
         with open(template_path, 'r') as f:
