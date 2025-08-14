@@ -1,0 +1,15 @@
+{
+    "economic_data": {
+        "cost_treatment": {
+            "intervention": { "unit_price": "", "posology": "", "annual_cost_patient": "" },
+            "comparator": { "unit_price": "", "posology": "", "annual_cost_patient": "" }
+        },
+        "cost_other": {
+            "intervention": { "annual_cost_other": "" },
+            "comparator": { "annual_cost_other": "" }
+        },
+        "is_cheaper": "No",
+        "cost_analysis_justification": "",
+        "pharmacoeconomic_studies": ""
+    }
+}
