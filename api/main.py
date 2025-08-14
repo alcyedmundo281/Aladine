@@ -6,10 +6,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Resolve project paths
-BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(BASE_DIR.parent / '.env')
-TEMPLATES_DIR = BASE_DIR.parent / 'report_templates'
+# Resolve project paths relative to this file so the app runs from any working directory
+API_DIR = Path(__file__).resolve().parent
+load_dotenv(API_DIR.parent / '.env')
+TEMPLATES_DIR = API_DIR.parent / 'report_templates'
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
