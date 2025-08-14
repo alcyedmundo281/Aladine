@@ -27,8 +27,7 @@ Your secret Google AI API key must be stored in an environment file.
 2. Open the new `.env` file in a text editor.
 3. Replace the placeholder `YOUR_API_KEY_HERE` with your actual Google AI API key.
 
-```bash
-# .env
+```
 GOOGLE_API_KEY="AIz..........................."
 ```
 
@@ -36,7 +35,7 @@ GOOGLE_API_KEY="AIz..........................."
 
 Open your terminal and navigate to the project's root directory. Install the necessary Python packages using the `requirements.txt` file.
 
-```bash
+```
 pip install -r api/requirements.txt
 ```
 
@@ -44,7 +43,7 @@ pip install -r api/requirements.txt
 
 Once the dependencies are installed, you can start the Python backend server.
 
-```bash
+```
 python3 api/main.py
 ```
 
