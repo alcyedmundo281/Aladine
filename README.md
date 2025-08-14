@@ -5,8 +5,8 @@ This project is a web-based tool for generating high-fidelity technical medical 
 ## How It Works
 
 The application has two main components:
-1.  **Frontend**: An HTML file (`web-conamei-maestra.html`) that provides the user interface. The user inputs a drug name and indication, then generates the report section by section.
-2.  **Backend**: A Python Flask server (`api/main.py`) that receives requests from the frontend, securely calls the Google AI API with the user's API key, and returns the generated content for each section.
+1. **Frontend**: An HTML file (`web-conamei-maestra.html`) that provides the user interface. The user inputs a drug name and indication, then generates the report section by section.
+2. **Backend**: A Python Flask server (`api/main.py`) that receives requests from the frontend, securely calls the Google AI API with the user's API key, and returns the generated content for each section.
 
 This architecture ensures that your Google AI API key is never exposed in the browser.
 
@@ -23,8 +23,8 @@ Follow these steps to get the application running locally.
 
 Your secret Google AI API key must be stored in an environment file.
 
-1.  Rename the file `.env.example` to `.env`.
-2.  Open the new `.env` file in a text editor.
+1. Rename the file `.env.example` to `.env`.
+2. Open the new `.env` file in a text editor.
 3.  Replace the placeholder `YOUR_API_KEY_HERE` with your actual Google AI API key.
 
 ```
