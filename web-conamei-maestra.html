@@ -5,24 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Informes CONAMEI (Alta Fidelidad)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .loader {
+            display: inline-block;
             border: 4px solid #f3f3f3;
             border-top: 4px solid #3498db;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .status-message { transition: opacity 0.5s ease-in-out; }
     </style>
 </head>
 <body class="bg-gray-100 p-4 sm:p-6 md:p-8">
@@ -38,18 +39,8 @@
                 <div class="lg:col-span-1 space-y-6">
                     <div class="space-y-4 p-4 border rounded-lg">
                         <h3 class="font-semibold text-lg text-gray-800">Panel de Control</h3>
-                        <!-- API KEY INPUT -->
-                        <div>
-                            <label for="apiKey" class="block text-sm font-medium text-gray-700">1. API Key de Google AI</label>
-                            <div class="mt-1 flex items-center space-x-2">
-                                <input type="password" id="apiKey" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pega tu clave aquí">
-                                <button id="clearApiKeyBtn" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50" title="Borrar Clave">X</button>
-                            </div>
-                        </div>
-
-                        <!-- DRUG & INDICATION INPUTS -->
-                        <div>
-                            <label for="dci" class="block text-sm font-medium text-gray-700">2. Datos del Medicamento</label>
+                         <div>
+                            <label for="dci" class="block text-sm font-medium text-gray-700">1. Datos del Medicamento</label>
                             <div class="mt-1 space-y-2">
                                 <input type="text" id="dci" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Nombre del Medicamento (DCI)">
                                 <input type="text" id="indication" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Indicación Solicitada">
@@ -57,45 +48,35 @@
                         </div>
                     </div>
 
-                    <!-- ACTION BUTTONS -->
                     <div class="space-y-4 p-4 border rounded-lg">
-                        <h3 class="font-semibold text-lg text-gray-800">3. Proceso de Generación</h3>
-                        <div class="flex items-center space-x-3">
-                            <button id="gatherDataBtn" class="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                                Iniciar Proceso
-                            </button>
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-semibold text-lg text-gray-800">2. Proceso de Generación</h3>
                             <div id="loader" class="loader hidden"></div>
                         </div>
-                        <div id="generation-steps" class="hidden space-y-3 pt-3 border-t">
-                            <p class="text-sm text-gray-500">El informe se construirá en la vista previa a la derecha.</p>
-                            <button id="generateConclusionBtn" disabled class="w-full text-white bg-blue-500 hover:bg-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400">
-                                Generar Conclusión
-                            </button>
-                             <button id="assembleReportBtn" disabled class="w-full text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400">
-                                Ensamblar Informe Final
-                            </button>
+                        <p class="text-sm text-gray-600">Completa los datos y luego genera el informe sección por sección.</p>
+                        <div id="section-buttons" class="space-y-2 pt-2 border-t">
+                            <button id="btn-sec12" data-section="12" class="gen-btn w-full text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400">1. Identificación e Indicación</button>
+                            <button id="btn-sec3" data-section="3" class="gen-btn w-full text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400" disabled>2. Políticas de Cobertura</button>
+                            <button id="btn-sec4" data-section="4" class="gen-btn w-full text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400" disabled>3. Búsqueda de Evidencia</button>
+                            <button id="btn-sec5" data-section="5" class="gen-btn w-full text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400" disabled>4. Eficacia y Seguridad</button>
+                            <button id="btn-sec6" data-section="6" class="gen-btn w-full text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400" disabled>5. Datos Económicos</button>
+                            <button id="btn-sec7" data-section="7" class="gen-btn w-full text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400" disabled>6. Datos de Conveniencia y Bibliografía</button>
+                            <button id="btn-sec8" data-section="8" class="gen-btn w-full text-white bg-blue-500 hover:bg-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-400" disabled>7. Generar Conclusión</button>
                         </div>
                     </div>
-
-                    <!-- STATUS AREA -->
+                    
                     <div id="status-container" class="p-4 border rounded-lg bg-gray-50 min-h-[60px]">
                          <p id="status" class="text-sm text-gray-600 status-message text-center">Esperando para iniciar...</p>
                     </div>
 
-                    <!-- FINAL ACTIONS -->
                     <div id="final-actions" class="hidden p-4 border rounded-lg space-y-3">
                          <h3 class="text-lg font-bold text-green-700 text-center">¡Informe Completo!</h3>
-                         <button id="copyBtn" class="w-full inline-flex justify-center items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700">
-                            Copiar Código HTML
-                         </button>
-                         <button id="downloadBtn" class="w-full inline-flex justify-center items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
-                            Descargar .html
-                         </button>
+                         <button id="copyBtn" class="w-full inline-flex justify-center items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700">Copiar Código HTML</button>
+                         <button id="downloadBtn" class="w-full inline-flex justify-center items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Descargar .html</button>
                          <textarea id="hidden-html-source" class="hidden"></textarea>
                     </div>
                 </div>
 
-                <!-- Columna de Vista Previa -->
                 <div class="lg:col-span-2">
                     <div class="h-full w-full rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-2">
                         <iframe id="report-frame" title="Vista Previa del Informe" class="w-full h-full min-h-[80vh]"></iframe>
@@ -105,585 +86,250 @@
         </div>
     </div>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- STATE MANAGEMENT ---
-        const appState = {
-            apiKey: '',
-            dci: '',
-            indication: '',
-            evidence: null,
-            evaluation: null,
-            finalHtml: '',
-        };
-
-        // --- DOM Elements ---
-        const apiKeyInput = document.getElementById('apiKey');
-        const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
-        const dciInput = document.getElementById('dci');
-        const indicationInput = document.getElementById('indication');
-
-        const gatherDataBtn = document.getElementById('gatherDataBtn');
-        const loader = document.getElementById('loader');
-
-        const generationStepsContainer = document.getElementById('generation-steps');
-        const generateConclusionBtn = document.getElementById('generateConclusionBtn');
-        const assembleReportBtn = document.getElementById('assembleReportBtn');
-
-        const statusEl = document.getElementById('status');
-        const reportFrame = document.getElementById('report-frame');
-
-        const finalActionsContainer = document.getElementById('final-actions');
-        const hiddenHtmlSource = document.getElementById('hidden-html-source');
-        const copyBtn = document.getElementById('copyBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-
-        const API_KEY_STORAGE_KEY = 'CONAMEI_ASSISTANT_API_KEY';
-
-        // --- UI Update Functions ---
-        function showStatus(message, isLoading = false) {
-            statusEl.textContent = message;
-            if (isLoading) {
-                loader.classList.remove('hidden');
-                gatherDataBtn.disabled = true;
-            } else {
-                loader.classList.add('hidden');
-                gatherDataBtn.disabled = false;
-            }
+document.addEventListener('DOMContentLoaded', () => {
+    // --- STATE MANAGEMENT ---
+    const appState = {
+        dci: '',
+        indication: '',
+        evidence: {},
+        ui: {
+            buttons: ['12', '3', '4', '5', '6', '7', '8'],
+            current: 0,
         }
+    };
 
-        function updateUIForStep(step) {
-            if (step === 'gathering_done') {
-                generationStepsContainer.classList.remove('hidden');
-                generateConclusionBtn.disabled = false;
-                assembleReportBtn.disabled = true;
-                finalActionsContainer.classList.add('hidden');
-            } else if (step === 'conclusion_done') {
-                generateConclusionBtn.disabled = true;
-                assembleReportBtn.disabled = false;
-            } else if (step === 'assembly_done') {
-                assembleReportBtn.disabled = true;
-                finalActionsContainer.classList.remove('hidden');
-            } else { // Initial state
-                generationStepsContainer.classList.add('hidden');
-                generateConclusionBtn.disabled = true;
-                assembleReportBtn.disabled = true;
-                finalActionsContainer.classList.add('hidden');
-            }
+    // --- DOM Elements ---
+    const dciInput = document.getElementById('dci');
+    const indicationInput = document.getElementById('indication');
+    const genButtons = document.querySelectorAll('.gen-btn');
+    const statusEl = document.getElementById('status');
+    const reportFrame = document.getElementById('report-frame');
+    const finalActionsContainer = document.getElementById('final-actions');
+    const hiddenHtmlSource = document.getElementById('hidden-html-source');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const loader = document.getElementById('loader');
+
+    // --- TEMPLATE AND RENDERING ---
+    const HTML_TEMPLATE = `
+    <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Informe Técnico CONAMEI</title>
+    <style>
+        body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; margin: 0; background-color: #eee; }
+        .page { width: 210mm; min-height: 297mm; padding: 1.5cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
+        th, td { border: 1px solid black; padding: 4px 6px; text-align: left; vertical-align: top; word-break: break-word; }
+        th { background-color: #E7E6E6; font-weight: bold; }
+        .section-title { font-weight: bold; font-size: 10pt; background-color: #E7E6E6; padding: 6px; border: 1px solid black; margin-top: 15px; margin-bottom: -1px; }
+        .sub-section-title { font-weight: bold; font-size: 9pt; margin-top: 10px; margin-bottom: 5px; }
+        ul { padding-left: 20px; margin: 5px 0; } li { margin-bottom: 5px; font-size: 9pt; }
+        p { margin: 5px 0; font-size: 9pt; text-align: justify; } .checkbox { font-size: 12pt; margin-right: 4px; }
+    </style></head><body><div class="page">
+        <p style="text-align: center; font-weight: bold;">INFORME TÉCNICO Nro. CONAMEI-2024-XX</p>
+        <p class="section-title">1. IDENTIFICACIÓN DEL MEDICAMENTO</p>
+        <table>
+            <tr><th style="width:30%;">Código ATC</th><td>{{drug_id.atc_code}}</td></tr>
+            <tr><th>DCI</th><td>{{drug_id.dci}}</td></tr>
+            <tr><th>Forma farmacéutica (CNMB)</th><td>{{drug_id.pharma_form_cnmb}}</td></tr>
+            <tr><th>Formas farmacéuticas (ARCSA)</th><td>{{drug_id.pharma_form_arcsa}}</td></tr>
+            <tr><th>Concentración</th><td>{{drug_id.concentration}}</td></tr>
+            <tr><th>Vía de administración</th><td>{{drug_id.admin_route}}</td></tr>
+            <tr><th>Presentación comercial</th><td>{{drug_id.commercial_presentation}}</td></tr>
+            <tr><th>Información sanitaria</th><td>{{drug_id.sanitary_info}}</td></tr>
+        </table>
+        <p class="section-title">2. INDICACIÓN TERAPÉUTICA</p>
+        <table>
+            <tr><th style="width:30%;">2.1. Indicación terapéutica</th><td>{{therapeutic_indication.indication_requested}}</td></tr>
+            <tr><th>2.2. Mecanismo de acción</th><td><p>{{therapeutic_indication.mechanism_of_action}}</p></td></tr>
+            <tr><th>2.3. Pauta de dosificación</th><td><p>{{therapeutic_indication.dosage_guideline}}</p></td></tr>
+            <tr><th>2.4. Alternativas en CNMB</th><td><p>{{therapeutic_indication.alternatives_cnmb}}</p></td></tr>
+            <tr><th>2.5. Alternativas no en CNMB</th><td><p>{{therapeutic_indication.alternatives_not_cnmb}}</p></td></tr>
+        </table>
+        <p class="section-title">3. POLÍTICAS DE COBERTURA</p>
+        <p class="sub-section-title">3.1. Políticas de cobertura</p>
+        <table><thead><tr><th>País/Agencia Sanitaria</th><th>Indicación y Condiciones de Cobertura</th><th>Fecha</th></tr></thead><tbody>{{coverage_policies_rows}}</tbody></table>
+        <p class="sub-section-title">3.2. Indicaciones formalmente aprobadas</p>
+        <table><thead><tr><th>Agencia sanitaria</th><th>Indicación aprobada</th><th>Tipo</th><th>Fecha</th></tr></thead><tbody>{{coverage_approvals_rows}}</tbody></table>
+        <p class="section-title">4. BÚSQUEDA DE EVIDENCIA CIENTÍFICA</p>
+        <p class="sub-section-title">4.1. Pregunta PICO</p>
+        <table><tr><th style="width:10%;">P</th><td>{{pico.p}}</td></tr><tr><th>I</th><td>{{pico.i}}</td></tr><tr><th>C</th><td>{{pico.c}}</td></tr><tr><th>O</th><td>{{pico.o}}</td></tr></table>
+        <p class="sub-section-title">4.2. Estrategia de Búsqueda</p>
+        <table><thead><tr><th style="width:25%;">Base de Datos</th><th>Estrategia Utilizada</th></tr></thead><tbody>{{search_strategy_rows}}</tbody></table>
+        <p class="sub-section-title">4.3. Selección de estudios</p>{{studies_tables}}
+        <p class="section-title">5. DATOS DE EFICACIA Y SEGURIDAD</p>
+        <p class="sub-section-title">5.1. Resumen de evidencia científica (Método GRADE)</p>{{grade_summary_tables}}
+        <p class="sub-section-title">5.2. Datos de seguridad</p>
+        <table><thead><tr><th>Frecuencia</th><th>Severidad</th><th>Detalle de reacciones adversas</th></tr></thead><tbody>{{safety_reactions_rows}}</tbody></table>
+        <p><span class="checkbox">{{safety_has_alerts_checkbox}}</span> ¿Existen alertas sanitarias graves emitidas? <em>Detalle: {{efficacy_safety.safety_details.alerts_details}}</em></p>
+        <p><span class="checkbox">{{safety_is_safer_checkbox}}</span> ¿Es más seguro que las alternativas del CNMB? <em>Justificación: {{efficacy_safety.safety_details.safety_justification}}</em></p>
+        <p class="section-title">6. DATOS ECONÓMICOS</p>
+        <p class="sub-section-title">6.1. Costo del tratamiento</p>
+        <table><thead><tr><th>Parámetros</th><th>Intervención ({{drug_id.dci}})</th><th>Comparador ({{pico.c}})</th></tr></thead><tbody>
+            <tr><th>Precio unitario (fuente)</th><td>{{economic_data.cost_treatment.intervention.unit_price}}</td><td>{{economic_data.cost_treatment.comparator.unit_price}}</td></tr>
+            <tr><th>Posología</th><td>{{economic_data.cost_treatment.intervention.posology}}</td><td>{{economic_data.cost_treatment.comparator.posology}}</td></tr>
+            <tr><th>Costo tratamiento/paciente/año</th><td>{{economic_data.cost_treatment.intervention.annual_cost_patient}}</td><td>{{economic_data.cost_treatment.comparator.annual_cost_patient}}</td></tr>
+            <tr><th>Costo adicional/paciente/año</th><td>{{economic_data.cost_other.intervention.annual_cost_other}}</td><td>{{economic_data.cost_other.comparator.annual_cost_other}}</td></tr>
+        </tbody></table>
+        <p class="sub-section-title">6.2. Análisis de costos</p>
+        <p><span class="checkbox">{{economic_is_cheaper_checkbox}}</span> ¿El costo del tratamiento es menor que el comparador? <em>Justificación: {{economic_data.cost_analysis_justification}}</em></p>
+        <p class="sub-section-title">6.3. Estudios fármaco-económicos</p><p>{{economic_data.pharmacoeconomic_studies}}</p>
+        <p class="section-title">7. DATOS DE CONVENIENCIA</p>
+        <table><thead><tr><th>Parámetro</th><th>Respuesta</th><th>Justificativo</th></tr></thead><tbody>
+            <tr><td>¿Frecuencia de administración menor?</td><td>{{convenience_frequency_checkbox}}</td><td>{{convenience_data.frequency.justification}}</td></tr>
+            <tr><td>¿Mejora la adherencia?</td><td>{{convenience_adherence_checkbox}}</td><td>{{convenience_data.adherence.justification}}</td></tr>
+            <tr><td>¿Disminuye hospitalización?</td><td>{{convenience_hospitalization_checkbox}}</td><td>{{convenience_data.hospitalization.justification}}</td></tr>
+        </tbody></table>
+        <p class="sub-section-title">7.2. Beneficios de forma farmacéutica/vía de administración</p><p>{{convenience_data.other_benefits}}</p>
+        <p class="section-title">8. CONCLUSIÓN DEL REVISOR</p><p>{{conclusion_text}}</p>
+        <p class="section-title">9. BIBLIOGRAFÍA</p><ul>{{bibliography_items}}</ul>
+        <p class="section-title">10. FIRMA DE RESPONSABILIDAD</p><p style="margin-top: 50px;">_________________________<br>Elaborador</p>
+    </div></body></html>`;
+    const getValue = (obj, path, fallback = '') => _.get(obj, path, fallback);
+    const renderCheckbox = (value) => `<span class="checkbox">${(value && String(value).toLowerCase() === 'si') ? '☑' : '☐'}</span>`;
+    const renderSimpleRows = (data, columns) => { if (!Array.isArray(data)) return ''; return data.map(row => `<tr>${columns.map(col => `<td>${getValue(row, col)}</td>`).join('')}</tr>`).join(''); };
+    const renderStudiesTables = (studies) => { if (!studies) return ''; let html = ''; const types = { meta_analysis: 'Meta-análisis', systematic_review: 'Revisión Sistemática', rct: 'Estudio Clínico Aleatorizado', observational: 'Estudio Observacional', gpc: 'Guía de Práctica Clínica' }; for (const key in types) { if (studies[key] && studies[key].length > 0) { studies[key].forEach(study => { html += `<p class="sub-section-title">${types[key]}</p><table><tr><th style="width:25%;">Referencia</th><td>${getValue(study, 'reference')}</td></tr><tr><th>Síntesis</th><td>${getValue(study, 'synthesis')}</td></tr></table>`; }); } } return html; };
+    const renderGradeTables = (gradeSummary) => { if (!gradeSummary || !Array.isArray(gradeSummary.certainty_assessment)) return ''; let html = `<p><b>Pregunta:</b> ${getValue(gradeSummary, 'question')}</p><p><b>Bibliografía:</b> ${getValue(gradeSummary, 'bibliography')}</p>`; gradeSummary.certainty_assessment.forEach(ca => { html += `<p class="sub-section-title">Desenlace: ${getValue(ca, 'outcome')}</p><table style="font-size: 8pt;"><thead><tr><th>Diseño</th><th>Riesgo Sesgo</th><th>Inconsistencia</th><th>Evidencia Indirecta</th><th>Imprecisión</th><th>Otras</th><th>Certeza</th></tr></thead><tbody><tr><td>${getValue(ca, 'study_design')}</td><td>${getValue(ca, 'risk_of_bias')}</td><td>${getValue(ca, 'inconsistency')}</td><td>${getValue(ca, 'indirectness')}</td><td>${getValue(ca, 'imprecision')}</td><td>${getValue(ca, 'other_considerations')}</td><td><b>${getValue(ca, 'certainty')}</b></td></tr></tbody></table><table style="font-size: 8pt;"><thead><tr><th colspan="2">Efecto Absoluto</th><th>Efecto Relativo</th></tr></thead><tbody><tr><td><b>Intervención (${getValue(ca, 'intervention_effect_n')}p)</b></td><td><b>Control (${getValue(ca, 'control_effect_n')}p)</b></td><td rowspan="2">${getValue(ca, 'relative_effect')}</td></tr><tr><td>${getValue(ca, 'absolute_effect')}</td><td>--</td></tr></tbody></table>`; }); return html; };
+    const renderSafetyReactions = (reactions) => { if (!Array.isArray(reactions)) return ''; return reactions.map(row => `<tr><td>${getValue(row, 'frequency')}</td><td>${getValue(row, 'severity')}</td><td>${getValue(row, 'details')}</td></tr>`).join(''); };
+    const renderBibliography = (items) => { if (!Array.isArray(items)) return ''; return items.map(item => `<li>${item}</li>`).join(''); };
+    
+    function renderHtml(evidence) {
+        let html = HTML_TEMPLATE;
+        const replacements = {
+            '{{drug_id.atc_code}}': getValue(evidence, 'drug_id.atc_code'),
+            '{{drug_id.dci}}': getValue(evidence, 'drug_id.dci'),
+            '{{drug_id.pharma_form_cnmb}}': getValue(evidence, 'drug_id.pharma_form_cnmb'),
+            '{{drug_id.pharma_form_arcsa}}': getValue(evidence, 'drug_id.pharma_form_arcsa'),
+            '{{drug_id.concentration}}': getValue(evidence, 'drug_id.concentration'),
+            '{{drug_id.admin_route}}': getValue(evidence, 'drug_id.admin_route'),
+            '{{drug_id.commercial_presentation}}': getValue(evidence, 'drug_id.commercial_presentation'),
+            '{{drug_id.sanitary_info}}': getValue(evidence, 'drug_id.sanitary_info'),
+            '{{therapeutic_indication.indication_requested}}': getValue(evidence, 'therapeutic_indication.indication_requested'),
+            '{{therapeutic_indication.mechanism_of_action}}': getValue(evidence, 'therapeutic_indication.mechanism_of_action'),
+            '{{therapeutic_indication.dosage_guideline}}': getValue(evidence, 'therapeutic_indication.dosage_guideline'),
+            '{{therapeutic_indication.alternatives_cnmb}}': getValue(evidence, 'therapeutic_indication.alternatives_cnmb'),
+            '{{therapeutic_indication.alternatives_not_cnmb}}': getValue(evidence, 'therapeutic_indication.alternatives_not_cnmb'),
+            '{{pico.p}}': getValue(evidence, 'pico.p'),
+            '{{pico.i}}': getValue(evidence, 'pico.i'),
+            '{{pico.c}}': getValue(evidence, 'pico.c'),
+            '{{pico.o}}': getValue(evidence, 'pico.o'),
+            '{{economic_data.cost_treatment.intervention.unit_price}}': getValue(evidence, 'economic_data.cost_treatment.intervention.unit_price'),
+            '{{economic_data.cost_treatment.comparator.unit_price}}': getValue(evidence, 'economic_data.cost_treatment.comparator.unit_price'),
+            '{{economic_data.cost_treatment.intervention.posology}}': getValue(evidence, 'economic_data.cost_treatment.intervention.posology'),
+            '{{economic_data.cost_treatment.comparator.posology}}': getValue(evidence, 'economic_data.cost_treatment.comparator.posology'),
+            '{{economic_data.cost_treatment.intervention.annual_cost_patient}}': getValue(evidence, 'economic_data.cost_treatment.intervention.annual_cost_patient'),
+            '{{economic_data.cost_treatment.comparator.annual_cost_patient}}': getValue(evidence, 'economic_data.cost_treatment.comparator.annual_cost_patient'),
+            '{{economic_data.cost_other.intervention.annual_cost_other}}': getValue(evidence, 'economic_data.cost_other.intervention.annual_cost_other'),
+            '{{economic_data.cost_other.comparator.annual_cost_other}}': getValue(evidence, 'economic_data.cost_other.comparator.annual_cost_other'),
+            '{{economic_data.cost_analysis_justification}}': getValue(evidence, 'economic_data.cost_analysis_justification'),
+            '{{economic_data.pharmacoeconomic_studies}}': getValue(evidence, 'economic_data.pharmacoeconomic_studies'),
+            '{{convenience_data.frequency.justification}}': getValue(evidence, 'convenience_data.frequency.justification'),
+            '{{convenience_data.adherence.justification}}': getValue(evidence, 'convenience_data.adherence.justification'),
+            '{{convenience_data.hospitalization.justification}}': getValue(evidence, 'convenience_data.hospitalization.justification'),
+            '{{convenience_data.other_benefits}}': getValue(evidence, 'convenience_data.other_benefits'),
+            '{{efficacy_safety.safety_details.alerts_details}}': getValue(evidence, 'efficacy_safety.safety_details.alerts_details'),
+            '{{efficacy_safety.safety_details.safety_justification}}': getValue(evidence, 'efficacy_safety.safety_details.safety_justification'),
+            '{{conclusion_text}}': getValue(evidence, 'conclusion_text', 'Conclusión pendiente...'),
+        };
+        for (const placeholder in replacements) {
+            html = html.replace(new RegExp(placeholder.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replacements[placeholder]);
         }
+        html = html.replace('{{coverage_policies_rows}}', renderSimpleRows(getValue(evidence, 'coverage.policies', []), ['agency', 'indication', 'date']));
+        html = html.replace('{{coverage_approvals_rows}}', renderSimpleRows(getValue(evidence, 'coverage.approvals', []), ['agency', 'indication', 'type', 'date']));
+        html = html.replace('{{search_strategy_rows}}', renderSimpleRows(getValue(evidence, 'search_strategy', []), ['database', 'strategy']));
+        html = html.replace('{{studies_tables}}', renderStudiesTables(getValue(evidence, 'studies')));
+        html = html.replace('{{grade_summary_tables}}', renderGradeTables(getValue(evidence, 'efficacy_safety.grade_summary')));
+        html = html.replace('{{safety_reactions_rows}}', renderSafetyReactions(getValue(evidence, 'efficacy_safety.safety_details.adverse_reactions', [])));
+        html = html.replace('{{bibliography_items}}', renderBibliography(getValue(evidence, 'bibliography', [])));
+        html = html.replace('{{safety_has_alerts_checkbox}}', renderCheckbox(getValue(evidence, 'efficacy_safety.safety_details.has_alerts')));
+        html = html.replace('{{safety_is_safer_checkbox}}', renderCheckbox(getValue(evidence, 'efficacy_safety.safety_details.is_safer_than_cnmb')));
+        html = html.replace('{{economic_is_cheaper_checkbox}}', renderCheckbox(getValue(evidence, 'economic_data.is_cheaper')));
+        html = html.replace('{{convenience_frequency_checkbox}}', renderCheckbox(getValue(evidence, 'convenience_data.frequency.answer')));
+        html = html.replace('{{convenience_adherence_checkbox}}', renderCheckbox(getValue(evidence, 'convenience_data.adherence.answer')));
+        html = html.replace('{{convenience_hospitalization_checkbox}}', renderCheckbox(getValue(evidence, 'convenience_data.hospitalization.answer')));
+        return html;
+    }
 
-        // --- Local Storage & Initial Setup ---
-        const savedApiKey = localStorage.getItem(API_KEY_STORAGE_KEY);
-        if (savedApiKey) {
-            apiKeyInput.value = savedApiKey;
-            appState.apiKey = savedApiKey;
-            showStatus('API Key cargada. Listo para iniciar.');
-        } else {
-            showStatus('Por favor, ingresa tu API Key de Google AI.');
+    // --- Core Application Logic ---
+    async function handleGenerateSection(e) {
+        const section = e.target.dataset.section;
+        appState.dci = dciInput.value.trim();
+        appState.indication = indicationInput.value.trim();
+        if (!appState.dci || !appState.indication) {
+            showStatus("ERROR: Por favor, completa los campos de DCI e Indicación.");
+            return;
         }
-
-        apiKeyInput.addEventListener('input', () => {
-            appState.apiKey = apiKeyInput.value;
-            localStorage.setItem(API_KEY_STORAGE_KEY, appState.apiKey);
-        });
-
-        clearApiKeyBtn.addEventListener('click', () => {
-            apiKeyInput.value = '';
-            appState.apiKey = '';
-            localStorage.removeItem(API_KEY_STORAGE_KEY);
-            showStatus('Clave de API borrada.');
-        });
-
-        // --- Enhanced Prompts and Template ---
-        function buildSearcherPrompt(dci, indication) {
-            return `
-                Actúa como un farmacólogo y analista experto en HTA para el Consejo Nacional de Salud (CONASA) de Ecuador. Tu tarea es investigar exhaustivamente y rellenar la siguiente estructura JSON para el medicamento "${dci}" en la indicación "${indication}".
-
-                REGLAS CRÍTICAS:
-                1.  **Comparador del CNMB**: Para 'pico.c' y todas las comparaciones, primero identifica las alternativas terapéuticas que existen DENTRO del Cuadro Nacional de Medicamentos Básico (CNMB) de Ecuador para la indicación dada. Luego, selecciona la más relevante de esa lista y úsala como el comparador principal en TODO el análisis. Si no existen alternativas en el CNMB, indícalo explícitamente.
-                2.  **Exhaustividad**: Rellena CADA campo. Si un dato específico no se puede encontrar tras una búsqueda razonable, usa el string "No encontrado". No dejes campos vacíos.
-                3.  **Formato**: Tu única salida debe ser el objeto JSON puro, sin explicaciones, comentarios o markdown.
-
-                Aquí está la estructura JSON a rellenar:
-                {
-                    "drug_id": {
-                        "atc_code": "Busca en https://atcddd.fhi.no/atc_ddd_index/",
-                        "dci": "${dci}",
-                        "pharma_form_cnmb": "Forma farmacéutica según el CNMB (si aplica)",
-                        "pharma_form_arcsa": "Formas farmacéuticas comercializadas en Ecuador (revisa ARCSA)",
-                        "concentration": "Concentración de la presentación principal",
-                        "admin_route": "Vía de administración principal",
-                        "commercial_presentation": "Presentación comercial disponible",
-                        "sanitary_info": "Información de registro sanitario en Ecuador (ARCSA)"
-                    },
-                    "therapeutic_indication": {
-                        "indication_requested": "${indication}",
-                        "mechanism_of_action": "Describe el mecanismo de acción detallado.",
-                        "dosage_guideline": "Describe la pauta de dosificación estándar.",
-                        "alternatives_cnmb": "Lista las alternativas del CNMB para esta indicación. Si no hay, indícalo.",
-                        "alternatives_not_cnmb": "Lista otras alternativas relevantes no presentes en el CNMB."
-                    },
-                    "coverage": {
-                        "policies": [
-                            {"agency": "NICE", "indication": "...", "details": "...", "date": "dd/mm/aaaa"},
-                            {"agency": "CADTH", "indication": "...", "details": "...", "date": "dd/mm/aaaa"}
-                        ],
-                        "approvals": [
-                            {"agency": "EMA", "indication": "...", "type": "Aprobación estándar, condicional, etc.", "date": "dd/mm/aaaa"},
-                            {"agency": "FDA", "indication": "...", "type": "...", "date": "dd/mm/aaaa"}
-                        ]
-                    },
-                    "pico": {
-                        "p": "Población de pacientes para la indicación: ${indication}",
-                        "i": "Intervención: ${dci}",
-                        "c": "Comparador: CRÍTICO - Alternativa más relevante del CNMB. Si no existe, indicar 'No aplica'",
-                        "o": "Resultados (outcomes) clave de los estudios pivotales (ej. sobrevida, respuesta clínica, eventos adversos)."
-                    },
-                    "search_strategy": [
-                        {"database": "PubMed", "strategy": "Formula la estrategia de búsqueda exacta usada, con términos MeSH y palabras clave."},
-                        {"database": "Cochrane Library", "strategy": "Formula la estrategia de búsqueda exacta usada."},
-                        {"database": "Trip Database", "strategy": "Formula la estrategia de búsqueda exacta usada."},
-                        {"database": "ClinicalTrials.gov", "strategy": "Formula la estrategia de búsqueda exacta usada."}
-                    ],
-                    "studies": {
-                        "meta_analysis": [{"reference": "Ref Vancouver", "synthesis": "Síntesis del estudio, criterios de inclusión, nivel de evidencia, grado de recomendación."}],
-                        "systematic_review": [{"reference": "Ref Vancouver", "synthesis": "..."}],
-                        "rct": [{"reference": "Ref Vancouver", "synthesis": "..."}],
-                        "observational": [{"reference": "Ref Vancouver", "synthesis": "..."}],
-                        "gpc": [{"reference": "Ref Vancouver", "synthesis": "..."}]
-                    },
-                    "efficacy_safety": {
-                        "grade_summary": {
-                            "question": "¿Debería usarse ${dci} vs ${'pico.c'} para ${indication}?",
-                            "bibliography": "Referencia del estudio principal usado para GRADE",
-                            "certainty_assessment": [{
-                                "outcome": "Desenlace primario",
-                                "study_design": "ECA, Observacional",
-                                "risk_of_bias": "Bajo, Moderado, Alto",
-                                "inconsistency": "...",
-                                "indirectness": "...",
-                                "imprecision": "...",
-                                "other_considerations": "...",
-                                "intervention_effect_n": "Nro de pacientes en brazo de intervención",
-                                "control_effect_n": "Nro de pacientes en brazo de control",
-                                "relative_effect": "RR/HR (IC 95%)",
-                                "absolute_effect": "Diferencia absoluta (IC 95%)",
-                                "certainty": "Alta, Moderada, Baja, Muy Baja"
-                            }]
-                        },
-                        "safety_details": {
-                            "adverse_reactions": [
-                                {"frequency": "Muy frecuentes", "severity": "Leves/Moderadas/Graves", "details": "Listar reacciones"},
-                                {"frequency": "Frecuentes", "severity": "Leves/Moderadas/Graves", "details": "Listar reacciones"}
-                            ],
-                            "has_alerts": "Si/No",
-                            "alerts_details": "Si 'Si', detallar la alerta sanitaria emitida por agencias (EMA, FDA, etc.)",
-                            "is_safer_than_cnmb": "Si/No/Perfil de seguridad diferente",
-                            "safety_justification": "Justificar la respuesta anterior comparando con el comparador del CNMB."
-                        }
-                    },
-                    "economic_data": {
-                        "cost_treatment": {
-                            "intervention": {"unit_price": "Indicar fuente", "posology": "...", "annual_cost_patient": "..."},
-                            "comparator": {"unit_price": "Indicar fuente", "posology": "...", "annual_cost_patient": "..."}
-                        },
-                        "cost_other": {
-                            "intervention": {"annual_cost_other": "Costo de medicamentos, dispositivos, exámenes adicionales."},
-                            "comparator": {"annual_cost_other": "..."}
-                        },
-                        "is_cheaper": "Si/No",
-                        "cost_analysis_justification": "Justificar si el costo total del tratamiento es menor que el comparador.",
-                        "pharmacoeconomic_studies": "Resumir resultados principales de estudios fármaco-económicos encontrados."
-                    },
-                    "convenience_data": {
-                        "frequency": {"answer": "Si/No", "justification": "Justificar si la frecuencia de administración es menor que el comparador CNMB."},
-                        "adherence": {"answer": "Si/No", "justification": "Justificar si mejora la adherencia en relación al comparador CNMB."},
-                        "hospitalization": {"answer": "Si/No", "justification": "Justificar si disminuye el tiempo de hospitalización en relación al comparador CNMB."},
-                        "other_benefits": "Detallar beneficios de usar una forma farmacéutica o vía de administración diferente a las del CNMB, si aplica."
-                    },
-                    "bibliography": ["Referencia 1 en formato Vancouver", "Referencia 2 en formato Vancouver", "..."]
-                }
-            `;
-        }
-        function buildEvaluatorPrompt(evidence) {
-            return `
-                Actúa como un evaluador experto e imparcial del Comité de Farmacología de CONASA, Ecuador.
-                Has recibido el siguiente JSON con toda la evidencia sobre el medicamento "${evidence.drug_id.dci}" para la indicación "${evidence.therapeutic_indication.indication_requested}".
-                Tu única tarea es redactar el texto para la "CONCLUSIÓN DEL REVISOR" (Sección 8 del informe).
-                La conclusión debe ser un párrafo conciso y balanceado que resuma los hallazgos clave sobre eficacia, seguridad, costos y conveniencia en comparación con la alternativa principal del CNMB ("${evidence.pico.c}").
-                Basa tu conclusión únicamente en los datos proporcionados. Tu única salida debe ser un objeto JSON con la siguiente estructura, sin explicaciones adicionales.
-
-                {
-                    "conclusion_text": "..."
-                }
-
-                Aquí están los datos para analizar:
-                'evidence_data': ${JSON.stringify(evidence)}
-            `;
-        }
-
-        const HTML_TEMPLATE = `
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Informe Técnico CONAMEI</title>
-        <style>
-            body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; margin: 0; background-color: #eee; }
-            .page { width: 210mm; min-height: 297mm; padding: 1.5cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
-            th, td { border: 1px solid black; padding: 4px 6px; text-align: left; vertical-align: top; }
-            th { background-color: #E7E6E6; font-weight: bold; }
-            .section-title { font-weight: bold; font-size: 10pt; background-color: #E7E6E6; padding: 6px; border: 1px solid black; margin-top: 15px; margin-bottom: -1px; }
-            .sub-section-title { font-weight: bold; font-size: 9pt; margin-top: 10px; margin-bottom: 5px; }
-            ul { padding-left: 20px; margin: 5px 0; }
-            li { margin-bottom: 5px; font-size: 9pt; }
-            p { margin: 5px 0; font-size: 9pt; text-align: justify; }
-            .checkbox { font-size: 12pt; margin-right: 4px; }
-        </style>
-    </head>
-    <body>
-        <div class="page">
-            <p style="text-align: center; font-weight: bold;">INFORME TÉCNICO Nro. CONAMEI-2024-XX</p>
-
-            <p class="section-title">1. IDENTIFICACIÓN DEL MEDICAMENTO</p>
-            <table>
-                <tr><th style="width:30%;">Código ATC</th><td>{{drug_id.atc_code}}</td></tr>
-                <tr><th>DCI</th><td>{{drug_id.dci}}</td></tr>
-                <tr><th>Forma farmacéutica (CNMB)</th><td>{{drug_id.pharma_form_cnmb}}</td></tr>
-                <tr><th>Formas farmacéuticas (ARCSA)</th><td>{{drug_id.pharma_form_arcsa}}</td></tr>
-                <tr><th>Concentración</th><td>{{drug_id.concentration}}</td></tr>
-                <tr><th>Vía de administración</th><td>{{drug_id.admin_route}}</td></tr>
-                <tr><th>Presentación comercial</th><td>{{drug_id.commercial_presentation}}</td></tr>
-                <tr><th>Información sanitaria</th><td>{{drug_id.sanitary_info}}</td></tr>
-            </table>
-
-            <p class="section-title">2. INDICACIÓN TERAPÉUTICA</p>
-            <table>
-                <tr><th style="width:30%;">2.1. Indicación terapéutica</th><td>{{therapeutic_indication.indication_requested}}</td></tr>
-                <tr><th>2.2. Mecanismo de acción</th><td><p>{{therapeutic_indication.mechanism_of_action}}</p></td></tr>
-                <tr><th>2.3. Pauta de dosificación</th><td><p>{{therapeutic_indication.dosage_guideline}}</p></td></tr>
-                <tr><th>2.4. Alternativas en CNMB</th><td><p>{{therapeutic_indication.alternatives_cnmb}}</p></td></tr>
-                <tr><th>2.5. Alternativas no en CNMB</th><td><p>{{therapeutic_indication.alternatives_not_cnmb}}</p></td></tr>
-            </table>
-
-            <p class="section-title">3. POLÍTICAS DE COBERTURA</p>
-            <p class="sub-section-title">3.1. Políticas de cobertura</p>
-            <table><thead><tr><th>País/Agencia Sanitaria</th><th>Indicación y Condiciones de Cobertura</th><th>Fecha</th></tr></thead><tbody>{{coverage_policies_rows}}</tbody></table>
-            <p class="sub-section-title">3.2. Indicaciones formalmente aprobadas</p>
-            <table><thead><tr><th>Agencia sanitaria</th><th>Indicación aprobada</th><th>Tipo</th><th>Fecha</th></tr></thead><tbody>{{coverage_approvals_rows}}</tbody></table>
-
-            <p class="section-title">4. BÚSQUEDA DE EVIDENCIA CIENTÍFICA</p>
-            <p class="sub-section-title">4.1. Pregunta PICO</p>
-            <table>
-                <tr><th style="width:10%;">P</th><td>{{pico.p}}</td></tr>
-                <tr><th>I</th><td>{{pico.i}}</td></tr>
-                <tr><th>C</th><td>{{pico.c}}</td></tr>
-                <tr><th>O</th><td>{{pico.o}}</td></tr>
-            </table>
-            <p class="sub-section-title">4.2. Estrategia de Búsqueda</p>
-            <table><thead><tr><th style="width:25%;">Base de Datos</th><th>Estrategia Utilizada</th></tr></thead><tbody>{{search_strategy_rows}}</tbody></table>
-            <p class="sub-section-title">4.3. Selección de estudios</p>
-            {{studies_tables}}
-
-            <p class="section-title">5. DATOS DE EFICACIA Y SEGURIDAD</p>
-            <p class="sub-section-title">5.1. Resumen de evidencia científica (Método GRADE)</p>
-            {{grade_summary_tables}}
-            <p class="sub-section-title">5.2. Datos de seguridad</p>
-            <table><thead><tr><th>Frecuencia</th><th>Severidad</th><th>Detalle de reacciones adversas</th></tr></thead><tbody>{{safety_reactions_rows}}</tbody></table>
-            <p><span class="checkbox">{{safety_has_alerts_checkbox}}</span> ¿Existen alertas sanitarias graves emitidas por agencias reguladoras o la OMS? <br><em>Detalle: {{efficacy_safety.safety_details.alerts_details}}</em></p>
-            <p><span class="checkbox">{{safety_is_safer_checkbox}}</span> ¿Es más seguro que las alternativas terapéuticas del CNMB? <br><em>Justificación: {{efficacy_safety.safety_details.safety_justification}}</em></p>
-
-            <p class="section-title">6. DATOS ECONÓMICOS</p>
-            <p class="sub-section-title">6.1. Costo del tratamiento</p>
-            <table>
-                <thead><tr><th>Parámetros</th><th>Intervención ({{drug_id.dci}})</th><th>Comparador ({{pico.c}})</th></tr></thead>
-                <tbody>
-                    <tr><th>Precio unitario (fuente)</th><td>{{economic_data.cost_treatment.intervention.unit_price}}</td><td>{{economic_data.cost_treatment.comparator.unit_price}}</td></tr>
-                    <tr><th>Posología</th><td>{{economic_data.cost_treatment.intervention.posology}}</td><td>{{economic_data.cost_treatment.comparator.posology}}</td></tr>
-                    <tr><th>Costo tratamiento/paciente/año</th><td>{{economic_data.cost_treatment.intervention.annual_cost_patient}}</td><td>{{economic_data.cost_treatment.comparator.annual_cost_patient}}</td></tr>
-                    <tr><th>Costo adicional/paciente/año</th><td>{{economic_data.cost_other.intervention.annual_cost_other}}</td><td>{{economic_data.cost_other.comparator.annual_cost_other}}</td></tr>
-                </tbody>
-            </table>
-            <p class="sub-section-title">6.2. Análisis de costos</p>
-            <p><span class="checkbox">{{economic_is_cheaper_checkbox}}</span> ¿El costo del tratamiento es menor que el comparador? <br><em>Justificación: {{economic_data.cost_analysis_justification}}</em></p>
-            <p class="sub-section-title">6.3. Estudios fármaco-económicos</p>
-            <p>{{economic_data.pharmacoeconomic_studies}}</p>
-
-            <p class="section-title">7. DATOS DE CONVENIENCIA</p>
-            <table>
-                <thead><tr><th>Parámetro</th><th>Respuesta</th><th>Justificativo</th></tr></thead>
-                <tbody>
-                    <tr><td>¿Frecuencia de administración menor?</td><td>{{convenience_frequency_checkbox}}</td><td>{{convenience_data.frequency.justification}}</td></tr>
-                    <tr><td>¿Mejora la adherencia?</td><td>{{convenience_adherence_checkbox}}</td><td>{{convenience_data.adherence.justification}}</td></tr>
-                    <tr><td>¿Disminuye hospitalización?</td><td>{{convenience_hospitalization_checkbox}}</td><td>{{convenience_data.hospitalization.justification}}</td></tr>
-                </tbody>
-            </table>
-            <p class="sub-section-title">7.2. Beneficios de forma farmacéutica/vía de administración</p>
-            <p>{{convenience_data.other_benefits}}</p>
-
-            <p class="section-title">8. CONCLUSIÓN DEL REVISOR</p>
-            <p>{{conclusion_text}}</p>
-
-            <p class="section-title">9. BIBLIOGRAFÍA</p>
-            <ul>{{bibliography_items}}</ul>
-
-            <p class="section-title">10. FIRMA DE RESPONSABILIDAD</p>
-            <p style="margin-top: 50px;">_________________________<br>Elaborador</p>
-        </div>
-    </body>
-    </html>
-    `;
-
-        // --- HTML Rendering Helpers ---
-        const renderCheckbox = (value) => `<span class="checkbox">${(value && value.toLowerCase() === 'si') ? '☑' : '☐'}</span>`;
-        const getValue = (obj, path, fallback = 'No encontrado') => path.split('.').reduce((acc, part) => acc && acc[part], obj) || fallback;
-
-        const renderSimpleRows = (data, columns) => {
-            if (!Array.isArray(data)) return '';
-            return data.map(row => `<tr>${columns.map(col => `<td>${getValue(row, col)}</td>`).join('')}</tr>`).join('');
-        };
-
-        const renderStudiesTables = (studies) => {
-            if (!studies) return '<p>No se encontraron estudios.</p>';
-            let html = '';
-            const studyTypes = {
-                meta_analysis: 'Meta-análisis',
-                systematic_review: 'Revisión Sistemática',
-                rct: 'Estudio Clínico Aleatorizado',
-                observational: 'Estudio Observacional',
-                gpc: 'Guía de Práctica Clínica'
-            };
-            for (const key in studyTypes) {
-                if (studies[key] && studies[key].length > 0) {
-                    studies[key].forEach(study => {
-                        html += `<p class="sub-section-title">${studyTypes[key]}</p>
-                        <table>
-                            <tr><th style="width:25%;">Referencia</th><td>${getValue(study, 'reference')}</td></tr>
-                            <tr><th>Síntesis</th><td>${getValue(study, 'synthesis')}</td></tr>
-                        </table>`;
-                    });
-                }
-            }
-            return html;
-        };
-
-        const renderGradeTables = (gradeSummary) => {
-            if (!gradeSummary || !Array.isArray(gradeSummary.certainty_assessment)) return '<p>No disponible.</p>';
-            let html = `<p><b>Pregunta:</b> ${getValue(gradeSummary, 'question')}</p><p><b>Bibliografía:</b> ${getValue(gradeSummary, 'bibliography')}</p>`;
-            gradeSummary.certainty_assessment.forEach(ca => {
-                html += `
-                <p class="sub-section-title">Desenlace: ${getValue(ca, 'outcome')}</p>
-                <table style="font-size: 8pt;">
-                    <thead><tr><th>Diseño</th><th>Riesgo Sesgo</th><th>Inconsistencia</th><th>Evidencia Indirecta</th><th>Imprecisión</th><th>Otras</th><th>Certeza</th></tr></thead>
-                    <tbody><tr>
-                        <td>${getValue(ca, 'study_design')}</td><td>${getValue(ca, 'risk_of_bias')}</td><td>${getValue(ca, 'inconsistency')}</td>
-                        <td>${getValue(ca, 'indirectness')}</td><td>${getValue(ca, 'imprecision')}</td><td>${getValue(ca, 'other_considerations')}</td><td><b>${getValue(ca, 'certainty')}</b></td>
-                    </tr></tbody>
-                </table>
-                <table style="font-size: 8pt;">
-                    <thead><tr><th colspan="2">Efecto Absoluto</th><th>Efecto Relativo</th></tr></thead>
-                    <tbody><tr>
-                        <td><b>Intervención (${getValue(ca, 'intervention_effect_n')} pacientes)</b></td><td><b>Control (${getValue(ca, 'control_effect_n')} pacientes)</b></td>
-                        <td rowspan="2">${getValue(ca, 'relative_effect')}</td>
-                    </tr>
-                    <tr><td>${getValue(ca, 'absolute_effect')}</td><td>--</td></tr>
-                    </tbody>
-                </table>`;
-            });
-            return html;
-        };
-
-        const renderSafetyReactions = (reactions) => {
-            if (!Array.isArray(reactions)) return '';
-            return reactions.map(row => `<tr><td>${getValue(row, 'frequency')}</td><td>${getValue(row, 'severity')}</td><td>${getValue(row, 'details')}</td></tr>`).join('');
-        };
-
-        const renderBibliography = (items) => {
-            if (!Array.isArray(items)) return '';
-            return items.map(item => `<li>${item}</li>`).join('');
-        };
-
-
-        // --- Core Application Logic ---
-        async function runAIFetch(prompt) {
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${appState.apiKey}`;
-            const response = await fetch(API_URL, {
+        showStatus(`Generando sección ${section}...`, true);
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/generate_section', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                body: JSON.stringify({
+                    section: section,
+                    dci: appState.dci,
+                    indication: appState.indication,
+                    evidence: appState.evidence
+                })
             });
             if (!response.ok) {
-                const errorBody = await response.text();
-                console.error('API Error Response:', errorBody);
-                throw new Error(`Error en la API de Google: ${response.status} ${response.statusText}`);
+                const errData = await response.json();
+                throw new Error(errData.error || `Error del servidor: ${response.status}`);
             }
-            const data = await response.json();
-            if (!data.candidates || !data.candidates[0].content.parts[0].text) {
-                console.error('Invalid API response structure:', data);
-                throw new Error('La respuesta de la API no tuvo el formato esperado.');
-            }
-            return data.candidates[0].content.parts[0].text.replace(/^```json\s*|```\s*$/g, '').trim();
+            const result = await response.json();
+            _.merge(appState.evidence, result);
+            appState.ui.current++;
+            updateButtonState();
+            renderPreview();
+            showStatus(appState.ui.current < appState.ui.buttons.length ? `Sección ${section} generada.` : 'Todas las secciones generadas.');
+        } catch (error) {
+            console.error(`Error en sección ${section}:`, error);
+            showStatus(`Error: ${error.message}`);
+        } finally {
+            showStatus(statusEl.textContent, false);
         }
+    }
+    
+    function renderPreview() {
+        const fullHtml = renderHtml(appState.evidence);
+        reportFrame.srcdoc = fullHtml;
+        hiddenHtmlSource.value = fullHtml;
+    }
 
-        // Parse JSON from AI responses more robustly, removing extra text and trailing commas
-        function parseAIJSON(text) {
-            const start = text.indexOf('{');
-            const end = text.lastIndexOf('}');
-            if (start === -1 || end === -1) {
-                throw new Error('La respuesta no contiene un JSON válido.');
-            }
-            const jsonStr = text.slice(start, end + 1);
-            try {
-                return JSON.parse(jsonStr);
-            } catch (e) {
-                const sanitized = jsonStr.replace(/,\s*(\}|\])/g, '$1');
-                return JSON.parse(sanitized);
-            }
+    // --- UI Update Functions ---
+    function showStatus(message, isLoading = false) {
+        statusEl.textContent = message;
+        if (isLoading) loader.classList.remove('hidden');
+        else loader.classList.add('hidden');
+    }
+    
+    function updateButtonState() {
+        genButtons.forEach((btn) => {
+            const btnSectionIndex = appState.ui.buttons.indexOf(btn.dataset.section);
+            btn.disabled = btnSectionIndex !== appState.ui.current;
+        });
+        if (appState.ui.current >= appState.ui.buttons.length) {
+            finalActionsContainer.classList.remove('hidden');
+            showStatus('¡Informe completo! Puede copiar o descargar el HTML.');
+        } else {
+            finalActionsContainer.classList.add('hidden');
         }
+    }
 
-        async function handleGatherData() {
-            appState.dci = dciInput.value.trim();
-            appState.indication = indicationInput.value.trim();
-            if (!appState.apiKey || !appState.dci || !appState.indication) {
-                showStatus("ERROR: Completa API Key, DCI e Indicación.");
-                return;
-            }
-
-            showStatus('Paso 1/3: Recopilando evidencia médica...', true);
-            updateUIForStep('initial');
-
-            try {
-                const searcherPrompt = buildSearcherPrompt(appState.dci, appState.indication);
-                const evidenceText = await runAIFetch(searcherPrompt);
-                appState.evidence = parseAIJSON(evidenceText);
-
-                showStatus('Paso 1 completado. Evidencia recopilada. Listo para generar conclusión.');
-                updateUIForStep('gathering_done');
-                renderPreview();
-            } catch (error) {
-                console.error("Error en Paso 1:", error);
-                showStatus(`Error: ${error.message}`);
-            } finally {
-                loader.classList.add('hidden');
-                gatherDataBtn.disabled = false;
-            }
-        }
-
-        async function handleGenerateConclusion() {
-            showStatus('Paso 2/3: Generando conclusión experta...', true);
-            try {
-                const evaluatorPrompt = buildEvaluatorPrompt(appState.evidence);
-                const evaluationText = await runAIFetch(evaluatorPrompt);
-                appState.evaluation = parseAIJSON(evaluationText);
-
-                showStatus('Paso 2 completado. Conclusión generada. Listo para ensamblar informe.');
-                updateUIForStep('conclusion_done');
-                renderPreview();
-            } catch (error) {
-                console.error("Error en Paso 2:", error);
-                showStatus(`Error: ${error.message}`);
-            } finally {
-                loader.classList.add('hidden');
-            }
-        }
-
-        function handleAssembleReport() {
-            showStatus('Paso 3/3: Ensamblando el informe HTML final...');
-            const finalHtml = renderHtml(appState.evidence, appState.evaluation);
-            appState.finalHtml = finalHtml;
-            hiddenHtmlSource.value = finalHtml;
-            reportFrame.srcdoc = finalHtml;
-
-            showStatus('¡Informe completo generado con éxito!');
-            updateUIForStep('assembly_done');
-        }
-
-        function renderPreview() {
-            if (!appState.evidence) return;
-            const previewHtml = renderHtml(appState.evidence, appState.evaluation);
-            reportFrame.srcdoc = previewHtml;
-        }
-
-        function renderHtml(evidence, evaluation) {
-            if (!evidence) return '';
-
-            let html = HTML_TEMPLATE;
-            const e = evidence; // shorthand
-
-            // Simple replacements
-            const replacements = {
-                '{{drug_id.atc_code}}': getValue(e, 'drug_id.atc_code'),
-                '{{drug_id.dci}}': getValue(e, 'drug_id.dci'),
-                '{{drug_id.pharma_form_cnmb}}': getValue(e, 'drug_id.pharma_form_cnmb'),
-                '{{drug_id.pharma_form_arcsa}}': getValue(e, 'drug_id.pharma_form_arcsa'),
-                '{{drug_id.concentration}}': getValue(e, 'drug_id.concentration'),
-                '{{drug_id.admin_route}}': getValue(e, 'drug_id.admin_route'),
-                '{{drug_id.commercial_presentation}}': getValue(e, 'drug_id.commercial_presentation'),
-                '{{drug_id.sanitary_info}}': getValue(e, 'drug_id.sanitary_info'),
-                '{{therapeutic_indication.indication_requested}}': getValue(e, 'therapeutic_indication.indication_requested'),
-                '{{therapeutic_indication.mechanism_of_action}}': getValue(e, 'therapeutic_indication.mechanism_of_action'),
-                '{{therapeutic_indication.dosage_guideline}}': getValue(e, 'therapeutic_indication.dosage_guideline'),
-                '{{therapeutic_indication.alternatives_cnmb}}': getValue(e, 'therapeutic_indication.alternatives_cnmb'),
-                '{{therapeutic_indication.alternatives_not_cnmb}}': getValue(e, 'therapeutic_indication.alternatives_not_cnmb'),
-                '{{pico.p}}': getValue(e, 'pico.p'),
-                '{{pico.i}}': getValue(e, 'pico.i'),
-                '{{pico.c}}': getValue(e, 'pico.c'),
-                '{{pico.o}}': getValue(e, 'pico.o'),
-                '{{economic_data.cost_treatment.intervention.unit_price}}': getValue(e, 'economic_data.cost_treatment.intervention.unit_price'),
-                '{{economic_data.cost_treatment.comparator.unit_price}}': getValue(e, 'economic_data.cost_treatment.comparator.unit_price'),
-                '{{economic_data.cost_treatment.intervention.posology}}': getValue(e, 'economic_data.cost_treatment.intervention.posology'),
-                '{{economic_data.cost_treatment.comparator.posology}}': getValue(e, 'economic_data.cost_treatment.comparator.posology'),
-                '{{economic_data.cost_treatment.intervention.annual_cost_patient}}': getValue(e, 'economic_data.cost_treatment.intervention.annual_cost_patient'),
-                '{{economic_data.cost_treatment.comparator.annual_cost_patient}}': getValue(e, 'economic_data.cost_treatment.comparator.annual_cost_patient'),
-                '{{economic_data.cost_other.intervention.annual_cost_other}}': getValue(e, 'economic_data.cost_other.intervention.annual_cost_other'),
-                '{{economic_data.cost_other.comparator.annual_cost_other}}': getValue(e, 'economic_data.cost_other.comparator.annual_cost_other'),
-                '{{economic_data.cost_analysis_justification}}': getValue(e, 'economic_data.cost_analysis_justification'),
-                '{{economic_data.pharmacoeconomic_studies}}': getValue(e, 'economic_data.pharmacoeconomic_studies'),
-                '{{convenience_data.frequency.justification}}': getValue(e, 'convenience_data.frequency.justification'),
-                '{{convenience_data.adherence.justification}}': getValue(e, 'convenience_data.adherence.justification'),
-                '{{convenience_data.hospitalization.justification}}': getValue(e, 'convenience_data.hospitalization.justification'),
-                '{{convenience_data.other_benefits}}': getValue(e, 'convenience_data.other_benefits'),
-                '{{efficacy_safety.safety_details.alerts_details}}': getValue(e, 'efficacy_safety.safety_details.alerts_details'),
-                '{{efficacy_safety.safety_details.safety_justification}}': getValue(e, 'efficacy_safety.safety_details.safety_justification'),
-                '{{conclusion_text}}': evaluation ? getValue(evaluation, 'conclusion_text', 'Conclusión pendiente...') : 'Conclusión pendiente...',
-            };
-            for(const placeholder in replacements) {
-                html = html.replace(new RegExp(placeholder, 'g'), replacements[placeholder]);
-            }
-
-            // Complex/looped replacements
-            html = html.replace('{{coverage_policies_rows}}', renderSimpleRows(getValue(e, 'coverage.policies', []), ['agency', 'indication', 'date']));
-            html = html.replace('{{coverage_approvals_rows}}', renderSimpleRows(getValue(e, 'coverage.approvals', []), ['agency', 'indication', 'type', 'date']));
-            html = html.replace('{{search_strategy_rows}}', renderSimpleRows(getValue(e, 'search_strategy', []), ['database', 'strategy']));
-            html = html.replace('{{studies_tables}}', renderStudiesTables(getValue(e, 'studies')));
-            html = html.replace('{{grade_summary_tables}}', renderGradeTables(getValue(e, 'efficacy_safety.grade_summary')));
-            html = html.replace('{{safety_reactions_rows}}', renderSafetyReactions(getValue(e, 'efficacy_safety.safety_details.adverse_reactions', [])));
-            html = html.replace('{{bibliography_items}}', renderBibliography(getValue(e, 'bibliography', [])));
-
-            // Checkbox replacements
-            html = html.replace('{{safety_has_alerts_checkbox}}', renderCheckbox(getValue(e, 'efficacy_safety.safety_details.has_alerts')));
-            html = html.replace('{{safety_is_safer_checkbox}}', renderCheckbox(getValue(e, 'efficacy_safety.safety_details.is_safer_than_cnmb')));
-            html = html.replace('{{economic_is_cheaper_checkbox}}', renderCheckbox(getValue(e, 'economic_data.is_cheaper')));
-            html = html.replace('{{convenience_frequency_checkbox}}', renderCheckbox(getValue(e, 'convenience_data.frequency.answer')));
-            html = html.replace('{{convenience_adherence_checkbox}}', renderCheckbox(getValue(e, 'convenience_data.adherence.answer')));
-            html = html.replace('{{convenience_hospitalization_checkbox}}', renderCheckbox(getValue(e, 'convenience_data.hospitalization.answer')));
-
-            return html;
-        }
-
-        // --- Event Listeners ---
-        gatherDataBtn.addEventListener('click', handleGatherData);
-        generateConclusionBtn.addEventListener('click', handleGenerateConclusion);
-        assembleReportBtn.addEventListener('click', handleAssembleReport);
-        copyBtn.addEventListener('click', () => { navigator.clipboard.writeText(appState.finalHtml); showStatus('¡Código HTML copiado!'); });
-        downloadBtn.addEventListener('click', () => {
-            const blob = new Blob([appState.finalHtml], { type: 'text/html' });
+    // --- Event Listeners and Initializer ---
+    function init() {
+        genButtons.forEach(btn => btn.addEventListener('click', handleGenerateSection));
+        copyBtn.addEventListener('click', () => navigator.clipboard.writeText(hiddenHtmlSource.value));
+        downloadBtn.addEventListener('click', () => { 
+            const blob = new Blob([hiddenHtmlSource.value], { type: 'text/html' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = `informe_conamei_${appState.dci.toLowerCase() || 'informe'}.html`;
             a.click();
         });
-    });
+        updateButtonState();
+        renderPreview();
+    }
+
+    init();
+});
 </script>
 </body>
 </html>
