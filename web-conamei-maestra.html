@@ -525,6 +525,51 @@
             return data.candidates[0].content.parts[0].text.replace(/^```json\s*|```\s*$/g, '').trim();
         }
 
+        // Parse JSON from AI responses more robustly, removing extra text and safely stripping trailing commas
+        function parseAIJSON(text) {
+            const start = text.indexOf('{');
+            const end = text.lastIndexOf('}');
+            if (start === -1 || end === -1) {
+                throw new Error('La respuesta no contiene un JSON válido.');
+            }
+
+            let jsonStr = text.slice(start, end + 1);
+            // Remove trailing commas that appear before closing brackets/braces, while respecting quoted strings
+            let sanitized = '';
+            let inString = false;
+            let escaped = false;
+            for (let i = 0; i < jsonStr.length; i++) {
+                const ch = jsonStr[i];
+                if (escaped) {
+                    sanitized += ch;
+                    escaped = false;
+                    continue;
+                }
+                if (ch === '\\') {
+                    sanitized += ch;
+                    escaped = true;
+                    continue;
+                }
+                if (ch === '"') {
+                    sanitized += ch;
+                    inString = !inString;
+                    continue;
+                }
+                if (!inString && ch === ',') {
+                    let j = i + 1;
+                    while (j < jsonStr.length && /\s/.test(jsonStr[j])) j++;
+                    if (jsonStr[j] === '}' || jsonStr[j] === ']') {
+                        // Skip trailing comma
+                        i = j - 1;
+                        continue;
+                    }
+                }
+                sanitized += ch;
+            }
+
+            return JSON.parse(sanitized);
+        }
+
         async function handleGatherData() {
             appState.dci = dciInput.value.trim();
             appState.indication = indicationInput.value.trim();
@@ -539,7 +584,7 @@
             try {
                 const searcherPrompt = buildSearcherPrompt(appState.dci, appState.indication);
                 const evidenceText = await runAIFetch(searcherPrompt);
-                appState.evidence = JSON.parse(evidenceText);
+                appState.evidence = parseAIJSON(evidenceText);
 
                 showStatus('Paso 1 completado. Evidencia recopilada. Listo para generar conclusión.');
                 updateUIForStep('gathering_done');
@@ -558,7 +603,7 @@
             try {
                 const evaluatorPrompt = buildEvaluatorPrompt(appState.evidence);
                 const evaluationText = await runAIFetch(evaluatorPrompt);
-                appState.evaluation = JSON.parse(evaluationText);
+                appState.evaluation = parseAIJSON(evaluationText);
 
                 showStatus('Paso 2 completado. Conclusión generada. Listo para ensamblar informe.');
                 updateUIForStep('conclusion_done');
