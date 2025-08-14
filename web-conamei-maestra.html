@@ -289,19 +289,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${basePrompt}\n${rules}\n${sectionData.ctx}\n\nGenera un JSON con la siguiente estructura y contenido:\n${sectionData.json}`;
     }
 
-    // --- Event Listeners ---
-    function setupListeners() {
-        genButtons.forEach(btn => btn.addEventListener('click', handleGenerateSection));
-        copyBtn.addEventListener('click', () => navigator.clipboard.writeText(hiddenHtmlSource.value));
-        downloadBtn.addEventListener('click', () => {
-            const blob = new Blob([hiddenHtmlSource.value], { type: 'text/html' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `informe_conamei_${appState.dci.toLowerCase() || 'informe'}.html`;
-            a.click();
-        });
+    // --- UI Update Functions ---
+    function showStatus(message, isLoading = false) {
+        statusEl.textContent = message;
+        if (isLoading) loader.classList.remove('hidden');
+        else loader.classList.add('hidden');
     }
 
+    function updateButtonState() {
+        genButtons.forEach((btn) => {
+            const btnSectionIndex = appState.ui.buttons.indexOf(btn.dataset.section);
+            btn.disabled = btnSectionIndex !== appState.ui.current;
+        });
+        if (appState.ui.current >= appState.ui.buttons.length) {
+            finalActionsContainer.classList.remove('hidden');
+            showStatus('¡Informe completo! Puede copiar o descargar el HTML.');
+        } else {
+            finalActionsContainer.classList.add('hidden');
+        }
+    }
+
+    // --- Event Listeners and Initializer ---
     function init() {
         const savedApiKey = localStorage.getItem(API_KEY_STORAGE_KEY);
         if (savedApiKey) {
@@ -317,7 +325,15 @@ document.addEventListener('DOMContentLoaded', () => {
             appState.apiKey = '';
             localStorage.removeItem(API_KEY_STORAGE_KEY);
         });
-        setupListeners();
+        genButtons.forEach(btn => btn.addEventListener('click', handleGenerateSection));
+        copyBtn.addEventListener('click', () => navigator.clipboard.writeText(hiddenHtmlSource.value));
+        downloadBtn.addEventListener('click', () => {
+            const blob = new Blob([hiddenHtmlSource.value], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `informe_conamei_${appState.dci.toLowerCase() || 'informe'}.html`;
+            a.click();
+        });
         updateButtonState();
         renderPreview();
     }
