@@ -5,13 +5,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Get the absolute path to the directory containing this script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-# Construct the path to the project root directory (one level up)
-project_root = os.path.abspath(os.path.join(script_dir, '..'))
-
-# Load environment variables from .env file in the project root
-load_dotenv(dotenv_path=os.path.join(project_root, '.env'))
+# Load environment variables from .env file in the parent directory
+load_dotenv(dotenv_path='../.env')
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -24,6 +19,7 @@ def get_prompt_for_section(section, dci, indication, evidence):
     base_prompt = f'Actúa como un farmacólogo y analista experto en HTA para CONASA, Ecuador. Investiga y rellena la siguiente estructura JSON para "{dci}" en la indicación "{indication}". Tu única salida debe ser el objeto JSON puro.'
     rules = "REGLAS CRÍTICAS: Para 'pico.c' y todas las comparaciones, usa la alternativa terapéutica más relevante del Cuadro Nacional de Medicamentos Básico (CNMB) de Ecuador. Si no existe, indícalo. Rellena cada campo; si no encuentras un dato, usa 'No encontrado'."
 
+    # Define context and template file for each section
     section_map = {
         '12': {'ctx': "", 'file': 'section_12.json'},
         '3': {'ctx': "", 'file': 'section_3.json'},
@@ -38,8 +34,7 @@ def get_prompt_for_section(section, dci, indication, evidence):
     if not section_data:
         raise ValueError(f"Invalid section number: {section}")
 
-    # Construct the absolute path to the template file
-    template_path = os.path.join(project_root, 'report_templates', section_data['file'])
+    template_path = os.path.join('../report_templates', section_data['file'])
     
     try:
         with open(template_path, 'r') as f:
@@ -74,6 +69,7 @@ def generate_section():
             return jsonify({"error": "API key not configured on server."}), 500
 
         prompt = get_prompt_for_section(section, dci, indication, evidence)
+        
         api_url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={api_key}'
         headers = {'Content-Type': 'application/json'}
         body = {"contents": [{"parts": [{"text": prompt}]}]}
