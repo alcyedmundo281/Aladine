@@ -1,0 +1,23 @@
+{
+    "studies": {
+        "meta_analysis": [],
+        "systematic_review": [],
+        "rct": [],
+        "observational": [],
+        "gpc": []
+    },
+    "efficacy_safety": {
+        "grade_summary": {
+            "question": "¿Debería usarse ${dci} vs ${comparator} para ${indication}?",
+            "bibliography": "",
+            "certainty_assessment": []
+        },
+        "safety_details": {
+            "adverse_reactions": [],
+            "has_alerts": "No",
+            "alerts_details": "",
+            "is_safer_than_cnmb": "No",
+            "safety_justification": ""
+        }
+    }
+}
