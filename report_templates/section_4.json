@@ -1,0 +1,22 @@
+{
+    "pico": {
+        "p": "Pacientes con ${indication}",
+        "i": "${dci}",
+        "c": "Debe ser uno de los medicamentos listados en 'alternatives_cnmb' de la sección anterior. Seleccionar el más relevante.",
+        "o": "Resultados clínicos relevantes (ej. eficacia, seguridad, calidad de vida)"
+    },
+    "search_strategy": [
+        {
+            "database": "PubMed/Medline",
+            "strategy": "Ej: (${dci} OR ${comparator}) AND (${indication})"
+        },
+        {
+            "database": "LILACS",
+            "strategy": "Ej: (${dci} OR ${comparator}) AND (${indication})"
+        },
+        {
+            "database": "Cochrane Library",
+            "strategy": "Ej: (${dci} OR ${comparator}) AND (${indication})"
+        }
+    ]
+}

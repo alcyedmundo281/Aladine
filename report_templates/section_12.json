@@ -1,0 +1,24 @@
+{
+    "drug_id": {
+        "atc_code": "Investigar y rellenar",
+        "dci": "${dci}",
+        "pharma_form_cnmb": "Investigar y rellenar",
+        "pharma_form_arcsa": "Investigar y rellenar",
+        "concentration": "Investigar y rellenar",
+        "admin_route": "Investigar y rellenar",
+        "commercial_presentation": "Investigar y rellenar",
+        "sanitary_info": "Investigar y rellenar"
+    },
+    "therapeutic_indication": {
+        "indication_requested": "${indication}",
+        "mechanism_of_action": "Investigar y rellenar",
+        "dosage_guideline": "Investigar y rellenar",
+        "alternatives_cnmb": [
+            {
+                "drug": "Buscar en el CNMB de Ecuador un medicamento para la misma indicación",
+                "indication": "Verificar que la indicación aprobada en el CNMB sea la misma que ${indication}"
+            }
+        ],
+        "alternatives_not_cnmb": "Investigar y rellenar"
+    }
+}

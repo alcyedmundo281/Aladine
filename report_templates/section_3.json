@@ -1,0 +1,44 @@
+{
+    "coverage": {
+        "policies": [
+            {
+                "agency": "NICE (UK)",
+                "indication": "Investigar y rellenar",
+                "details": "Investigar y rellenar",
+                "date": "Investigar y rellenar"
+            },
+            {
+                "agency": "CADTH (Canadá)",
+                "indication": "Investigar y rellenar",
+                "details": "Investigar y rellenar",
+                "date": "Investigar y rellenar"
+            },
+            {
+                "agency": "Otra agencia HTA relevante",
+                "indication": "Investigar y rellenar si se encuentra",
+                "details": "Investigar y rellenar si se encuentra",
+                "date": "Investigar y rellenar si se encuentra"
+            }
+        ],
+        "approvals": [
+            {
+                "agency": "EMA (Europa)",
+                "indication": "Investigar y rellenar",
+                "type": "Investigar y rellenar",
+                "date": "Investigar y rellenar"
+            },
+            {
+                "agency": "FDA (EE.UU.)",
+                "indication": "Investigar y rellenar",
+                "type": "Investigar y rellenar",
+                "date": "Investigar y rellenar"
+            },
+            {
+                "agency": "Otra agencia regulatoria relevante (ej. ANMAT, INVIMA)",
+                "indication": "Investigar y rellenar si se encuentra",
+                "type": "Investigar y rellenar si se encuentra",
+                "date": "Investigar y rellenar si se encuentra"
+            }
+        ]
+    }
+}
